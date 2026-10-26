@@ -51,10 +51,20 @@ include __DIR__ . '/includes/header.php';
       </ul>
       <a class="btn btn-primary" href="<?= url('page.php?slug=about-us') ?>">Learn more about us</a>
     </div>
-    <div class="about-img reveal">
-      <?php if (!empty($about['image'])): ?><img src="<?= e(media($about['image'])) ?>" alt="Archbishop Flynn Secondary School campus"><?php else: ?><img class="crest-big" src="<?= e(media(setting('logo') ?: 'assets/img/logo.webp')) ?>" alt="<?= e(setting('school_name')) ?> crest"><?php endif; ?>
-      <div class="badge">Sapientia et Servitium</div>
-    </div>
+    <?php if (!empty($about['image'])): ?>
+    <div class="about-img reveal"><img src="<?= e(media($about['image'])) ?>" alt="<?= e(setting('school_name')) ?> campus"></div>
+    <?php else: ?>
+    <aside class="values-panel reveal" aria-label="About the school">
+      <?php if (setting('vision')): ?><div class="vp-block"><span class="vp-label">Our vision</span><p><?= e(setting('vision')) ?></p></div><?php endif; ?>
+      <?php if (setting('tagline')): ?><div class="vp-block vp-motto"><span class="vp-label">Our motto</span><p><?= e(setting('tagline')) ?></p></div><?php endif; ?>
+      <ul class="vp-facts">
+        <li><b>O &amp; A Level</b><span>Co-educational boarding</span></li>
+        <li><b>Pader</b><span>Northern Uganda</span></li>
+        <?php if (setting('uneb_centre')): ?><li><b><?= e(setting('uneb_centre')) ?></b><span>UNEB centre no.</span></li><?php endif; ?>
+        <?php if (setting('moes_reg')): ?><li><b><?= e(setting('moes_reg')) ?></b><span>MoES registration</span></li><?php endif; ?>
+      </ul>
+    </aside>
+    <?php endif; ?>
   </div>
 </section>
 

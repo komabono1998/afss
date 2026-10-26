@@ -2,7 +2,7 @@
 <footer class="site-footer">
   <div class="container footer-grid">
     <div>
-      <img class="footer-logo" src="<?= e(media(setting('logo') ?: 'assets/img/logo.webp')) ?>" alt="<?= e(setting('school_name')) ?> crest">
+      <?php if (basename($_SERVER['SCRIPT_NAME']) !== 'index.php'): ?><img class="footer-logo" src="<?= e(media(setting('logo') ?: 'assets/img/logo.webp')) ?>" alt="<?= e(setting('school_name')) ?> crest"><?php endif; ?>
       <h4><?= e(setting('school_name')) ?></h4>
       <p><?= e(setting('intro')) ?></p>
       <div class="social">

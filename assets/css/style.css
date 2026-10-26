@@ -345,3 +345,14 @@ a:hover{color:var(--secondary)}
 /* a little more air between the brand and the menu on laptop widths */
 @media(min-width:1280px) and (max-width:1439px){.main-nav a{padding:.55rem .5rem}.brand{margin-right:1.2rem}}
 .about-img .crest-big~.badge{display:none}   /* the crest already carries the motto; the badge only covered its ribbon */
+
+/* landing page: vision / motto / quick-facts panel (replaces a second crest) */
+.values-panel{background:#fff;border:1px solid color-mix(in srgb,var(--primary) 12%,transparent);border-radius:var(--radius);box-shadow:var(--shadow);padding:1.8rem;position:relative;overflow:hidden}
+.values-panel::before{content:"";position:absolute;left:0;top:0;bottom:0;width:6px;background:linear-gradient(180deg,var(--secondary) 0 50%,var(--accent) 50% 100%)}
+.vp-block{margin-bottom:1.3rem;padding-left:.6rem}
+.vp-label{display:block;font-size:.72rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--secondary);margin-bottom:.25rem}
+.vp-block p{margin:0;font-size:1.05rem;color:var(--ink)}
+.vp-motto p{font-family:var(--serif);font-style:italic;font-size:1.7rem;line-height:1.2;color:var(--primary)}
+.vp-facts{list-style:none;margin:0;padding:1.1rem 0 0 .6rem;border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(2,1fr);gap:.9rem 1rem}
+.vp-facts b{display:block;font-family:var(--serif);font-size:1.15rem;color:var(--primary)}
+.vp-facts span{font-size:.8rem;color:var(--muted)}
