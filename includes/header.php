@@ -65,7 +65,8 @@ $logo = setting('logo');
     <nav class="main-nav" aria-label="Main">
       <ul>
         <?= nav_item('Home', url()) ?>
-        <?= nav_item('About', url('page.php?slug=about-us'), group_children('about', [['Governance', url('governance.php')]], false)) ?>
+        <?= nav_item('About', url('page.php?slug=about-us'), group_children('about')) ?>
+        <?= nav_item('Management', url('governance.php'), [['Governance Structure', url('governance.php')], ['Board of Governors', url('management.php?g=board')], ['School Management Team', url('management.php?g=team')], ['PTA Committee', url('management.php?g=pta')]]) ?>
         <?= nav_item('Academics', url('page.php?slug=academics'), group_children('academics')) ?>
         <?= nav_item('Admissions', url('admissions.php'), group_children('admissions', [['Apply Online', url('apply.php')]], true)) ?>
         <?= nav_item('Student Life', url('gallery.php'), group_children('students', [['Photo Gallery', url('gallery.php')]])) ?>

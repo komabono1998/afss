@@ -7,7 +7,7 @@ $crumbs = [['About', url('page.php?slug=about-us')]];
 $groups = [
     'board' => ['Board of Governors', 'The Board provides policy direction, oversight and accountability for the school.'],
     'director' => ['Director', 'Leads the overall strategic direction and stewardship of the institution.'],
-    'administration' => ['School Administration Team', 'Manages the day-to-day academic and administrative life of the school.'],
+    'administration' => ['School Management Team', 'Manages the day-to-day academic and administrative life of the school.'],
 ];
 function person_card(array $m): string
 {

@@ -34,7 +34,7 @@ function install_schema(PDO $db): void
     );
     CREATE TABLE team (
         id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, role TEXT, grp TEXT DEFAULT 'administration',
-        bio TEXT, photo TEXT, sort INTEGER DEFAULT 0
+        bio TEXT, photo TEXT, sort INTEGER DEFAULT 0, email TEXT, phone TEXT, term TEXT
     );
     CREATE TABLE gallery (
         id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, category TEXT DEFAULT 'Campus', image TEXT NOT NULL,
@@ -138,6 +138,12 @@ function seed_content(PDO $db): void
         ['Name to be updated', 'Head Teacher', 'administration', 1],
         ['Name to be updated', 'Deputy Head Teacher (Academics)', 'administration', 2],
         ['Name to be updated', 'Deputy Head Teacher (Administration)', 'administration', 3],
+        ['Name to be updated', 'PTA Chairperson', 'pta', 1],
+        ['Name to be updated', 'PTA Vice Chairperson', 'pta', 2],
+        ['Name to be updated', 'PTA Secretary', 'pta', 3],
+        ['Name to be updated', 'PTA Treasurer', 'pta', 4],
+        ['Name to be updated', 'PTA Committee Member', 'pta', 5],
+        ['Name to be updated', 'PTA Committee Member', 'pta', 6],
         ['Name to be updated', 'Director of Studies', 'administration', 4],
         ['Name to be updated', 'Bursar', 'administration', 5],
     ];
@@ -168,4 +174,19 @@ function seed_content(PDO $db): void
     $job->execute(['General Application — Teaching and Support Staff', 'general-application', 'All Departments', 'Various', 'Pader, Uganda',
         '<p>AFSS is always interested in meeting committed educators and support staff. Submit your application and CV and we will contact you when a suitable vacancy arises.</p>',
         '<ul><li>Relevant academic or professional qualification</li><li>Commitment to the mission and values of the school</li><li>Willingness to live and work in a boarding community</li></ul>', null, 'open']);
+}
+
+/** Upgrades for databases created by earlier versions. Safe to run on every request. */
+function migrate(PDO $db): void
+{
+    $cols = array_column($db->query('PRAGMA table_info(team)')->fetchAll(PDO::FETCH_ASSOC), 'name');
+    foreach (['email', 'phone', 'term'] as $c) if (!in_array($c, $cols, true)) $db->exec("ALTER TABLE team ADD COLUMN $c TEXT");
+    $done = $db->query("SELECT 1 FROM settings WHERE k = 'migr_pta'")->fetchColumn();
+    if (!$done) {
+        if (!$db->query("SELECT 1 FROM team WHERE grp = 'pta' LIMIT 1")->fetchColumn()) {
+            $ins = $db->prepare("INSERT INTO team (name,role,grp,bio,sort) VALUES ('Name to be updated',?,'pta','',?)");
+            foreach (['PTA Chairperson', 'PTA Vice Chairperson', 'PTA Secretary', 'PTA Treasurer', 'PTA Committee Member', 'PTA Committee Member'] as $i => $r) $ins->execute([$r, $i + 1]);
+        }
+        $db->exec("INSERT OR REPLACE INTO settings (k,v) VALUES ('migr_pta','1')");
+    }
 }

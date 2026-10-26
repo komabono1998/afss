@@ -8,7 +8,7 @@ function admin_nav(): array
         'Overview' => [['index.php', '📊 Dashboard']],
         'Content' => [
             ['crud.php?e=slides', '🖼 Hero Slides'], ['crud.php?e=pages', '📄 Pages'], ['crud.php?e=news', '📰 News & Stories'],
-            ['crud.php?e=events', '📅 Events'], ['crud.php?e=gallery', '📷 Gallery'], ['crud.php?e=team', '🏛 Governance / Staff'],
+            ['crud.php?e=events', '📅 Events'], ['crud.php?e=gallery', '📷 Gallery'], ['crud.php?e=team', '🏛 Management Profiles'],
         ],
         'Recruitment' => [['crud.php?e=jobs', '💼 Job Vacancies'], ['inbox.php?t=job_apps', '📨 Job Applications']],
         'Admissions' => [['inbox.php?t=admissions', '🎓 Applications']],

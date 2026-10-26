@@ -34,6 +34,7 @@ function db(): PDO
             install_schema($pdo);
             seed_content($pdo);
         }
+        migrate($pdo);
     }
     return $pdo;
 }

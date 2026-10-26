@@ -15,6 +15,7 @@
       <ul class="flinks">
         <li><a href="<?= url('page.php?slug=about-us') ?>">About Us</a></li>
         <li><a href="<?= url('governance.php') ?>">Governance</a></li>
+        <li><a href="<?= url('management.php?g=pta') ?>">PTA Committee</a></li>
         <li><a href="<?= url('admissions.php') ?>">Admissions</a></li>
         <li><a href="<?= url('apply.php') ?>">Apply Online</a></li>
         <li><a href="<?= url('news.php') ?>">News &amp; Stories</a></li>
