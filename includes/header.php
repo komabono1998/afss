@@ -59,10 +59,10 @@ $logo = setting('logo') ?: 'assets/img/logo.webp';
 <?php endif; ?>
 <header class="site-header" id="top">
   <div class="container header-in">
-    <a class="brand" href="<?= url() ?>">
+    <a class="brand" href="<?= url() ?>" aria-label="<?= e(setting('school_name')) ?> — home" title="<?= e(setting('school_name')) ?>">
       <img src="<?= e(media($logo)) ?>" alt="<?= e(setting('school_name')) ?> logo">
       <?php if (false): ?><span class="crest" aria-hidden="true"><svg viewBox="0 0 40 46" width="38" height="44"><path d="M20 2 4 8v14c0 11 7 19 16 22 9-3 16-11 16-22V8z" fill="var(--accent)"/><path d="M20 10v24M12 18h16" stroke="var(--primary)" stroke-width="3" stroke-linecap="round"/></svg></span><?php endif; ?>
-      <span class="brand-text"><strong><?= e(setting('school_name')) ?></strong><small><?= e(setting('tagline')) ?></small></span>
+      <span class="brand-text"><strong><?= e(setting('short_name', 'AFSS')) ?></strong></span>
     </a>
     <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false"><span></span><span></span><span></span></button>
     <nav class="main-nav" aria-label="Main">
