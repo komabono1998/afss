@@ -519,3 +519,64 @@ a:hover{color:var(--secondary)}
 
 
 @media(prefers-reduced-motion:reduce){.brand img,.footer-logo,.crest-rays,.crest-stage::after,.crest-stage .hero-crest{animation:none!important}}
+
+/* two-column layouts that stack on small screens (replaces inline grid styles that blocked the mobile rule) */
+.split-cal{grid-template-columns:1.6fr 1fr;align-items:start}
+.split-profile{grid-template-columns:300px 1fr;align-items:start}
+@media(max-width:900px){.split-cal,.split-profile{grid-template-columns:1fr}}
+
+/* ===== design polish ===== */
+html{scroll-padding-top:96px;-webkit-text-size-adjust:100%}
+body{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+::selection{background:var(--accent);color:#111}
+.skip-link{position:absolute;left:1rem;top:-60px;z-index:300;background:var(--k,#0a0e0c);color:#fff;padding:.7rem 1.1rem;border-radius:0 0 10px 10px;font-weight:700;transition:top .15s}
+.skip-link:focus{top:0;color:#fff;outline:3px solid var(--accent)}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,summary:focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:6px}
+.main-nav a:focus-visible{outline-offset:-2px}
+
+/* gold on white fails contrast: eyebrow labels use the school red on light sections, gold only on dark ones */
+.section .eyebrow,.section-head .eyebrow,.ab-motto span{color:var(--secondary)}
+.banner .eyebrow,.slide .eyebrow,.cta-band .eyebrow,.ab-hero .eyebrow,.ab-vm .eyebrow{color:var(--accent)}
+
+/* calmer, more consistent rhythm */
+.section{padding:4.5rem 0}
+.section-head{margin-bottom:2.2rem}
+.section-head h2{margin-bottom:.4rem}
+.prose p,.prose li{line-height:1.75}
+.prose h2{margin-top:2rem}
+.prose img{border-radius:14px}
+.prose table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:.95rem}
+.prose th{background:var(--primary);color:#fff;text-align:left;padding:.65rem .8rem}
+.prose td{padding:.6rem .8rem;border-bottom:1px solid var(--line)}
+.prose tr:nth-child(even) td{background:color-mix(in srgb,var(--primary) 3.5%,#fff)}
+.prose .notice,.notice{border-left:5px solid var(--accent);background:#fffbea;border-radius:10px;padding:1rem 1.2rem}
+.prose a:not(.btn){text-decoration:underline;text-decoration-color:color-mix(in srgb,var(--primary) 35%,transparent);text-underline-offset:3px}
+.prose a:not(.btn):hover{text-decoration-color:currentColor}
+
+/* buttons: one consistent feel */
+.btn{transition:transform .15s,box-shadow .15s,background .2s,color .2s;font-weight:700;letter-spacing:.01em}
+.btn:hover{transform:translateY(-1px);box-shadow:0 8px 18px rgba(0,0,0,.16)}
+.btn:active{transform:none;box-shadow:none}
+
+/* cards */
+.card{border-radius:16px;transition:transform .2s,box-shadow .2s,border-color .2s}
+a.card:hover{transform:translateY(-4px);box-shadow:0 14px 30px rgba(0,0,0,.12)}
+
+/* forms */
+.form input:not([type=checkbox]):not([type=radio]):not([type=file]),.form select,.form textarea{border:1.5px solid #cfd8d3;border-radius:10px;padding:.7rem .9rem;transition:border-color .15s,box-shadow .15s}
+.form input:focus,.form select:focus,.form textarea:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 4px color-mix(in srgb,var(--primary) 16%,transparent)}
+.form label{font-weight:600}
+
+/* page banner: slightly tighter and cleaner */
+.banner{padding:3.2rem 0 2.8rem}
+.banner h1{margin-bottom:.3rem}
+
+/* footer */
+.site-footer a{transition:color .15s}
+.footer-grid h4{letter-spacing:.02em}
+
+/* fewer layout jumps */
+img{max-width:100%;height:auto}
+img[loading=lazy]{background:color-mix(in srgb,var(--primary) 6%,#fff)}
+@media(max-width:700px){.section{padding:3rem 0}.banner{padding:2.4rem 0 2rem}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}.slide.on{animation:none}}

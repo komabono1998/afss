@@ -34,6 +34,9 @@ $logo = setting('logo') ?: 'assets/img/logo.webp';
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title><?= e($fullTitle) ?></title>
 <meta name="description" content="<?= e(excerpt($pageDesc, 160)) ?>">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="<?= e(setting('school_name')) ?>">
+<meta name="twitter:card" content="summary_large_image">
 <meta property="og:title" content="<?= e($fullTitle) ?>">
 <meta property="og:description" content="<?= e(excerpt($pageDesc, 160)) ?>">
 <meta property="og:image" content="<?= e(media(!empty($pageImage) ? $pageImage : (setting('logo') ?: 'assets/img/logo.webp'))) ?>">
@@ -46,6 +49,7 @@ $logo = setting('logo') ?: 'assets/img/logo.webp';
 <style>:root{--primary:<?= e(setting('primary_color', '#0b4a24')) ?>;--accent:<?= e(setting('accent_color', '#f2b705')) ?>;--secondary:<?= e(setting('secondary_color', '#d7141a')) ?>}</style>
 </head>
 <body<?= basename($_SERVER['SCRIPT_NAME']) === 'index.php' ? ' class="home"' : '' ?>>
+<a class="skip-link" href="#main">Skip to main content</a>
 <?php if (maintenance_on() && admin_user()): ?><div class="maint-bar">🚧 Maintenance mode is ON. Visitors see a "back soon" page; you can see the site because you are signed in. <a href="<?= url('admin/index.php') ?>">Open dashboard to go live</a></div><?php endif; ?>
 <?php $showClock = setting('show_clock') !== '0'; if (setting('announcement') || $showClock): ?>
 <div class="topbar">

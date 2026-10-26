@@ -13,7 +13,7 @@ $initials = implode('', array_map(fn($w) => mb_substr($w, 0, 1), array_slice(pre
 include __DIR__ . '/includes/header.php';
 include __DIR__ . '/includes/banner.php';
 ?>
-<section class="section"><div class="container split" style="grid-template-columns:300px 1fr;align-items:start">
+<section class="section"><div class="container split split-profile">
   <div class="card person"><div class="avatar" style="width:180px;height:180px;font-size:3rem"><?php if ($m['photo']): ?><img src="<?= e(media($m['photo'])) ?>" alt="<?= e($m['name']) ?>"><?php else: ?><?= e($initials) ?><?php endif; ?></div>
     <h3><?= e($m['name']) ?></h3><div class="role"><?= e($m['role']) ?></div>
     <?php if (!empty($m['subjects'])): ?><div class="subjects" style="margin:.7rem 0"><?php foreach (array_filter(array_map('trim', explode(',', $m['subjects']))) as $sj): ?><span class="tag"><?= e($sj) ?></span> <?php endforeach; ?></div><?php endif; ?>

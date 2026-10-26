@@ -47,7 +47,7 @@ include __DIR__ . '/includes/header.php';
 include __DIR__ . '/includes/banner.php';
 ?>
 <section class="section">
-  <div class="container split" style="grid-template-columns:1.6fr 1fr;align-items:start">
+  <div class="container split split-cal">
     <div>
       <div class="cal-nav">
         <a class="btn btn-ghost btn-sm" href="?m=<?= $prev ?>">← <?= date('M', strtotime($prev . '-01')) ?></a>
