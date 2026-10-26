@@ -332,6 +332,10 @@ function migrate(PDO $db): void
         foreach (page_drafts() as $slug => $html) $up->execute([$html, $slug, '%to be updated from the admin panel%']);
         $db->exec("INSERT OR REPLACE INTO settings (k,v) VALUES ('migr_page_drafts','1')");
     }
+    if (!$db->query("SELECT 1 FROM settings WHERE k = 'migr_content_paper'")->fetchColumn()) {   // content paper: history, vision/mission, values, new pages
+        apply_content_paper($db);
+        $db->exec("INSERT OR REPLACE INTO settings (k,v) VALUES ('migr_content_paper','1')");
+    }
     foreach (['founders_show' => '1', 'founders_title' => 'Our Founders\' Story', 'founders_story' => "Archbishop Flynn Secondary School began with a simple conviction: that the young people of Pader and the wider northern Uganda deserve a school where academic excellence and strong moral formation go hand in hand.\n\nOur founders gave their time, resources and faith to open a school that welcomes boys and girls on equal terms and prepares them to serve their communities. Their vision lives on in our motto, Sapientia et Servitium: wisdom and service.\n\nToday, teachers, parents, alumni and well-wishers carry that vision forward, one learner at a time.", 'founders_image' => '', 'founders_caption' => 'The founders of Archbishop Flynn Secondary School'] as $fk => $fv)
         $db->prepare('INSERT OR IGNORE INTO settings (k,v) VALUES (?,?)')->execute([$fk, $fv]);
     foreach (['careers_heading' => 'Build a career that shapes young lives', 'careers_intro' => 'At AFSS you will join qualified, mentoring colleagues serving a diverse boarding community. We value integrity, professionalism and a passion for learners\' growth.', 'careers_benefits' => "Supportive mentoring culture\nProfessional development\nA purposeful, values-driven community", 'careers_how' => 'Choose a vacancy below, complete the short form and attach your CV. Shortlisted candidates will be contacted.'] as $ck => $cv)

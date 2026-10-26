@@ -23,6 +23,7 @@ $groups = [
     'Home page' => [
         'announcement' => ['Announcement bar text', 'text', 'Shown at the left of the top bar. Leave empty to show only the clock and contact details.'],
         'show_clock' => ['Show the live date & time in the top bar', 'check'],
+        'welcome_text' => ['Welcome message (home page)', 'textarea', 'Shown in the "Educating for wisdom and service" block. Leave a blank line between paragraphs.'],
         'founders_show' => ['Show the Founders\' Story section on the home page', 'check'],
         'founders_title' => ['Founders\' story heading', 'text'],
         'founders_story' => ['Founders\' story', 'textarea', 'Leave a blank line between paragraphs. Replace the draft with the real story of the school.'],

@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/includes/bootstrap.php';
 $pageTitle = '';
-$pageDesc = setting('intro');
+$pageDesc = 'Discover Archbishop Flynn Secondary School in Pader, Northern Uganda, a school committed to holistic education, Christian values, wisdom and service.';
 $slides = rows('SELECT * FROM slides WHERE active = 1 ORDER BY sort, id');
 $news = rows("SELECT * FROM news WHERE status='published' AND published_at <= date('now') ORDER BY featured DESC, published_at DESC LIMIT 3");
 $events = rows("SELECT * FROM events WHERE date(COALESCE(end_date,start_date)) >= date('now') ORDER BY start_date LIMIT 4");
@@ -30,11 +30,11 @@ include __DIR__ . '/includes/header.php';
 <section class="pillars" aria-label="Why choose us"><div class="container">
   <div class="pillar-row">
     <?php foreach ([
-      ['📖', 'p-gold', 'Academic Excellence', 'Strong O and A level teaching, a reading culture and e-learning.'],
-      ['✝', 'p-green', 'Faith &amp; Character', 'Moral formation rooted in wisdom, service and discipline.'],
-      ['🏠', 'p-blue', 'Boarding Community', 'A safe, caring co-educational home away from home.'],
-      ['🎓', 'p-gold', 'Bursaries &amp; Access', 'Scholarships and equal opportunities for deserving learners.'],
-      ['🌿', 'p-leaf', 'Life Beyond Class', 'Clubs, sports, health care and counselling for every learner.'],
+      ['🎓', 'p-gold', 'Holistic Education', 'We develop the whole learner through academics, character, faith, leadership and service.'],
+      ['✝', 'p-green', 'A Values-led Community', 'Our Christian tradition encourages integrity, respect, accountability and charity.'],
+      ['📖', 'p-blue', 'Learning &amp; Opportunity', 'Academic departments and learning resources prepare learners for examinations and future pathways.'],
+      ['⚽', 'p-gold', 'Growth Beyond the Classroom', 'Clubs, student leadership, cultural activities and sport build confidence and teamwork.'],
+      ['🌱', 'p-leaf', 'Community Development', 'Our history and AFRUDEC reflect a commitment to education, food security and sustainability.'],
     ] as [$ic, $cl, $t, $d]): ?>
     <div class="pillar reveal"><span class="pillar-ico <?= $cl ?>"><?= $ic ?></span><h3><?= $t ?></h3><p><?= $d ?></p></div>
     <?php endforeach; ?>
@@ -73,7 +73,7 @@ include __DIR__ . '/includes/header.php';
     <div class="reveal">
       <span class="eyebrow">Welcome to <?= e(setting('short_name')) ?></span>
       <h2>Educating for wisdom and service</h2>
-      <p><?= e(setting('mission')) ?></p>
+      <?php foreach (preg_split('/\R{2,}/', trim((string) (setting('welcome_text') ?: setting('mission')))) as $wp): ?><p><?= nl2br(e(trim($wp))) ?></p><?php endforeach; ?>
       <ul class="checks">
         <li>Co-educational boarding for O and A level</li>
         <li>Equal opportunities for boys and girls</li>
@@ -90,6 +90,7 @@ include __DIR__ . '/includes/header.php';
       <?php if (setting('tagline')): ?><div class="vp-block vp-motto"><span class="vp-label">Our motto</span><p><?= e(setting('tagline')) ?></p></div><?php endif; ?>
       <ul class="vp-facts">
         <li><b>O &amp; A Level</b><span>Co-educational boarding</span></li>
+        <li><b>2009</b><span>Year established</span></li>
         <li><b>Pader</b><span>Northern Uganda</span></li>
         <?php if (setting('uneb_centre')): ?><li><b><?= e(setting('uneb_centre')) ?></b><span>UNEB centre no.</span></li><?php endif; ?>
         <?php if (setting('moes_reg')): ?><li><b><?= e(setting('moes_reg')) ?></b><span>MoES registration</span></li><?php endif; ?>
