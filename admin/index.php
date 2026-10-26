@@ -44,7 +44,7 @@ $attn = [
     ['📝', 'Admission applications', 'admissions_apps', 'inbox.php?t=admissions', 'admissions'],
     ['💼', 'Job applications', 'job_apps', 'inbox.php?t=job_apps', 'job_apps'],
     ['🏅', 'Scholarship applications', 'scholarship_apps', 'inbox.php?t=scholarship_apps', 'scholarship_apps'],
-    ['🎓', 'Alumni sign-ups', 'alumni_members', 'inbox.php?t=alumni_members', 'alumni_members'],
+    ['🎓', 'Alumni awaiting approval', 'alumni_members', 'alumni_db.php?status=new', 'alumni_members'],
     ['🕊', 'Whistle-blower reports', 'whistle_reports', 'whistle.php', 'whistleblower'],
     ['🤝', 'Donor & partner enquiries', 'donor_pledges', 'inbox.php?t=donor_pledges', 'donor_pledges'],
     ['✉', 'Messages', 'messages', 'inbox.php?t=messages', 'messages'],

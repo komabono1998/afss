@@ -63,7 +63,12 @@ function install_schema(PDO $db): void
     CREATE TABLE alumni_members (
         id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, email TEXT, phone TEXT, year_left TEXT, last_class TEXT, occupation TEXT,
         location TEXT, message TEXT, newsletter INTEGER DEFAULT 0, token TEXT, status TEXT DEFAULT 'new', created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-        profession TEXT, workplace TEXT, photo TEXT, proof_file TEXT, consent INTEGER DEFAULT 0, consent_at TEXT
+        profession TEXT, workplace TEXT, photo TEXT, proof_file TEXT, consent INTEGER DEFAULT 0, consent_at TEXT,
+        member_no TEXT, member_year INTEGER, member_seq INTEGER, approved_at TEXT, approved_by TEXT, valid_from TEXT, valid_to TEXT, reject_reason TEXT, card_token TEXT, notes TEXT
+    );
+    CREATE UNIQUE INDEX ux_alumni_member_no ON alumni_members(member_no);
+    CREATE TABLE alumni_log (
+        id INTEGER PRIMARY KEY AUTOINCREMENT, member_id INTEGER, user_name TEXT, action TEXT, detail TEXT, created_at TEXT DEFAULT CURRENT_TIMESTAMP
     );
     CREATE TABLE class_streams (
         id INTEGER PRIMARY KEY AUTOINCREMENT, class_name TEXT NOT NULL, stream_name TEXT DEFAULT '', level TEXT DEFAULT 'O Level',
@@ -296,6 +301,18 @@ function migrate(PDO $db): void
     $db->exec("CREATE TABLE IF NOT EXISTS alumni_members (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, email TEXT, phone TEXT, year_left TEXT, last_class TEXT, occupation TEXT, location TEXT, message TEXT, newsletter INTEGER DEFAULT 0, token TEXT, status TEXT DEFAULT 'new', created_at TEXT DEFAULT CURRENT_TIMESTAMP)");
     $amc = array_column($db->query('PRAGMA table_info(alumni_members)')->fetchAll(PDO::FETCH_ASSOC), 'name');
     foreach (['profession' => 'TEXT', 'workplace' => 'TEXT', 'photo' => 'TEXT', 'proof_file' => 'TEXT', 'consent' => 'INTEGER DEFAULT 0', 'consent_at' => 'TEXT'] as $c => $def) if (!in_array($c, $amc, true)) $db->exec("ALTER TABLE alumni_members ADD COLUMN $c $def");
+    $am = array_column($db->query('PRAGMA table_info(alumni_members)')->fetchAll(PDO::FETCH_ASSOC), 'name');
+    foreach (['member_no' => 'TEXT', 'member_year' => 'INTEGER', 'member_seq' => 'INTEGER', 'approved_at' => 'TEXT', 'approved_by' => 'TEXT', 'valid_from' => 'TEXT', 'valid_to' => 'TEXT', 'reject_reason' => 'TEXT', 'card_token' => 'TEXT', 'notes' => 'TEXT'] as $c => $def)
+        if (!in_array($c, $am, true)) $db->exec("ALTER TABLE alumni_members ADD COLUMN $c $def");
+    $db->exec('CREATE UNIQUE INDEX IF NOT EXISTS ux_alumni_member_no ON alumni_members(member_no)');
+    $db->exec('CREATE TABLE IF NOT EXISTS alumni_log (id INTEGER PRIMARY KEY AUTOINCREMENT, member_id INTEGER, user_name TEXT, action TEXT, detail TEXT, created_at TEXT DEFAULT CURRENT_TIMESTAMP)');
+    if (!$db->query("SELECT 1 FROM settings WHERE k = 'migr_alumni_cards'")->fetchColumn()) {
+        $db->exec("UPDATE alumni_members SET status = 'approved' WHERE status = 'verified'");   // old wording
+        $db->exec("UPDATE alumni_members SET status = 'rejected' WHERE status = 'ignored'");
+        $ia = $db->prepare('INSERT OR IGNORE INTO settings (k,v) VALUES (?,?)');
+        foreach (['alumni_prefix', 'alumni_validity_months', 'alumni_card_note', 'alumni_card_signatory'] as $k) $ia->execute([$k, alumni_default($k)]);
+        $db->exec("INSERT OR REPLACE INTO settings (k,v) VALUES ('migr_alumni_cards','1')");
+    }
     $nc = array_column($db->query('PRAGMA table_info(newsletter_issues)')->fetchAll(PDO::FETCH_ASSOC), 'name');
     if (!in_array('audience', $nc, true)) $db->exec("ALTER TABLE newsletter_issues ADD COLUMN audience TEXT DEFAULT 'school'");
     if (!$db->query("SELECT 1 FROM settings WHERE k = 'migr_alumni'")->fetchColumn()) {
@@ -371,6 +388,10 @@ function alumni_default(string $key): string
         'alumni_email' => '',
         'alumni_phone' => '',
         'alumni_payment_info' => '',
+        'alumni_prefix' => 'AFSSOSA',
+        'alumni_validity_months' => '12',
+        'alumni_card_note' => 'This card is the property of the association. Present it at alumni events. If found, please return it to the school.',
+        'alumni_card_signatory' => 'Chairperson',
     ][$key] ?? '';
 }
 

@@ -37,8 +37,18 @@ if (!empty($_GET['e'])) {
 }
 
 // ---------- join form ----------
-$errors = [];
-if (is_post()) {
+$errors = []; $cardErr = null;
+if (is_post() && ($_POST['do'] ?? '') === 'getcard') {
+    csrf_check();
+    if (!spam_guard('getcard', 8, 900)) $cardErr = 'Too many attempts. Please wait a few minutes.';
+    else {
+        $no = strtoupper(post('member_no')); $em = strtolower(post('email'));
+        $mm = ($no !== '' && $em !== '') ? row("SELECT card_token FROM alumni_members WHERE upper(member_no) = ? AND lower(email) = ? AND status = 'approved'", [$no, $em]) : null;
+        if ($mm) redirect('card.php?t=' . $mm['card_token']);
+        usleep(400000);
+        $cardErr = 'We could not find an approved membership with that number and email. Check them and try again, or contact the alumni office.';
+    }
+} elseif (is_post()) {
     csrf_check();
     if (!spam_guard('alumni', 5)) $errors[] = 'Too many submissions. Please try again later.';
     if (post('name') === '') $errors[] = 'Your name is required.';
@@ -59,8 +69,9 @@ if (is_post()) {
     if (!$errors) {
         q('INSERT INTO alumni_members (name,email,phone,year_left,last_class,profession,workplace,location,message,newsletter,token,photo,proof_file,consent,consent_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
             [post('name'), strtolower(post('email')), post('phone'), post('year_left'), post('last_class'), post('profession'), post('workplace'), post('location'), post('message'), post('newsletter') !== '' ? 1 : 0, bin2hex(random_bytes(12)), $photo, $proof, 1, date('Y-m-d H:i:s')]);
+        alumni_log((int) db()->lastInsertId(), 'registered', 'Submitted the online registration form');
         notify('New alumni sign-up: ' . post('name'), post('name') . ' (left ' . post('year_left') . ') joined the alumni network.\nView it in the admin panel.', post('email'));
-        flash('Welcome back, ' . post('name') . '! You have joined the AFSS alumni network.');
+        flash('Thank you, ' . post('name') . '. Your registration has been received and is awaiting approval. Once it is approved you will receive your membership number and card' . (post('email') !== '' ? ' by email.' : '.'));
         redirect('alumni.php#join');
     }
 }
@@ -102,7 +113,7 @@ $tools = array_filter([
     can('alumni_events') ? ['Activities & events', 'admin/crud.php?e=alumni_events'] : null,
     can('team') ? ['Leadership', 'admin/crud.php?e=team'] : null,
     can('issues') ? ['Alumni newsletter', 'admin/issues.php'] : null,
-    can('alumni_members') ? ['Members', 'admin/inbox.php?t=alumni_members'] : null,
+    can('alumni_members') ? ['Alumni database', 'admin/alumni_db.php'] : null,
     can('alumni_page') ? ['Page text', 'admin/alumni_page.php'] : null,
 ]);
 ?>
@@ -169,5 +180,19 @@ $tools = array_filter([
     <button class="btn btn-primary" type="submit">Join the network</button>
     <p class="meta" style="margin-top:1rem">Questions? <?= e($contactPhone) ?> · <a href="mailto:<?= e($contactEmail) ?>"><?= e($contactEmail) ?></a></p>
   </form>
+</div></section>
+<section class="section alt" id="card"><div class="container" style="max-width:820px">
+  <div class="section-head"><span class="eyebrow">Members</span><h2>Your membership card</h2><p>Approved members can open and print their card. Anyone can check that a card is genuine.</p></div>
+  <div class="grid g2">
+    <form class="form" method="post" action="#card"><h3 style="margin-top:0">Get my card</h3><?= csrf_field() ?><input type="hidden" name="do" value="getcard">
+      <?php if ($cardErr): ?><div class="alert alert-err"><?= e($cardErr) ?></div><?php endif; ?>
+      <div class="field"><label class="req">Membership number</label><input name="member_no" placeholder="e.g. AFSSOSA/2026/0001" required></div>
+      <div class="field"><label class="req">Email you registered with</label><input type="email" name="email" required></div>
+      <button class="btn btn-primary" type="submit">Open my card</button></form>
+    <form class="form" method="get" action="verify.php"><h3 style="margin-top:0">Verify a card</h3>
+      <p class="meta">Checking someone's card? Enter the number printed on it (or scan the QR code on the back).</p>
+      <div class="field"><label class="req">Membership number</label><input name="m" placeholder="e.g. AFSSOSA/2026/0001" required></div>
+      <button class="btn btn-ghost" type="submit">Verify</button></form>
+  </div>
 </div></section>
 <?php include __DIR__ . '/includes/footer.php'; ?>

@@ -29,6 +29,7 @@ $T = [
         'search' => ['name', 'email', 'subject', 'message']],
 ];
 $t = $_GET['t'] ?? '';
+if ($t === 'alumni_members') redirect('admin/alumni_db.php' . (!empty($_GET['id']) ? '?a=view&id=' . (int) $_GET['id'] : ''));
 if (!isset($T[$t])) redirect('admin/index.php');
 require_perm($t);
 $C = $T[$t];

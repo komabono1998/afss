@@ -8,11 +8,17 @@ $fields = [
     'alumni_about' => ['About the association (HTML allowed)', 'html', 'Who the alumni are and what the association does.'],
     'alumni_email' => ['Alumni contact email', 'text', 'Leave empty to use the school email.'],
     'alumni_phone' => ['Alumni contact phone', 'text', 'Leave empty to use the school phone.'],
+    'alumni_prefix' => ['Membership number prefix', 'text', 'Numbers look like PREFIX/2026/0001, e.g. AFSSOSA/2026/0001.'],
+    'alumni_validity_months' => ['Membership validity (months)', 'text', 'How long a card is valid from approval or renewal. Default 12.'],
+    'alumni_card_signatory' => ['Signatory title on the card', 'text', 'e.g. Chairperson'],
+    'alumni_card_note' => ['Text on the back of the card', 'textarea', 'Terms or a short note printed on the card back.'],
     'alumni_payment_info' => ['Membership fee & payment instructions', 'textarea', 'Shown on the join form, e.g. the fee and mobile-money or bank details. Leave empty to hide.'],
 ];
 if (is_post()) {
     csrf_check();
-    foreach ($fields as $k => $_) save_setting($k, in_array($k, ['alumni_about', 'alumni_intro', 'alumni_payment_info'], true) ? trim((string) ($_POST[$k] ?? '')) : post($k));
+    foreach ($fields as $k => $_) save_setting($k, in_array($k, ['alumni_about', 'alumni_intro', 'alumni_payment_info', 'alumni_card_note'], true) ? trim((string) ($_POST[$k] ?? '')) : post($k));
+    save_setting('alumni_validity_months', (string) max(1, min(120, (int) post('alumni_validity_months') ?: 12)));
+    save_setting('alumni_prefix', strtoupper(preg_replace('/[^A-Za-z0-9]/', '', post('alumni_prefix'))) ?: 'AFSSOSA');
     save_setting('alumni_require_photo', isset($_POST['alumni_require_photo']) ? '1' : '0');
     save_setting('alumni_require_proof', isset($_POST['alumni_require_proof']) ? '1' : '0');
     try {
