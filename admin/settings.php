@@ -29,6 +29,10 @@ $groups = [
     'Photo gallery' => [
         'gallery_categories' => ['Event / function categories', 'textarea', 'One per line. These appear when creating albums and as filters on the gallery page.'],
     ],
+    'Scholarships page' => [
+        'scholarships_intro' => ['Page introduction', 'textarea'],
+        'scholarships_apply' => ['General "How to apply" text (HTML allowed)', 'textarea', 'Shown at the bottom of the Scholarships & Bursaries page.'],
+    ],
     'Admissions' => [
         'admissions_open' => ['Accept online applications', 'check'],
         'intake_text' => ['Intake message', 'textarea', 'Shown on the home page, admissions page and call-to-action.'],

@@ -6,6 +6,9 @@ $T = [
     'admissions' => ['table' => 'admissions_apps', 'label' => 'Admission Applications', 'statuses' => ['new', 'reviewing', 'accepted', 'rejected'],
         'cols' => ['ref' => 'Reference', 'first_name' => 'Applicant', 'entry_class' => 'Class', 'admission_type' => 'Type', 'guardian_phone' => 'Guardian phone', 'created_at' => 'Received', 'status' => 'Status'],
         'search' => ['ref', 'first_name', 'last_name', 'guardian_name', 'guardian_phone']],
+    'scholarship_apps' => ['table' => 'scholarship_apps', 'label' => 'Scholarship Applications', 'statuses' => ['new', 'reviewing', 'awarded', 'declined'],
+        'cols' => ['name' => 'Learner', 'scholarship_title' => 'Award', 'current_class' => 'Class', 'phone' => 'Phone', 'created_at' => 'Received', 'status' => 'Status'],
+        'search' => ['name', 'scholarship_title', 'guardian_name', 'phone']],
     'job_apps' => ['table' => 'job_apps', 'label' => 'Job Applications', 'statuses' => ['new', 'reviewing', 'shortlisted', 'rejected'],
         'cols' => ['name' => 'Applicant', 'job_title' => 'Position', 'email' => 'Email', 'created_at' => 'Received', 'status' => 'Status'],
         'search' => ['name', 'email', 'job_title']],
@@ -33,6 +36,7 @@ if (is_post()) {
             $cv = val('SELECT cv_file FROM job_apps WHERE id = ?', [$pid]);
             if ($cv) @unlink(PRIVATE_DIR . '/' . basename($cv));
         }
+        if ($t === 'scholarship_apps') { $fn = val('SELECT supporting_file FROM scholarship_apps WHERE id = ?', [$pid]); if ($fn) @unlink(PRIVATE_DIR . '/' . basename($fn)); }
         if ($t === 'admissions') foreach (['results_file', 'recommendation_file'] as $cf) { $fn = val("SELECT $cf FROM admissions_apps WHERE id = ?", [$pid]); if ($fn) @unlink(PRIVATE_DIR . '/' . basename($fn)); }
         q("DELETE FROM $table WHERE id = ?", [$pid]);
         flash('Deleted.');
@@ -67,7 +71,7 @@ if ($id) {
         <?php foreach ($r as $k => $v): if ($v === null || $v === '' || $k === 'id') continue; ?>
           <dt><?= e(ucwords(str_replace('_', ' ', $k))) ?></dt>
           <dd><?php
-            if (in_array($k, ['cv_file', 'results_file', 'recommendation_file'], true)) echo '<a href="download.php?f=' . urlencode($v) . '">⬇ Download ' . ucwords(str_replace('_file', '', $k)) . ' (PDF)</a>';
+            if (in_array($k, ['cv_file', 'results_file', 'recommendation_file', 'supporting_file'], true)) echo '<a href="download.php?f=' . urlencode($v) . '">⬇ Download ' . ucwords(str_replace('_file', '', $k)) . ' (PDF)</a>';
             elseif ($k === 'email' || $k === 'guardian_email') echo '<a href="mailto:' . e($v) . '">' . e($v) . '</a>';
             elseif ($k === 'status') echo '<span class="badge ' . e($v) . '">' . e($v) . '</span>';
             else echo e($v); ?></dd>

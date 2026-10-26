@@ -36,6 +36,16 @@ function install_schema(PDO $db): void
         id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, role TEXT, grp TEXT DEFAULT 'administration',
         bio TEXT, photo TEXT, sort INTEGER DEFAULT 0, email TEXT, phone TEXT, term TEXT
     );
+    CREATE TABLE scholarships (
+        id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL, slug TEXT UNIQUE NOT NULL, type TEXT DEFAULT 'Bursary',
+        summary TEXT, coverage TEXT, sponsor TEXT, eligibility TEXT, how_to_apply TEXT, documents TEXT, deadline TEXT,
+        accepting INTEGER DEFAULT 1, sort INTEGER DEFAULT 0, active INTEGER DEFAULT 1
+    );
+    CREATE TABLE scholarship_apps (
+        id INTEGER PRIMARY KEY AUTOINCREMENT, scholarship_id INTEGER, scholarship_title TEXT, name TEXT, current_class TEXT,
+        school TEXT, guardian_name TEXT, phone TEXT, email TEXT, statement TEXT, supporting_file TEXT,
+        status TEXT DEFAULT 'new', created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
     CREATE TABLE albums (
         id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL, slug TEXT UNIQUE NOT NULL, category TEXT DEFAULT 'General',
         event_date TEXT, term TEXT, description TEXT, cover TEXT, active INTEGER DEFAULT 1
@@ -110,6 +120,8 @@ Campus Life",
         'footer_text' => 'Archbishop Flynn Secondary School — Sapientia et Servitium.',
     ];
     foreach ($defaults as $k => $v) $set->execute([$k, $v]);
+    foreach (['scholarships_intro', 'scholarships_apply'] as $k) $set->execute([$k, scholarship_default($k)]);
+    seed_scholarships($db);
 
     $slide = $db->prepare('INSERT INTO slides (title,subtitle,link_text,link_url,sort) VALUES (?,?,?,?,?)');
     $slide->execute(['Welcome to Archbishop Flynn Secondary School', 'Wisdom and Service — educating the head, heart and hands in Pader, Uganda.', 'Apply for Admission', 'apply.php', 1]);
@@ -132,7 +144,6 @@ Campus Life",
         ['admission-requirements', 'Minimum Entry Requirements', 'What you need to join AFSS.', '<h2>S.1 Entry</h2><p>Primary Leaving Examination (PLE) results slip and completed application form.</p><h2>S.5 Entry</h2><p>UCE results slip showing the minimum requirements for the chosen combination.</p><h2>Transfers</h2><p>Latest report card, transfer letter and a recommendation from the previous school.</p><p><em>Please confirm exact requirements with the school office; this text can be edited in the admin panel.</em></p>', 'admissions', 1],
         ['tuition-and-fees', 'Tuition and Fees Payment', 'Fees structure and payment options.', '<p>The fees structure and payment channels are published here. Bursaries are available for academic improvement, sports, discipline, disability and orphans.</p><p>Contact the school bursar for the current fees structure.</p>', 'admissions', 2],
         ['how-to-apply', 'How to Apply', 'Simple steps to apply.', '<ol><li>Complete the online application form.</li><li>Submit copies of your results slip and a recent passport photograph at the school office.</li><li>Receive your admission decision by phone or email.</li><li>Report on the stated date with the required items.</li></ol>', 'admissions', 3],
-        ['scholarships', 'Scholarships and Bursaries', 'Support for deserving learners.', '<p>Bursaries are offered for academic improvement, sports, discipline, disability and orphans.</p>', 'admissions', 4],
         ['clubs', 'School Clubs and Societies', 'Prefects, Interact, Debating, Patriotism, Writers and Scouting.', '<ul><li>Prefects Body</li><li>Interact Club</li><li>Debating Club</li><li>Patriotism Club</li><li>Writers Club</li><li>Scouting</li></ul>', 'students', 1],
         ['health-services', 'Health Services', 'Caring for learners’ wellbeing.', '<p>The school health unit provides first aid and basic care, and refers learners to nearby health facilities when necessary.</p>', 'students', 2],
         ['counselling', 'Counselling and Career Centre', 'Guidance for learning, life and careers.', '<p>The Student Counselling and Career Centre offers guidance and support for personal growth and career choices.</p>', 'students', 3],
@@ -205,6 +216,15 @@ function migrate(PDO $db): void
         $aid = $db->query("SELECT id FROM albums WHERE slug = " . $db->quote($slug))->fetchColumn();
         $db->prepare("UPDATE gallery SET album_id = ? WHERE album_id IS NULL AND COALESCE(category,'Campus Life') = ?")->execute([$aid, $cat]);
     }
+    $db->exec("CREATE TABLE IF NOT EXISTS scholarships (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL, slug TEXT UNIQUE NOT NULL, type TEXT DEFAULT 'Bursary', summary TEXT, coverage TEXT, sponsor TEXT, eligibility TEXT, how_to_apply TEXT, documents TEXT, deadline TEXT, accepting INTEGER DEFAULT 1, sort INTEGER DEFAULT 0, active INTEGER DEFAULT 1)");
+    $db->exec("CREATE TABLE IF NOT EXISTS scholarship_apps (id INTEGER PRIMARY KEY AUTOINCREMENT, scholarship_id INTEGER, scholarship_title TEXT, name TEXT, current_class TEXT, school TEXT, guardian_name TEXT, phone TEXT, email TEXT, statement TEXT, supporting_file TEXT, status TEXT DEFAULT 'new', created_at TEXT DEFAULT CURRENT_TIMESTAMP)");
+    if (!$db->query("SELECT 1 FROM settings WHERE k = 'migr_scholarships'")->fetchColumn()) {
+        if (!$db->query('SELECT 1 FROM scholarships LIMIT 1')->fetchColumn()) seed_scholarships($db);
+        $db->exec("UPDATE pages SET active = 0 WHERE slug = 'scholarships'");
+        $ins = $db->prepare('INSERT OR IGNORE INTO settings (k,v) VALUES (?,?)');
+        foreach (['scholarships_intro', 'scholarships_apply'] as $k) $ins->execute([$k, scholarship_default($k)]);
+        $db->exec("INSERT OR REPLACE INTO settings (k,v) VALUES ('migr_scholarships','1')");
+    }
     $ac = array_column($db->query('PRAGMA table_info(admissions_apps)')->fetchAll(PDO::FETCH_ASSOC), 'name');
     foreach (['admission_type', 'transfer_reason', 'results_file', 'recommendation_file'] as $c) if (!in_array($c, $ac, true)) $db->exec("ALTER TABLE admissions_apps ADD COLUMN $c TEXT");
     $done = $db->query("SELECT 1 FROM settings WHERE k = 'migr_pta'")->fetchColumn();
@@ -215,4 +235,29 @@ function migrate(PDO $db): void
         }
         $db->exec("INSERT OR REPLACE INTO settings (k,v) VALUES ('migr_pta','1')");
     }
+}
+
+
+function scholarship_default(string $key): string
+{
+    return [
+        'scholarships_intro' => 'AFSS believes no capable learner should miss out on education because of financial hardship. Below are the bursaries and scholarships offered, who qualifies and how to apply.',
+        'scholarships_apply' => '<p>Read the requirements of the bursary or scholarship you are interested in, then apply online using the form on its page, or deliver your application to the school office. Applications are reviewed by the Scholarships &amp; Bursaries Committee, and outcomes are communicated to parents or guardians by phone or email.</p>',
+    ][$key] ?? '';
+}
+
+/** Starter bursaries. The wording is a sample for the school to confirm and edit from the admin panel. */
+function seed_scholarships(PDO $db): void
+{
+    $howto = '<ol><li>Read the eligibility criteria carefully.</li><li>Fill in the online application form on this page, or collect a paper form from the school office.</li><li>Attach or deliver the required supporting documents.</li><li>Wait for communication from the Scholarships &amp; Bursaries Committee.</li></ol>';
+    $note = '<p><em>Sample wording — the school should confirm and edit these details in the admin panel.</em></p>';
+    $rows = [
+        ['Academic Improvement Bursary', 'Rewards learners who show strong academic progress and commitment.', 'Partial tuition support (amount set each year)', '<ul><li>Currently enrolled at AFSS or admitted for the coming term</li><li>Demonstrated improvement or strong performance in recent assessments</li><li>Good discipline record</li></ul>', '<ul><li>Recent report card or results slip</li><li>Letter from parent or guardian</li></ul>'],
+        ['Sports Bursary', 'Supports talented learners who represent the school in sport.', 'Partial tuition support', '<ul><li>Proven talent in an approved sport</li><li>Recommendation from a sports teacher or coach</li><li>Maintains acceptable academic performance</li></ul>', '<ul><li>Evidence of participation or achievements</li><li>Recommendation letter from a coach or sports teacher</li></ul>'],
+        ['Good Conduct (Discipline) Bursary', 'Recognises learners with an outstanding record of discipline and leadership.', 'Partial tuition support', '<ul><li>Clean disciplinary record</li><li>Positive contribution to school life or leadership roles</li><li>Recommendation from the Director of Studies or class teacher</li></ul>', '<ul><li>Teacher recommendation letter</li><li>Short personal statement</li></ul>'],
+        ['Disability Support Bursary', 'Helps learners living with a disability to study without financial barriers.', 'Support determined case by case', '<ul><li>Learner living with a disability</li><li>Demonstrated financial need</li></ul>', '<ul><li>Medical or disability assessment letter</li><li>Letter from parent or guardian explaining the need</li></ul>'],
+        ['Orphans Support Bursary', 'Supports orphaned and vulnerable learners to complete their education.', 'Support determined case by case', '<ul><li>Orphaned or vulnerable learner</li><li>Verified by a local leader or church/community authority</li></ul>', '<ul><li>Recommendation from the LC1 chairperson or parish priest</li><li>Death certificate or confirmation letter, where available</li></ul>'],
+    ];
+    $st = $db->prepare("INSERT OR IGNORE INTO scholarships (title,slug,type,summary,coverage,sponsor,eligibility,how_to_apply,documents,sort) VALUES (?,?,'Bursary',?,?,'AFSS',?,?,?,?)");
+    foreach ($rows as $i => $r) $st->execute([$r[0], strtolower(trim(preg_replace('/[^A-Za-z0-9]+/', '-', $r[0]), '-')), $r[1], $r[2], $r[3] . $note, $howto, $r[4], $i + 1]);
 }

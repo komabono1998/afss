@@ -11,7 +11,7 @@ function admin_nav(): array
             ['crud.php?e=events', '📅 Events'], ['albums.php', '📷 Photo Albums'], ['crud.php?e=team', '🏛 Management Profiles'],
         ],
         'Recruitment' => [['crud.php?e=jobs', '💼 Job Vacancies'], ['inbox.php?t=job_apps', '📨 Job Applications']],
-        'Admissions' => [['inbox.php?t=admissions', '🎓 Applications']],
+        'Admissions' => [['inbox.php?t=admissions', '🎓 Applications'], ['crud.php?e=scholarships', '🏅 Scholarships & Bursaries'], ['inbox.php?t=scholarship_apps', '📝 Scholarship Applications']],
         'Communication' => [['inbox.php?t=messages', '✉ Messages'], ['newsletter.php', '📬 Newsletter']],
         'System' => [['settings.php', '⚙ Site Settings'], ['users.php', '👤 Admin Users']],
     ];
@@ -22,6 +22,7 @@ function badge_counts(): array
         'inbox.php?t=admissions' => (int) val("SELECT COUNT(*) FROM admissions_apps WHERE status='new'"),
         'inbox.php?t=job_apps' => (int) val("SELECT COUNT(*) FROM job_apps WHERE status='new'"),
         'inbox.php?t=messages' => (int) val("SELECT COUNT(*) FROM messages WHERE status='new'"),
+        'inbox.php?t=scholarship_apps' => (int) val("SELECT COUNT(*) FROM scholarship_apps WHERE status='new'"),
     ];
 }
 function admin_head(string $title): void

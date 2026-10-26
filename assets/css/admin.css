@@ -54,3 +54,5 @@ body.center{align-items:center;justify-content:center;background:linear-gradient
  .side{position:fixed;left:-260px;z-index:30;transition:.2s;height:100%}.side.open{left:0}.burger{display:block}.cols{grid-template-columns:1fr}.kv{grid-template-columns:1fr}.who{display:none}
 }
 @media print{.side,.top,.no-print{display:none}.body{padding:0}}
+
+.badge.awarded{background:#e1f5e8;color:#17692f}.badge.declined{background:#eceff3;color:#5d6b7a}

@@ -17,7 +17,7 @@ include __DIR__ . '/includes/banner.php';
       <?php endforeach; ?>
     </div>
     <p style="text-align:center;margin-top:2rem">
-      <?php if (setting('admissions_open') === '1'): ?><a class="btn btn-accent" href="<?= url('apply.php') ?>">Start your application</a>
+      <?php if (setting('admissions_open') === '1'): ?><a class="btn btn-accent" href="<?= url('apply.php') ?>">Start your application</a> <a class="btn btn-ghost" href="<?= url('scholarships.php') ?>">Scholarships &amp; bursaries</a>
       <?php else: ?><span class="notice">Admissions are currently closed. Please check back soon or contact the school office.</span><?php endif; ?>
     </p>
   </div>
