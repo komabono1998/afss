@@ -8,7 +8,7 @@
 const ADMIN_MODULES = [
     'slides' => 'Hero slides', 'pages' => 'Pages', 'news' => 'News & stories', 'issues' => 'Monthly newsletter',
     'events' => 'Events', 'albums' => 'Photo albums', 'team' => 'Management profiles',
-    'jobs' => 'Job vacancies', 'job_apps' => 'Job applications',
+    'jobs' => 'Job vacancies', 'job_apps' => 'Job applications', 'careers_page' => 'Careers page text',
     'admissions' => 'Admission applications', 'scholarships' => 'Scholarships & bursaries', 'scholarship_apps' => 'Scholarship applications',
     'messages' => 'Contact messages', 'newsletter' => 'Subscribers & email',
     'population' => 'School population', 'alumni_events' => 'Alumni activities & events', 'alumni_members' => 'Alumni members', 'alumni_page' => 'Alumni page text', 'students' => 'Student database (view)', 'students_manage' => 'Student database (edit & upload)', 'classes' => 'Classes & streams', 'students_api' => 'Student data API', 'whistleblower' => 'Whistle-blower reports', 'donation_methods' => 'Donation methods', 'donation_causes' => 'Giving causes', 'donor_pledges' => 'Donor enquiries', 'donate_page' => 'Donate page text', 'clubs' => 'Clubs & societies', 'welfare_services' => 'Health & counselling services', 'help_requests' => 'Help & counselling requests', 'welfare_page' => 'Welfare page text', 'settings' => 'Site settings', 'users' => 'Admin users',
@@ -36,8 +36,13 @@ function roles(): array
         'deputy_admin' => [
             'label' => 'Deputy Headteacher (Administration)',
             'desc' => 'Management profiles, job vacancies and applications, contact messages, events, news and student-life pages.',
-            'modules' => ['pages', 'news', 'events', 'albums', 'team', 'jobs', 'job_apps', 'messages', 'admissions', 'population', 'alumni_events', 'alumni_members', 'alumni_page', 'students', 'students_manage', 'classes', 'clubs'],
+            'modules' => ['pages', 'news', 'events', 'albums', 'team', 'jobs', 'job_apps', 'careers_page', 'messages', 'admissions', 'population', 'alumni_events', 'alumni_members', 'alumni_page', 'students', 'students_manage', 'classes', 'clubs'],
             'scope' => ['pages' => ['menu_group', ['about', 'students', 'none']]],
+        ],
+        'hr' => [
+            'label' => 'Human Resource Manager',
+            'desc' => 'Updates the Careers page and manages recruitment: job vacancies and the applications (CVs) received.',
+            'modules' => ['jobs', 'job_apps', 'careers_page'],
         ],
         'bursar' => [
             'label' => 'Bursar',

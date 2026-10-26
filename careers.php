@@ -71,10 +71,10 @@ include __DIR__ . '/includes/banner.php';
 ?>
 <section class="section"><div class="container">
   <div class="split" style="margin-bottom:3rem">
-    <div class="prose"><span class="eyebrow">Work with us</span><h2>Build a career that shapes young lives</h2>
-      <p>At AFSS you will join qualified, mentoring colleagues serving a diverse boarding community. We value integrity, professionalism and a passion for learners' growth.</p>
-      <ul class="checks"><li>Supportive mentoring culture</li><li>Professional development</li><li>A purposeful, values-driven community</li></ul></div>
-    <div class="notice"><strong>How to apply:</strong> choose a vacancy below, complete the short form and attach your CV. Shortlisted candidates will be contacted.</div>
+    <div class="prose"><span class="eyebrow">Work with us</span><h2><?= e(setting('careers_heading')) ?></h2>
+      <p><?= nl2br(e(setting('careers_intro'))) ?></p>
+      <ul class="checks"><?php foreach (array_filter(array_map('trim', preg_split('/\R/', (string) setting('careers_benefits')))) as $b): ?><li><?= e($b) ?></li><?php endforeach; ?></ul></div>
+    <div class="notice"><strong>How to apply:</strong> <?= e(setting('careers_how')) ?></div>
   </div>
   <h2>Open vacancies</h2>
   <div class="grid" style="gap:1rem">
