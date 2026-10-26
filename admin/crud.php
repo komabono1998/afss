@@ -82,6 +82,24 @@ if (is_post()) {
     }
 }
 
+// ----- export (CSV / Excel / PDF) -----
+if (!empty($_GET['export']) && $action === 'list') {
+    $search = trim($_GET['q'] ?? '');
+    $where = '1=1'; $params = [];
+    if ($search !== '') { $where = '(' . implode(' OR ', array_map(fn($c) => "$c LIKE ?", $E['search'])) . ')'; $params = array_fill(0, count($E['search']), "%$search%"); }
+    [$scopeSql, $scopeParams] = scope_sql($scope);
+    $data = rows("SELECT * FROM $table WHERE $where$scopeSql ORDER BY {$E['order']}", array_merge($params, $scopeParams));
+    $cols = array_filter($E['list'], fn($l, $c) => ($E['fields'][$c][1] ?? 'text') !== 'image', ARRAY_FILTER_USE_BOTH);
+    $fmtv = function ($c, $v) use ($E) {
+        $f = $E['fields'][$c] ?? ['', 'text'];
+        if ($f[1] === 'check') return $v ? 'Yes' : 'No';
+        if ($f[1] === 'select') return $f['options'][$v] ?? $v;
+        if ($f[1] === 'date') return $v ? fmt_date($v) : '';
+        return $v;
+    };
+    export_send((string) $_GET['export'], $E['label'], array_values($cols), array_map(fn($r) => array_map(fn($c) => $fmtv($c, $r[$c] ?? ''), array_keys($cols)), $data), $key);
+}
+
 // ----- views -----
 admin_head($E['label']);
 
@@ -144,7 +162,8 @@ $items = rows("SELECT * FROM $table WHERE $where$scopeSql ORDER BY {$E['order']}
 <div class="bar">
   <a class="btn accent" href="<?= e($self) ?>&a=new">+ New <?= e($E['singular']) ?></a>
   <form method="get" style="display:flex;gap:.4rem"><input type="hidden" name="e" value="<?= e($key) ?>"><input type="search" name="q" value="<?= e($search) ?>" placeholder="Search…"><button class="btn ghost">Search</button></form>
-  <span class="muted"><?= count($items) ?> item(s)</span>
+  <span class="muted"><?= count($items) ?> item(s)</span><span class="grow"></span>
+  <?= export_buttons($self . ($search !== '' ? '&q=' . urlencode($search) : '')) ?>
 </div>
 <div class="tablewrap"><table>
   <thead><tr><?php foreach ($E['list'] as $c => $l) echo '<th>' . e($l) . '</th>'; ?><th></th></tr></thead>

@@ -31,12 +31,10 @@ if (is_post()) {
         redirect('admin/newsletter.php?tab=history');
     }
 }
-if (($_GET['export'] ?? '') === '1') {
-    header('Content-Type: text/csv; charset=utf-8');
-    header('Content-Disposition: attachment; filename="subscribers-' . date('Ymd') . '.csv"');
-    $o = fopen('php://output', 'w'); fputcsv($o, ['email', 'active', 'subscribed']);
-    foreach (rows('SELECT email,active,created_at FROM subscribers ORDER BY id DESC') as $r) fputcsv($o, $r);
-    exit;
+if (!empty($_GET['export'])) {
+    $data = rows('SELECT email,active,created_at FROM subscribers ORDER BY id DESC');
+    export_send($_GET['export'] === '1' ? 'csv' : (string) $_GET['export'], 'Newsletter subscribers', ['Email', 'Status', 'Subscribed'],
+        array_map(fn($r) => [$r['email'], $r['active'] ? 'Active' : 'Unsubscribed', $r['created_at']], $data), 'subscribers');
 }
 
 admin_head('Newsletter');
@@ -60,7 +58,7 @@ $active = (int) val('SELECT COUNT(*) FROM subscribers WHERE active=1');
   </tbody></table></div>
 <?php else: ?>
   <div class="bar"><form method="post" style="display:flex;gap:.4rem"><?= csrf_field() ?><input type="hidden" name="do" value="add_sub"><input type="search" name="email" placeholder="Add email…" style="padding:.5rem .8rem;border:1px solid var(--line);border-radius:8px"><button class="btn">Add</button></form>
-    <span class="grow"></span><a class="btn ghost" href="?export=1">⬇ Export CSV</a></div>
+    <span class="grow"></span><?= export_buttons('newsletter.php') ?></div>
   <div class="tablewrap"><table><thead><tr><th>Email</th><th>Status</th><th>Subscribed</th><th></th></tr></thead><tbody>
   <?php foreach (rows('SELECT * FROM subscribers ORDER BY id DESC') as $s): ?><tr><td><?= e($s['email']) ?></td><td><span class="badge <?= $s['active'] ? 'yes' : 'no' ?>"><?= $s['active'] ? 'Active' : 'Unsubscribed' ?></span></td><td><?= e(fmt_date($s['created_at'])) ?></td>
     <td><form method="post" data-confirm="Remove this subscriber?"><?= csrf_field() ?><input type="hidden" name="do" value="delete_sub"><input type="hidden" name="id" value="<?= $s['id'] ?>"><button class="btn sm danger">Remove</button></form></td></tr><?php endforeach; ?>

@@ -21,6 +21,7 @@ if (session_status() === PHP_SESSION_NONE) {
 
 require_once __DIR__ . '/schema.php';
 require_once __DIR__ . '/roles.php';
+require_once __DIR__ . '/export.php';
 
 function db(): PDO
 {

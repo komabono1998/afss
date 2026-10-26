@@ -62,7 +62,8 @@ function install_schema(PDO $db): void
     );
     CREATE TABLE alumni_members (
         id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, email TEXT, phone TEXT, year_left TEXT, last_class TEXT, occupation TEXT,
-        location TEXT, message TEXT, newsletter INTEGER DEFAULT 0, token TEXT, status TEXT DEFAULT 'new', created_at TEXT DEFAULT CURRENT_TIMESTAMP
+        location TEXT, message TEXT, newsletter INTEGER DEFAULT 0, token TEXT, status TEXT DEFAULT 'new', created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+        profession TEXT, workplace TEXT, photo TEXT, proof_file TEXT, consent INTEGER DEFAULT 0, consent_at TEXT
     );
     CREATE TABLE albums (
         id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL, slug TEXT UNIQUE NOT NULL, category TEXT DEFAULT 'General',
@@ -257,6 +258,8 @@ function migrate(PDO $db): void
     }
     $db->exec("CREATE TABLE IF NOT EXISTS alumni_events (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL, slug TEXT UNIQUE NOT NULL, category TEXT DEFAULT 'Event', event_date TEXT, end_date TEXT, time_text TEXT, venue TEXT, summary TEXT, description TEXT, image TEXT, contact_info TEXT, sort INTEGER DEFAULT 0, active INTEGER DEFAULT 1)");
     $db->exec("CREATE TABLE IF NOT EXISTS alumni_members (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, email TEXT, phone TEXT, year_left TEXT, last_class TEXT, occupation TEXT, location TEXT, message TEXT, newsletter INTEGER DEFAULT 0, token TEXT, status TEXT DEFAULT 'new', created_at TEXT DEFAULT CURRENT_TIMESTAMP)");
+    $amc = array_column($db->query('PRAGMA table_info(alumni_members)')->fetchAll(PDO::FETCH_ASSOC), 'name');
+    foreach (['profession' => 'TEXT', 'workplace' => 'TEXT', 'photo' => 'TEXT', 'proof_file' => 'TEXT', 'consent' => 'INTEGER DEFAULT 0', 'consent_at' => 'TEXT'] as $c => $def) if (!in_array($c, $amc, true)) $db->exec("ALTER TABLE alumni_members ADD COLUMN $c $def");
     $nc = array_column($db->query('PRAGMA table_info(newsletter_issues)')->fetchAll(PDO::FETCH_ASSOC), 'name');
     if (!in_array('audience', $nc, true)) $db->exec("ALTER TABLE newsletter_issues ADD COLUMN audience TEXT DEFAULT 'school'");
     if (!$db->query("SELECT 1 FROM settings WHERE k = 'migr_alumni'")->fetchColumn()) {
@@ -314,6 +317,7 @@ function alumni_default(string $key): string
         'alumni_about' => '<p>The alumni association brings together former students of Archbishop Flynn Secondary School to keep the spirit of <em>Sapientia et Servitium</em> alive, support current learners and give back to the school community.</p>',
         'alumni_email' => '',
         'alumni_phone' => '',
+        'alumni_payment_info' => '',
     ][$key] ?? '';
 }
 

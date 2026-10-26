@@ -45,9 +45,20 @@ if (is_post()) {
     if (post('email') === '' && post('phone') === '') $errors[] = 'Please give an email or a phone number so we can reach you.';
     if (post('email') !== '' && !filter_var(post('email'), FILTER_VALIDATE_EMAIL)) $errors[] = 'Email is not valid.';
     if (post('newsletter') !== '' && post('email') === '') $errors[] = 'An email is needed to receive the alumni newsletter.';
+    if (post('consent') === '') $errors[] = 'Please confirm that you have read the AFSSOSA constitution and are ready to abide by it.';
+    $photo = $proof = null;
     if (!$errors) {
-        q('INSERT INTO alumni_members (name,email,phone,year_left,last_class,occupation,location,message,newsletter,token) VALUES (?,?,?,?,?,?,?,?,?,?)',
-            [post('name'), strtolower(post('email')), post('phone'), post('year_left'), post('last_class'), post('occupation'), post('location'), post('message'), post('newsletter') !== '' ? 1 : 0, bin2hex(random_bytes(12))]);
+        try {
+            $photo = handle_upload('photo', IMG_TYPES, PRIVATE_DIR, 'alp_');
+            $proof = handle_upload('proof_file', ['pdf' => 'application/pdf', 'jpg' => 'image/jpeg', 'jpeg' => 'image/jpeg', 'png' => 'image/png'], PRIVATE_DIR, 'alf_');
+            if (!$photo && setting('alumni_require_photo') === '1') $errors[] = 'Please upload your photo.';
+            if (!$proof && setting('alumni_require_proof') === '1') $errors[] = 'Please attach your proof of payment or membership.';
+        } catch (RuntimeException $ex) { $errors[] = $ex->getMessage(); }
+        if ($errors) foreach ([$photo, $proof] as $fn) if ($fn) @unlink(PRIVATE_DIR . '/' . $fn);
+    }
+    if (!$errors) {
+        q('INSERT INTO alumni_members (name,email,phone,year_left,last_class,profession,workplace,location,message,newsletter,token,photo,proof_file,consent,consent_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
+            [post('name'), strtolower(post('email')), post('phone'), post('year_left'), post('last_class'), post('profession'), post('workplace'), post('location'), post('message'), post('newsletter') !== '' ? 1 : 0, bin2hex(random_bytes(12)), $photo, $proof, 1, date('Y-m-d H:i:s')]);
         notify('New alumni sign-up: ' . post('name'), post('name') . ' (left ' . post('year_left') . ') joined the alumni network.\nView it in the admin panel.', post('email'));
         flash('Welcome back, ' . post('name') . '! You have joined the AFSS alumni network.');
         redirect('alumni.php#join');
@@ -137,7 +148,7 @@ $tools = array_filter([
 <section class="section" id="join"><div class="container" style="max-width:820px">
   <div class="section-head"><span class="eyebrow">Stay connected</span><h2>Join the alumni network</h2><p>Tell us where you are now so we can keep you informed about events and news.</p></div>
   <?php foreach ($errors as $er): ?><div class="alert alert-err"><?= e($er) ?></div><?php endforeach; ?>
-  <form class="form" method="post" action="#join">
+  <form class="form" method="post" action="#join" enctype="multipart/form-data">
     <?= csrf_field() ?><input type="text" name="website" class="hp" tabindex="-1" autocomplete="off">
     <div class="row">
       <div class="field"><label class="req">Full name</label><input name="name" value="<?= old('name') ?>" required></div>
@@ -145,10 +156,15 @@ $tools = array_filter([
       <div class="field"><label>Email</label><input type="email" name="email" value="<?= old('email') ?>"></div>
       <div class="field"><label>Phone / WhatsApp</label><input name="phone" value="<?= old('phone') ?>"></div>
       <div class="field"><label>Last class attended</label><input name="last_class" value="<?= old('last_class') ?>" placeholder="e.g. Senior 6"></div>
-      <div class="field"><label>Occupation</label><input name="occupation" value="<?= old('occupation') ?>"></div>
+      <div class="field"><label>Profession</label><input name="profession" value="<?= old('profession') ?>" placeholder="e.g. Nurse, Engineer, Teacher"></div>
+      <div class="field"><label>Place of work (if any)</label><input name="workplace" value="<?= old('workplace') ?>" placeholder="Employer or organisation"></div>
       <div class="field"><label>Where do you live?</label><input name="location" value="<?= old('location') ?>"></div>
+      <div class="field"><label<?= setting('alumni_require_photo') === '1' ? ' class="req"' : '' ?>>Your photo</label><input type="file" name="photo" accept="image/*"<?= setting('alumni_require_photo') === '1' ? ' required' : '' ?>><small>A clear passport-style picture (JPG, PNG or WebP, max 5MB).</small></div>
     </div>
+    <?php if (setting('alumni_payment_info') !== ''): ?><div class="notice" style="margin-bottom:1rem"><strong>Membership &amp; payment</strong><br><?= nl2br(e(setting('alumni_payment_info'))) ?></div><?php endif; ?>
+    <div class="field"><label<?= setting('alumni_require_proof') === '1' ? ' class="req"' : '' ?>>Proof of payment or membership</label><input type="file" name="proof_file" accept=".pdf,.jpg,.jpeg,.png"<?= setting('alumni_require_proof') === '1' ? ' required' : '' ?>><small>Receipt, mobile-money confirmation or membership card (PDF, JPG or PNG, max 5MB). You must re-attach your files if the form shows an error.</small></div>
     <div class="field"><label>Message (optional)</label><textarea name="message" rows="3"><?= old('message') ?></textarea></div>
+    <label style="display:flex;gap:.6rem;align-items:flex-start;margin-bottom:.8rem"><input type="checkbox" name="consent" value="1" required <?= isset($_POST['consent']) ? 'checked' : '' ?>> <span>I have read the AFSSOSA constitution<?php if (setting('alumni_constitution')): ?> (<a href="<?= e(media(setting('alumni_constitution'))) ?>" target="_blank" rel="noopener">read it here</a>)<?php endif; ?> and I am ready to abide by it. *</span></label>
     <label style="display:flex;gap:.6rem;align-items:flex-start;margin-bottom:1.2rem"><input type="checkbox" name="newsletter" value="1" <?= isset($_POST['newsletter']) || !is_post() ? 'checked' : '' ?>> Send me the alumni newsletter and event updates by email.</label>
     <button class="btn btn-primary" type="submit">Join the network</button>
     <p class="meta" style="margin-top:1rem">Questions? <?= e($contactPhone) ?> · <a href="mailto:<?= e($contactEmail) ?>"><?= e($contactEmail) ?></a></p>
