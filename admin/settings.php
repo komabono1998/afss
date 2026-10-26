@@ -20,6 +20,11 @@ $groups = [
         'facebook' => ['Facebook URL', 'text'], 'twitter' => ['X / Twitter URL', 'text'], 'instagram' => ['Instagram URL', 'text'],
         'youtube' => ['YouTube URL', 'text'], 'whatsapp' => ['WhatsApp support line (number or wa.me link)', 'text'],
     ],
+    'About page' => [
+        'about_intro' => ['Introduction (top of the About page)', 'textarea'],
+        'about_journey' => ['Our journey (one step per line: Heading | text)', 'textarea', 'Shown as a timeline. Use a vertical bar | between the heading and the text.'],
+        'about_values' => ['Core values (one per line: Value: explanation)', 'textarea', 'Shown as cards. The story, vision, mission and photo come from the Home page and School profile settings.'],
+    ],
     'Home page' => [
         'announcement' => ['Announcement bar text', 'text', 'Shown at the left of the top bar. Leave empty to show only the clock and contact details.'],
         'show_clock' => ['Show the live date & time in the top bar', 'check'],

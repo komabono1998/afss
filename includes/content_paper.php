@@ -8,28 +8,7 @@ function content_paper_pages(): array
 {
     return [
         'about-us' => ['About Us', 'Who we are, our story, what we believe and where we are going.', 'about', 1, <<<'HTML'
-<p>Archbishop Flynn Secondary School (AFSS) is a co-educational secondary school located in Pader District, Northern Uganda. Established in 2009, the school seeks to provide quality education grounded in the Christian tradition and to prepare learners to become responsible, productive and service-minded members of society.</p>
-<h2>Our story</h2>
-<p>The school's founding vision emerged from a desire to expand access to quality education for young people in Northern Uganda, a region whose communities experienced years of conflict and disruption. Monsignor Mathew Ray Odong, a priest of the Archdiocese of Gulu, helped advance this vision with support from friends and benefactors in the United States. The school was named in honour of Archbishop Harry John Flynn, whose friendship and support formed part of its founding story.</p>
-<p>Since its establishment, AFSS has sought to combine academic learning with Christian formation, student development and community service. Its story is part of a wider effort to create opportunities for young people and strengthen the future of communities in Northern Uganda.</p>
-<h2>Vision</h2>
-<p>To be a leading school through a dedicated commitment to quality and holistic education.</p>
-<h2>Mission</h2>
-<p>To provide excellence in holistic and quality education rooted in the Christian tradition, with the aim of producing responsible and productive professionals for community transformation.</p>
-<h2>Our motto</h2>
-<p><strong>Sapientia et Servitium</strong>: Wisdom and Service.</p>
-<p>Our motto expresses the belief that knowledge carries responsibility. We encourage learners to grow in understanding and to put their abilities to constructive use in their families, workplaces, churches and communities.</p>
-<h2>Our values</h2>
-<ul>
-  <li><strong>Fear of God:</strong> a life of faith, prayer and reverence that shapes how we treat others.</li>
-  <li><strong>Charity:</strong> care and generosity towards those in need.</li>
-  <li><strong>Integrity:</strong> doing what is right, even when no one is watching.</li>
-  <li><strong>Honesty:</strong> truthfulness in words, work and examinations.</li>
-  <li><strong>Accountability:</strong> taking responsibility for our choices and our resources.</li>
-  <li><strong>Professionalism:</strong> excellence, diligence and good conduct in all we do.</li>
-  <li><strong>Respect:</strong> dignity for every person, and equal opportunity for boys and girls.</li>
-</ul>
-<h2>Registration</h2>
+<h2>Registration and recognition</h2>
 <p>The school is registered with the Ministry of Education and Sports (PSS/A/209), licensed (ME/22/4831) and operates as UNEB centre U2848. It is located two kilometres from Pader town along Latanya Road.</p>
 HTML],
         'partnerships' => ['Partnerships and Collaborations', 'Institutional partners, supporters and how to work with the school.', 'about', 6, <<<'HTML'

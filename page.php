@@ -10,6 +10,7 @@ $bannerTitle = $p['title'];
 $bannerSub = $p['summary'];
 $siblings = $p['menu_group'] !== 'none' ? rows('SELECT slug,title FROM pages WHERE menu_group = ? AND active = 1 ORDER BY sort,title', [$p['menu_group']]) : [];
 include __DIR__ . '/includes/header.php';
+if ($p['slug'] === 'about-us') { include __DIR__ . '/includes/about_view.php'; include __DIR__ . '/includes/footer.php'; exit; }
 include __DIR__ . '/includes/banner.php';
 ?>
 <div class="container content-wrap">
