@@ -21,7 +21,8 @@ function nav_item(string $label, string $href, array $children = []): string
 function group_children(string $group, array $extra = [], bool $extraFirst = false): array
 {
     $c = [];
-    foreach (menu_pages($group) as $p) $c[] = [$p['title'], url('page.php?slug=' . $p['slug'])];
+    $own = ['clubs' => 'clubs.php', 'health-services' => 'health.php', 'counselling' => 'counselling.php'];   // dedicated, admin-managed pages
+    foreach (menu_pages($group) as $p) $c[] = [$p['title'], url($own[$p['slug']] ?? ('page.php?slug=' . $p['slug']))];
     return $extraFirst ? array_merge($extra, $c) : array_merge($c, $extra);
 }
 $logo = setting('logo') ?: 'assets/img/logo.webp';
@@ -71,7 +72,7 @@ $logo = setting('logo') ?: 'assets/img/logo.webp';
         <?= nav_item('Management', url('governance.php'), [['Governance Structure', url('governance.php')], ['Board of Governors', url('management.php?g=board')], ['School Management Team', url('management.php?g=team')], ['PTA Committee', url('management.php?g=pta')]]) ?>
         <?= nav_item('Academics', url('page.php?slug=academics'), group_children('academics')) ?>
         <?= nav_item('Admissions', url('admissions.php'), group_children('admissions', [['Apply Online', url('apply.php')], ['Scholarships & Bursaries', url('scholarships.php')]], true)) ?>
-        <?= nav_item('Student Life', url('gallery.php'), group_children('students', [['Alumni (AFSSOSA)', url('alumni.php')], ['Photo Gallery', url('gallery.php')]])) ?>
+        <?= nav_item('Student Life', url('clubs.php'), group_children('students', [['Alumni (AFSSOSA)', url('alumni.php')], ['Photo Gallery', url('gallery.php')]])) ?>
         <?= nav_item('News', url('news.php'), [['News & Stories', url('news.php')], ['Monthly Newsletter', url('newsletters.php')]]) ?>
         <?= nav_item('Events', url('events.php')) ?>
         <?= nav_item('Contact', url('contact.php'), [['Contact Us', url('contact.php')], ['Report a Concern (confidential)', url('whistleblower.php')]]) ?>

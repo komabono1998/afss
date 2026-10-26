@@ -11,6 +11,7 @@ function admin_nav(): array
             ['crud.php?e=events', '📅 Events'], ['albums.php', '📷 Photo Albums'], ['crud.php?e=team', '🏛 Staff & Management'],
         ],
         'Giving' => [['crud.php?e=donation_methods', '💳 Donation Methods'], ['crud.php?e=donation_causes', '💚 Giving Causes'], ['inbox.php?t=donor_pledges', '🤝 Donor Enquiries'], ['donate_page.php', '📝 Donate Page Text']],
+        'Student Welfare' => [['crud.php?e=clubs', '🎭 Clubs & Societies'], ['crud.php?e=welfare_services', '🩺 Health & Counselling Services'], ['help_requests.php', '💬 Help & Counselling Requests'], ['welfare_page.php', '📝 Welfare Page Text']],
         'Students' => [['students.php', '🎓 Student Database'], ['classes.php', '🏫 Classes & Streams'], ['student_api.php', '🔌 Student Data API']],
         'Recruitment' => [['crud.php?e=jobs', '💼 Job Vacancies'], ['inbox.php?t=job_apps', '📨 Job Applications']],
         'Admissions' => [['inbox.php?t=admissions', '🎓 Applications'], ['crud.php?e=scholarships', '🏅 Scholarships & Bursaries'], ['inbox.php?t=scholarship_apps', '📝 Scholarship Applications']],
@@ -24,7 +25,7 @@ function nav_module(string $href): ?string
 {
     if (preg_match('/^crud\.php\?e=(\w+)/', $href, $m)) return $m[1];
     if (preg_match('/^inbox\.php\?t=(\w+)/', $href, $m)) return $m[1];
-    return ['donate_page.php' => 'donate_page', 'alumni_db.php' => 'alumni_members', 'students.php' => 'students', 'classes.php' => 'classes', 'student_api.php' => 'students_api', 'whistle.php' => 'whistleblower', 'alumni_page.php' => 'alumni_page', 'population.php' => 'population', 'issues.php' => 'issues', 'albums.php' => 'albums', 'newsletter.php' => 'newsletter', 'settings.php' => 'settings', 'users.php' => 'users'][$href] ?? null;
+    return ['help_requests.php' => 'help_requests', 'welfare_page.php' => 'welfare_page', 'donate_page.php' => 'donate_page', 'alumni_db.php' => 'alumni_members', 'students.php' => 'students', 'classes.php' => 'classes', 'student_api.php' => 'students_api', 'whistle.php' => 'whistleblower', 'alumni_page.php' => 'alumni_page', 'population.php' => 'population', 'issues.php' => 'issues', 'albums.php' => 'albums', 'newsletter.php' => 'newsletter', 'settings.php' => 'settings', 'users.php' => 'users'][$href] ?? null;
 }
 function badge_counts(): array
 {
@@ -33,6 +34,7 @@ function badge_counts(): array
         'inbox.php?t=job_apps' => (int) val("SELECT COUNT(*) FROM job_apps WHERE status='new'"),
         'inbox.php?t=messages' => (int) val("SELECT COUNT(*) FROM messages WHERE status='new'"),
         'inbox.php?t=donor_pledges' => (int) val("SELECT COUNT(*) FROM donor_pledges WHERE status='new'"),
+        'help_requests.php' => (function () { $sc = scope_for('help_requests'); [$sql, $p] = scope_sql($sc); return (int) val("SELECT COUNT(*) FROM help_requests WHERE status='new'" . $sql, $p); })(),
         'whistle.php' => (int) val("SELECT COUNT(*) FROM whistle_reports WHERE status='new'"),
         'alumni_db.php' => (int) val("SELECT COUNT(*) FROM alumni_members WHERE status='new'"),
         'inbox.php?t=scholarship_apps' => (int) val("SELECT COUNT(*) FROM scholarship_apps WHERE status='new'"),

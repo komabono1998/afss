@@ -46,6 +46,7 @@ $attn = [
     ['🏅', 'Scholarship applications', 'scholarship_apps', 'inbox.php?t=scholarship_apps', 'scholarship_apps'],
     ['🎓', 'Alumni awaiting approval', 'alumni_members', 'alumni_db.php?status=new', 'alumni_members'],
     ['🕊', 'Whistle-blower reports', 'whistle_reports', 'whistle.php', 'whistleblower'],
+    ['💬', 'Help & counselling requests', 'help_requests', 'help_requests.php', 'help_requests'],
     ['🤝', 'Donor & partner enquiries', 'donor_pledges', 'inbox.php?t=donor_pledges', 'donor_pledges'],
     ['✉', 'Messages', 'messages', 'inbox.php?t=messages', 'messages'],
 ];
@@ -53,7 +54,8 @@ $attn = array_filter($attn, fn($a) => can($a[4]));
 if ($attn): ?>
 <h3 class="sec">Needs your attention</h3>
 <div class="kpis">
-  <?php foreach ($attn as [$ic, $l, $tbl, $href, $mod]): $new = (int) val("SELECT COUNT(*) FROM $tbl WHERE status='new'"); $all = (int) val("SELECT COUNT(*) FROM $tbl"); ?>
+  <?php foreach ($attn as [$ic, $l, $tbl, $href, $mod]): [$scSql, $scPar] = $tbl === 'help_requests' ? scope_sql(scope_for('help_requests')) : ['', []];
+      $new = (int) val("SELECT COUNT(*) FROM $tbl WHERE status='new'" . $scSql, $scPar); $all = (int) val("SELECT COUNT(*) FROM $tbl WHERE 1=1" . $scSql, $scPar); ?>
   <a class="kpi link <?= $new ? 'hot' : '' ?>" href="<?= e($href) ?>"><span class="kpi-ico"><?= $ic ?></span><b><?= $new ?></b><span>New <?= e(strtolower($l)) ?></span><small><?= $all ?> in total</small></a>
   <?php endforeach; ?>
 </div>
@@ -66,7 +68,7 @@ $tiles = [
     ['💼', 'Post vacancy', 'crud.php?e=jobs&a=new', 'jobs'], ['🏅', 'Add scholarship', 'crud.php?e=scholarships&a=new', 'scholarships'],
     ['🎓', 'Review admissions', 'inbox.php?t=admissions', 'admissions'], ['📄', 'Edit pages', 'crud.php?e=pages', 'pages'],
     ['🖼', 'Hero slides', 'crud.php?e=slides', 'slides'], ['🏛', 'Management profiles', 'crud.php?e=team', 'team'],
-    ['🎓', 'Student database', 'students.php', 'students'], ['👩‍🏫', 'Staff profiles', 'crud.php?e=team&a=new', 'team'], ['💳', 'Donation methods', 'crud.php?e=donation_methods', 'donation_methods'], ['⬆', 'Upload class list', 'students.php?a=upload', 'students_manage'], ['🏫', 'Classes & streams', 'classes.php', 'classes'], ['🕊', 'Whistle-blower reports', 'whistle.php', 'whistleblower'], ['🔌', 'Student data API', 'student_api.php', 'students_api'], ['👥', 'School population', 'population.php', 'population'], ['📝', 'Alumni page text', 'alumni_page.php', 'alumni_page'], ['📬', 'Subscribers & email', 'newsletter.php', 'newsletter'],
+    ['🎓', 'Student database', 'students.php', 'students'], ['🎭', 'Clubs & societies', 'crud.php?e=clubs', 'clubs'], ['🩺', 'Health & counselling', 'crud.php?e=welfare_services', 'welfare_services'], ['💬', 'Help requests', 'help_requests.php', 'help_requests'], ['📝', 'Welfare page text', 'welfare_page.php', 'welfare_page'], ['👩‍🏫', 'Staff profiles', 'crud.php?e=team&a=new', 'team'], ['💳', 'Donation methods', 'crud.php?e=donation_methods', 'donation_methods'], ['⬆', 'Upload class list', 'students.php?a=upload', 'students_manage'], ['🏫', 'Classes & streams', 'classes.php', 'classes'], ['🕊', 'Whistle-blower reports', 'whistle.php', 'whistleblower'], ['🔌', 'Student data API', 'student_api.php', 'students_api'], ['👥', 'School population', 'population.php', 'population'], ['📝', 'Alumni page text', 'alumni_page.php', 'alumni_page'], ['📬', 'Subscribers & email', 'newsletter.php', 'newsletter'],
     ['⚙', 'Site settings', 'settings.php', 'settings'], ['👤', 'Admin users', 'users.php', 'users'],
 ];
 $tiles = array_filter($tiles, fn($t) => $t[3] === 'team_alumni' ? ($ME['role'] === 'alumni_coordinator') : can($t[3]));

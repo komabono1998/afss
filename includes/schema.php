@@ -101,6 +101,18 @@ function install_schema(PDO $db): void
         id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, organisation TEXT, email TEXT, phone TEXT, kind TEXT, cause TEXT, amount_text TEXT,
         reference TEXT, message TEXT, status TEXT DEFAULT 'new', created_at TEXT DEFAULT CURRENT_TIMESTAMP
     );
+    CREATE TABLE clubs (
+        id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, slug TEXT UNIQUE NOT NULL, summary TEXT, description TEXT, activities TEXT,
+        meeting_time TEXT, venue TEXT, patron TEXT, leaders TEXT, how_to_join TEXT, image TEXT, sort INTEGER DEFAULT 0, active INTEGER DEFAULT 1
+    );
+    CREATE TABLE welfare_services (
+        id INTEGER PRIMARY KEY AUTOINCREMENT, type TEXT DEFAULT 'health', title TEXT NOT NULL, description TEXT, sort INTEGER DEFAULT 0, active INTEGER DEFAULT 1
+    );
+    CREATE TABLE help_requests (
+        id INTEGER PRIMARY KEY AUTOINCREMENT, ref TEXT UNIQUE, kind TEXT DEFAULT 'health', topic TEXT, topic_other TEXT, urgent INTEGER DEFAULT 0, anonymous INTEGER DEFAULT 0,
+        name TEXT, class_name TEXT, role_text TEXT, contact TEXT, preferred_time TEXT, message TEXT, status TEXT DEFAULT 'new', notes TEXT,
+        created_at TEXT DEFAULT CURRENT_TIMESTAMP, updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
     CREATE TABLE albums (
         id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL, slug TEXT UNIQUE NOT NULL, category TEXT DEFAULT 'General',
         event_date TEXT, term TEXT, description TEXT, cover TEXT, active INTEGER DEFAULT 1
@@ -184,6 +196,9 @@ Campus Life",
     seed_scholarships($db);
     seed_alumni($db, true);
     seed_giving($db);
+    seed_welfare($db);
+    $wi = $db->prepare('INSERT OR IGNORE INTO settings (k,v) VALUES (?,?)');
+    foreach (welfare_settings() as $wk => $wv) $wi->execute([$wk, $wv]);
 
     $slide = $db->prepare('INSERT INTO slides (title,subtitle,link_text,link_url,sort) VALUES (?,?,?,?,?)');
     $slide->execute(['Welcome to Archbishop Flynn Secondary School', 'Wisdom and Service — educating the head, heart and hands in Pader, Uganda.', 'Apply for Admission', 'apply.php', 1]);
@@ -333,6 +348,13 @@ function migrate(PDO $db): void
     $ins2 = $db->prepare('INSERT OR IGNORE INTO settings (k,v) VALUES (?,?)');
     foreach (['reg_prefix' => 'AFSS', 'api_enabled' => '0', 'api_key_hash' => '', 'api_key_hint' => '', 'api_guardian' => '0', 'whistle_intro' => whistle_default('whistle_intro'), 'whistle_categories' => whistle_default('whistle_categories')] as $k2 => $v2) $ins2->execute([$k2, $v2]);
     $db->exec("CREATE TABLE IF NOT EXISTS donation_methods ( id INTEGER PRIMARY KEY AUTOINCREMENT, type TEXT DEFAULT 'bank', title TEXT NOT NULL, bank_name TEXT, account_name TEXT, account_number TEXT, branch TEXT, swift TEXT, currency TEXT, merchant_code TEXT, link_url TEXT, instructions TEXT, sort INTEGER DEFAULT 0, active INTEGER DEFAULT 1 ); CREATE TABLE IF NOT EXISTS donation_causes ( id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL, summary TEXT, image TEXT, target TEXT, sort INTEGER DEFAULT 0, active INTEGER DEFAULT 1 ); CREATE TABLE IF NOT EXISTS donor_pledges ( id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, organisation TEXT, email TEXT, phone TEXT, kind TEXT, cause TEXT, amount_text TEXT, reference TEXT, message TEXT, status TEXT DEFAULT 'new', created_at TEXT DEFAULT CURRENT_TIMESTAMP );");
+    $db->exec("CREATE TABLE IF NOT EXISTS clubs ( id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, slug TEXT UNIQUE NOT NULL, summary TEXT, description TEXT, activities TEXT, meeting_time TEXT, venue TEXT, patron TEXT, leaders TEXT, how_to_join TEXT, image TEXT, sort INTEGER DEFAULT 0, active INTEGER DEFAULT 1 ); CREATE TABLE IF NOT EXISTS welfare_services ( id INTEGER PRIMARY KEY AUTOINCREMENT, type TEXT DEFAULT 'health', title TEXT NOT NULL, description TEXT, sort INTEGER DEFAULT 0, active INTEGER DEFAULT 1 ); CREATE TABLE IF NOT EXISTS help_requests ( id INTEGER PRIMARY KEY AUTOINCREMENT, ref TEXT UNIQUE, kind TEXT DEFAULT 'health', topic TEXT, topic_other TEXT, urgent INTEGER DEFAULT 0, anonymous INTEGER DEFAULT 0, name TEXT, class_name TEXT, role_text TEXT, contact TEXT, preferred_time TEXT, message TEXT, status TEXT DEFAULT 'new', notes TEXT, created_at TEXT DEFAULT CURRENT_TIMESTAMP, updated_at TEXT DEFAULT CURRENT_TIMESTAMP );");
+    if (!$db->query("SELECT 1 FROM settings WHERE k = 'migr_welfare'")->fetchColumn()) {
+        $wi = $db->prepare('INSERT OR IGNORE INTO settings (k,v) VALUES (?,?)');
+        foreach (welfare_settings() as $wk => $wv) $wi->execute([$wk, $wv]);
+        seed_welfare($db);
+        $db->exec("INSERT OR REPLACE INTO settings (k,v) VALUES ('migr_welfare','1')");
+    }
     $tmc = array_column($db->query('PRAGMA table_info(team)')->fetchAll(PDO::FETCH_ASSOC), 'name');
     if (!in_array('subjects', $tmc, true)) $db->exec('ALTER TABLE team ADD COLUMN subjects TEXT');
     if (!$db->query("SELECT 1 FROM settings WHERE k = 'migr_giving'")->fetchColumn()) {
@@ -340,6 +362,9 @@ function migrate(PDO $db): void
         foreach (['donate_intro', 'donate_thanks', 'partnership_text', 'partnership_types'] as $gk) $gi->execute([$gk, donate_default($gk)]);
         $gi->execute(['donate_button', '1']);
         seed_giving($db);
+    seed_welfare($db);
+    $wi = $db->prepare('INSERT OR IGNORE INTO settings (k,v) VALUES (?,?)');
+    foreach (welfare_settings() as $wk => $wv) $wi->execute([$wk, $wv]);
         $db->exec("INSERT OR REPLACE INTO settings (k,v) VALUES ('migr_giving','1')");
     }
     $ac = array_column($db->query('PRAGMA table_info(admissions_apps)')->fetchAll(PDO::FETCH_ASSOC), 'name');
@@ -450,4 +475,71 @@ function seed_giving(PDO $db): void
         $c->execute(['Library and learning resources', 'Textbooks, readers, science equipment and e-learning tools for every classroom.', 2]);
         $c->execute(['School development', 'Classrooms, dormitories, sanitation and safe learning spaces.', 3]);
     }
+}
+
+/** Editable defaults for the Health and Counselling pages (stored in settings, changed under Student Welfare → Welfare Page Text). */
+function welfare_settings(): array
+{
+    return [
+        'clubs_intro' => 'Clubs and societies are where our learners discover talents, build friendships and learn to lead and serve. Every learner is encouraged to join at least one.',
+        'health_intro' => 'The school health unit looks after the wellbeing of every learner. If you or your child is unwell, injured or worried about health, we are here to help.',
+        'health_hours' => 'Monday to Friday, during school hours. A staff member is available on call for boarders after hours.',
+        'health_location' => 'School health unit (sick bay), on the school campus.',
+        'health_contact' => '',
+        'health_parents_note' => 'Parents and guardians, please tell the school nurse in writing about any ongoing health condition, allergy or regular medication when your child joins, and update us if anything changes. In an emergency we will contact you using the numbers on file, so please keep them up to date.',
+        'health_topics' => "Feeling unwell / need to see the nurse\nInjury\nOngoing health condition or medication\nMental or emotional health\nHealth information or advice\nDisability or special-needs support\nSick leave or health report\nOther (type your own)",
+        'counselling_intro' => 'Everyone needs someone to talk to. Our counselling and career centre offers a safe, respectful and confidential space for learners, and support for parents and guardians too.',
+        'counselling_hours' => 'By appointment during school hours. Urgent requests are handled first.',
+        'counselling_location' => 'Student Counselling and Career Centre, on the school campus.',
+        'counselling_contact' => '',
+        'counselling_promise' => 'What you share stays private. We only involve others if someone is in danger of serious harm, and we will talk to you first whenever it is safe to do so. You can ask for help without giving your name.',
+        'counselling_topics' => "Stress or worry\nBullying or harassment\nFamily or home difficulties\nGrief or loss\nPeer pressure\nRelationships\nAcademic pressure or exam anxiety\nCareer or subject choice\nAlcohol, drugs or substance use\nFeeling sad, hopeless or unsafe\nOther (type your own)",
+        'emergency_info' => "In an emergency, call the school on the number on this page, or call the police and ambulance on 999 or 112.\nChildren and young people can also call Sauti 116, the free Uganda Child Helpline.",
+    ];
+}
+
+/** Starter clubs (the six listed on the old website) and welfare services. Descriptions are sample text for the school to replace. */
+function seed_welfare(PDO $db): void
+{
+    if (!$db->query('SELECT 1 FROM clubs LIMIT 1')->fetchColumn()) {
+        $note = '<p><em>Sample description. The patron can edit this in the admin panel.</em></p>';
+        $join = 'Speak to the patron or a club leader, or ask your class teacher. New members are welcome at the start of each term.';
+        $rows = [
+            ['Prefects Body', 'prefects-body', 'Learner leaders who help keep the school orderly, caring and united.', '<p>The Prefects Body represents learners, supports discipline and welfare, and works with teachers to keep the school a good place to learn and live.</p>' . $note, "Leading by example\nSupervising duties and school routines\nRepresenting learners' concerns to staff"],
+            ['Interact Club', 'interact-club', 'A service club where young people serve their community.', '<p>Interact is a service-minded club for young people. Members plan and carry out projects that help the school and the surrounding community.</p>' . $note, "Community service projects\nClean-up and tree-planting drives\nVisits to those in need"],
+            ['Debating Club', 'debating-club', 'Learn to think clearly, speak with confidence and listen well.', '<p>The Debating Club trains learners in research, argument and public speaking, and takes part in school and inter-school debates.</p>' . $note, "Weekly practice debates\nInter-school competitions\nPublic-speaking training"],
+            ['Patriotism Club', 'patriotism-club', 'Building love for country, civic responsibility and good citizenship.', '<p>Members learn about Uganda’s history, values and institutions and practise responsible citizenship in school and community life.</p>' . $note, "Civic education talks\nNational days and celebrations\nCommunity and leadership activities"],
+            ['Writers Club', 'writers-club', 'A home for poets, storytellers, journalists and creative thinkers.', '<p>The Writers Club encourages reading and writing. Members share their work, take part in writing competitions and contribute to school publications.</p>' . $note, "Creative-writing workshops\nPoetry and storytelling sessions\nContributing to the school newsletter"],
+            ['Scouting', 'scouting', 'Adventure, teamwork, service and practical life skills.', '<p>Scouting builds character through outdoor activities, teamwork and service, guided by the Scout promise and law.</p>' . $note, "Camping and outdoor skills\nFirst aid and survival basics\nService to others"],
+        ];
+        $st = $db->prepare('INSERT INTO clubs (name,slug,summary,description,activities,how_to_join,sort) VALUES (?,?,?,?,?,?,?)');
+        foreach ($rows as $i => $r) $st->execute([$r[0], $r[1], $r[2], $r[3], $r[4], $join, $i + 1]);
+    }
+    if (!$db->query('SELECT 1 FROM welfare_services LIMIT 1')->fetchColumn()) {
+        $st = $db->prepare('INSERT INTO welfare_services (type,title,description,sort) VALUES (?,?,?,?)');
+        foreach ([
+            ['health', 'First aid and minor treatment', 'Care for everyday illnesses, cuts, sprains and other minor injuries.'],
+            ['health', 'Sick bay for rest and observation', 'A quiet place for learners who are unwell to rest while we monitor them.'],
+            ['health', 'Referral to health facilities', 'When a learner needs more than we can give on campus, we refer them to a nearby health facility and inform parents or guardians.'],
+            ['health', 'Health education and hygiene', 'Talks and campaigns on hygiene, nutrition, sanitation and disease prevention.'],
+            ['health', 'Support for ongoing conditions', 'Help for learners with long-term conditions or regular medication, in partnership with their families.'],
+            ['health', 'Emergency response', 'Quick action in emergencies and immediate contact with parents or guardians.'],
+            ['counselling', 'Individual counselling', 'One-to-one conversations in a private, respectful setting.'],
+            ['counselling', 'Career guidance and subject choice', 'Help with choosing subject combinations, courses and career paths.'],
+            ['counselling', 'Study skills and exam support', 'Practical help with time management, revision and coping with exam stress.'],
+            ['counselling', 'Peer support and mentoring', 'Trained peer supporters and mentors who listen and help learners feel less alone.'],
+            ['counselling', 'Support through loss and crisis', 'Care for learners facing bereavement, family difficulty or other upsetting events.'],
+            ['counselling', 'Parent and guardian consultations', 'Guidance for families on supporting their child’s wellbeing and learning.'],
+        ] as $i => $r) $st->execute([$r[0], $r[1], $r[2], $i + 1]);
+    }
+    // replace the old one-line placeholder bodies of the three pages with short intros (only if the school has not edited them)
+    $old = [
+        'clubs' => ['<ul><li>Prefects Body</li><li>Interact Club</li><li>Debating Club</li><li>Patriotism Club</li><li>Writers Club</li><li>Scouting</li></ul>', 'Prefects, Interact, Debating, Patriotism, Writers and Scouting.'],
+        'health-services' => ['<p>The school health unit provides first aid and basic care, and refers learners to nearby health facilities when necessary.</p>', 'Caring for learners’ wellbeing.'],
+        'counselling' => ['<p>The Student Counselling and Career Centre offers guidance and support for personal growth and career choices.</p>', 'Guidance for learning, life and careers.'],
+    ];
+    $s = welfare_settings();
+    $new = ['clubs' => $s['clubs_intro'], 'health-services' => $s['health_intro'], 'counselling' => $s['counselling_intro']];
+    $up = $db->prepare('UPDATE pages SET body = ? WHERE slug = ? AND body = ?');
+    foreach ($old as $slug => [$body]) $up->execute(['<p>' . htmlspecialchars($new[$slug], ENT_QUOTES, 'UTF-8') . '</p>', $slug, $body]);
 }

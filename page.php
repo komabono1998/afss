@@ -2,6 +2,7 @@
 require_once __DIR__ . '/includes/bootstrap.php';
 $p = row('SELECT * FROM pages WHERE slug = ? AND active = 1', [$_GET['slug'] ?? '']);
 if (!$p) { http_response_code(404); include __DIR__ . '/404.php'; exit; }
+foreach (['clubs' => 'clubs.php', 'health-services' => 'health.php', 'counselling' => 'counselling.php'] as $sl => $dest) if ($p['slug'] === $sl) redirect($dest);
 $pageTitle = $p['title'];
 $pageDesc = $p['summary'] ?: excerpt($p['body']);
 $pageImage = $p['image'];

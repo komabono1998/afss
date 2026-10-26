@@ -11,7 +11,7 @@ const ADMIN_MODULES = [
     'jobs' => 'Job vacancies', 'job_apps' => 'Job applications',
     'admissions' => 'Admission applications', 'scholarships' => 'Scholarships & bursaries', 'scholarship_apps' => 'Scholarship applications',
     'messages' => 'Contact messages', 'newsletter' => 'Subscribers & email',
-    'population' => 'School population', 'alumni_events' => 'Alumni activities & events', 'alumni_members' => 'Alumni members', 'alumni_page' => 'Alumni page text', 'students' => 'Student database (view)', 'students_manage' => 'Student database (edit & upload)', 'classes' => 'Classes & streams', 'students_api' => 'Student data API', 'whistleblower' => 'Whistle-blower reports', 'donation_methods' => 'Donation methods', 'donation_causes' => 'Giving causes', 'donor_pledges' => 'Donor enquiries', 'donate_page' => 'Donate page text', 'settings' => 'Site settings', 'users' => 'Admin users',
+    'population' => 'School population', 'alumni_events' => 'Alumni activities & events', 'alumni_members' => 'Alumni members', 'alumni_page' => 'Alumni page text', 'students' => 'Student database (view)', 'students_manage' => 'Student database (edit & upload)', 'classes' => 'Classes & streams', 'students_api' => 'Student data API', 'whistleblower' => 'Whistle-blower reports', 'donation_methods' => 'Donation methods', 'donation_causes' => 'Giving causes', 'donor_pledges' => 'Donor enquiries', 'donate_page' => 'Donate page text', 'clubs' => 'Clubs & societies', 'welfare_services' => 'Health & counselling services', 'help_requests' => 'Help & counselling requests', 'welfare_page' => 'Welfare page text', 'settings' => 'Site settings', 'users' => 'Admin users',
 ];
 
 function roles(): array
@@ -30,13 +30,13 @@ function roles(): array
         'deputy_academics' => [
             'label' => 'Deputy Headteacher (Academics)',
             'desc' => 'Academic and About pages, news, events, photo albums, admissions and scholarship applications.',
-            'modules' => ['pages', 'news', 'events', 'albums', 'admissions', 'scholarships', 'scholarship_apps', 'population', 'students', 'students_manage', 'classes'],
+            'modules' => ['pages', 'news', 'events', 'albums', 'admissions', 'scholarships', 'scholarship_apps', 'population', 'students', 'students_manage', 'classes', 'clubs'],
             'scope' => ['pages' => ['menu_group', ['academics', 'about']]],
         ],
         'deputy_admin' => [
             'label' => 'Deputy Headteacher (Administration)',
             'desc' => 'Management profiles, job vacancies and applications, contact messages, events, news and student-life pages.',
-            'modules' => ['pages', 'news', 'events', 'albums', 'team', 'jobs', 'job_apps', 'messages', 'admissions', 'population', 'alumni_events', 'alumni_members', 'alumni_page', 'students', 'students_manage', 'classes'],
+            'modules' => ['pages', 'news', 'events', 'albums', 'team', 'jobs', 'job_apps', 'messages', 'admissions', 'population', 'alumni_events', 'alumni_members', 'alumni_page', 'students', 'students_manage', 'classes', 'clubs'],
             'scope' => ['pages' => ['menu_group', ['about', 'students', 'none']]],
         ],
         'bursar' => [
@@ -50,6 +50,18 @@ function roles(): array
             'desc' => 'Sports news, sports events and sports photo albums only.',
             'modules' => ['news', 'events', 'albums', 'students'],
             'scope' => ['news' => ['category', ['Sports']], 'events' => ['category', ['Sports']], 'albums' => ['category', 'sport']],
+        ],
+        'school_nurse' => [
+            'label' => 'School Nurse',
+            'desc' => 'Manages the Health Services page and handles health help requests. Can look students up.',
+            'modules' => ['welfare_services', 'help_requests', 'welfare_page', 'students'],
+            'scope' => ['welfare_services' => ['type', ['health']], 'help_requests' => ['kind', ['health']]],
+        ],
+        'counsellor' => [
+            'label' => 'Counsellor',
+            'desc' => 'Manages the Counselling page and handles confidential counselling requests. Can look students up.',
+            'modules' => ['welfare_services', 'help_requests', 'welfare_page', 'students'],
+            'scope' => ['welfare_services' => ['type', ['counselling']], 'help_requests' => ['kind', ['counselling']]],
         ],
         'class_teacher' => [
             'label' => 'Class Teacher',

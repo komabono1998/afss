@@ -66,7 +66,7 @@ include __DIR__ . '/includes/header.php';
         ['🏛', 'About & Governance', 'Our story, leadership and the Board of Governors.', 'governance.php'],
         ['📚', 'Academics', 'O and A level programmes, departments and library.', 'page.php?slug=academics'],
         ['🎓', 'Admissions', 'Entry requirements, fees and how to apply.', 'admissions.php'],
-        ['⚽', 'Student Life', 'Clubs, health, counselling and alumni.', 'page.php?slug=clubs'],
+        ['⚽', 'Student Life', 'Clubs, health, counselling and alumni.', 'clubs.php'],
       ] as [$ic, $t, $d, $l]): ?>
       <a class="card feature reveal" href="<?= url($l) ?>"><div class="ico"><?= $ic ?></div><h3><?= e($t) ?></h3><p><?= e($d) ?></p><span class="more">Read more →</span></a>
       <?php endforeach; ?>
