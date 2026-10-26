@@ -14,7 +14,7 @@
     </div>
     <div>
       <h4>Quick Links</h4>
-      <ul class="flinks">
+      <ul class="flinks cols">
         <li><a href="<?= url('page.php?slug=about-us') ?>">About Us</a></li>
         <li><a href="<?= url('governance.php') ?>">Governance</a></li>
         <li><a href="<?= url('management.php?g=pta') ?>">PTA Committee</a></li>
@@ -55,11 +55,11 @@
   </div>
   <div class="footer-bottom">
     <div class="container">
-      <span>© <?= date('Y') ?> <?= e(setting('school_name')) ?>. <?= e(setting('footer_text')) ?></span>
-      <span>
-        <?php if (setting('moes_reg')): ?>MoES Reg: <?= e(setting('moes_reg')) ?> · <?php endif; ?>
-        <?php if (setting('uneb_centre')): ?>UNEB Centre: <?= e(setting('uneb_centre')) ?> · <?php endif; ?>
-        <a href="<?= url('page.php?slug=privacy') ?>">Privacy</a> · <a href="<?= url('admin/') ?>">Staff Login</a>
+      <span>© <?= date('Y') ?> <?= (setting('footer_text') && stripos(setting('footer_text'), setting('school_name')) === 0) ? e(setting('footer_text')) : e(setting('school_name')) . '. ' . e(setting('footer_text')) ?></span>
+      <span class="fb-meta">
+        <?php if (setting('moes_reg')): ?><span>MoES Reg: <?= e(setting('moes_reg')) ?></span><?php endif; ?>
+        <?php if (setting('uneb_centre')): ?><span>UNEB Centre: <?= e(setting('uneb_centre')) ?></span><?php endif; ?>
+        <a href="<?= url('page.php?slug=privacy') ?>">Privacy</a><a href="<?= url('admin/') ?>">Staff Login</a>
       </span>
     </div>
   </div>
