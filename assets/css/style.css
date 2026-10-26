@@ -580,3 +580,5 @@ img{max-width:100%;height:auto}
 img[loading=lazy]{background:color-mix(in srgb,var(--primary) 6%,#fff)}
 @media(max-width:700px){.section{padding:3rem 0}.banner{padding:2.4rem 0 2rem}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}.slide.on{animation:none}}
+.prose .lead{font-size:1.15rem;color:var(--primary);border-left:5px solid var(--accent);padding-left:1rem}
+.prose .val-grid{margin:1.2rem 0 1.6rem}

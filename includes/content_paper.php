@@ -199,7 +199,36 @@ HTML],
 <p class="notice">Portfolios and office-bearers are confirmed each year. Current student leaders are announced on the <a href="news.php">News</a> page. Questions about student leadership? <a href="contact.php">Contact the school</a>.</p>
 HTML],
         'faith-formation' => ['Faith Formation', 'Prayer, reflection and service in the Catholic tradition.', 'students', 6, <<<'HTML'
-<p>Rooted in the school's Catholic tradition, faith formation encourages reflection, compassion, service, respect and responsible living. It is part of the daily rhythm of school life, through prayer, Mass, religious celebrations and service activities, and it shapes the character we hope to see in every learner.</p>
+<p class="lead">Rooted in the school's Catholic tradition, faith formation encourages reflection, compassion, service, respect and responsible living. It is part of the daily rhythm of school life, through prayer, Mass, religious celebrations and service activities, and it shapes the character we hope to see in every learner.</p>
+
+<p>Our motto, <strong class="motto-hl">Sapientia et Servitium</strong>, joins wisdom and service. At AFSS, faith is not an extra subject. It is the foundation that gives meaning to learning and a purpose to leadership: to grow in understanding and to use it for the good of others.</p>
+
+<h2>Faith in the life of the school</h2>
+<div class="val-grid">
+  <div class="val"><span class="val-ico">🙏</span><h3>Daily prayer</h3><p>The day begins and ends in prayer, and learners gather for morning devotion and assemblies that set a calm, grateful tone for learning.</p></div>
+  <div class="val"><span class="val-ico">⛪</span><h3>Holy Mass</h3><p>Mass is celebrated with the school community, led by the chaplaincy, and special Masses mark the opening and close of terms and key school events.</p></div>
+  <div class="val"><span class="val-ico">📖</span><h3>Reflection and Scripture</h3><p>Religious education and guided reflection help learners understand their faith, ask honest questions and apply the Gospel values to everyday choices.</p></div>
+  <div class="val"><span class="val-ico">🎶</span><h3>Choir and liturgy</h3><p>Learners take part as readers, servers, choir members and ushers, learning to serve through worship.</p></div>
+  <div class="val"><span class="val-ico">🕯</span><h3>Religious celebrations</h3><p>The school keeps the main feasts and seasons of the Church year, including Christmas, Lent, Easter and the patronal celebrations, as a community.</p></div>
+  <div class="val"><span class="val-ico">🤝</span><h3>Service and charity</h3><p>Prayer is matched with action: clean-up days, visits, tree planting and support for people in need, in the spirit of charity.</p></div>
+</div>
+
+<h2>The values faith builds</h2>
+<ul>
+  <li><strong>Fear of God and reverence</strong> for life, for others and for creation.</li>
+  <li><strong>Compassion and charity</strong> towards classmates, neighbours and the poor.</li>
+  <li><strong>Integrity and honesty</strong>, even when no one is watching.</li>
+  <li><strong>Respect and forgiveness</strong>, so that the school remains a peaceful home.</li>
+  <li><strong>Responsibility and service</strong> in leadership, work and community life.</li>
+</ul>
+
+<h2>Spiritual guidance and support</h2>
+<p>Learners are accompanied by the school chaplain, religious education teachers, class teachers and the counselling team. Anyone who wants to talk, pray or seek advice can approach these staff members at any time. The <a href="counselling.php">counselling service</a> is also available for personal support.</p>
+
+<h2>Respect for every learner</h2>
+<p>AFSS is a Catholic school that welcomes learners from different Christian traditions and families. Every learner is treated with dignity, and we encourage mutual respect, tolerance and peaceful relationships among all members of the school community.</p>
+
+<p class="notice">Parents who would like to know more about the school's prayer life, sacramental preparation or chaplaincy activities are welcome to <a href="contact.php">contact the school</a>. Mass and prayer timetables are shared each term.</p>
 HTML],
         'safeguarding' => ['Health, Safety and Safeguarding', 'Student health, safety, dignity and how to raise a concern.', 'students', 7, <<<'HTML'
 <p>Student health, safety and dignity are central to a supportive learning environment. This page explains where to find help and how concerns are handled.</p>
