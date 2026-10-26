@@ -87,7 +87,15 @@ $bannerTitle = 'Alumni';
 $bannerSub = $AL('alumni_name');
 include __DIR__ . '/includes/header.php';
 include __DIR__ . '/includes/banner.php';
+$tools = array_filter([
+    can('alumni_events') ? ['Activities & events', 'admin/crud.php?e=alumni_events'] : null,
+    can('team') ? ['Leadership', 'admin/crud.php?e=team'] : null,
+    can('issues') ? ['Alumni newsletter', 'admin/issues.php'] : null,
+    can('alumni_members') ? ['Members', 'admin/inbox.php?t=alumni_members'] : null,
+    can('alumni_page') ? ['Page text', 'admin/alumni_page.php'] : null,
+]);
 ?>
+<?php if ($tools): ?><div class="adminbar no-print"><div class="container"><span>✏ Editing tools:</span><?php foreach ($tools as [$l, $h]): ?><a href="<?= e(url($h)) ?>"><?= e($l) ?></a><?php endforeach; ?></div></div><?php endif; ?>
 <section class="section">
   <div class="container split">
     <div class="reveal"><span class="eyebrow"><?= e($AL('alumni_name')) ?></span><h2>Once AFSS, always AFSS</h2>

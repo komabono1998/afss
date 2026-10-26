@@ -40,7 +40,7 @@ $logo = setting('logo') ?: 'assets/img/logo.webp';
 <title><?= $hasUsers ? 'Admin Login' : 'Set up Administrator' ?> · <?= e(setting('short_name', 'AFSS')) ?></title>
 <link rel="icon" href="<?= e(media($logo)) ?>">
 <link rel="stylesheet" href="<?= asset('assets/css/admin.css') ?>">
-<style>:root{--primary:<?= e(setting('primary_color', '#0b6b2e')) ?>;--accent:<?= e(setting('accent_color', '#f2b705')) ?>;--secondary:<?= e(setting('secondary_color', '#d7141a')) ?>}</style></head>
+<style>:root{--primary:<?= e(setting('primary_color', '#0b4a24')) ?>;--accent:<?= e(setting('accent_color', '#f2b705')) ?>;--secondary:<?= e(setting('secondary_color', '#d7141a')) ?>}</style></head>
 <body class="auth">
 <main class="auth-wrap">
   <section class="auth-brand">

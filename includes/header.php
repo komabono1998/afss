@@ -41,8 +41,8 @@ $logo = setting('logo') ?: 'assets/img/logo.webp';
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="<?= asset('assets/css/style.css') ?>">
 <link rel="icon" href="<?= e(media($logo)) ?>">
-<meta name="theme-color" content="<?= e(setting('primary_color', '#0b6b2e')) ?>">
-<style>:root{--primary:<?= e(setting('primary_color', '#0b6b2e')) ?>;--accent:<?= e(setting('accent_color', '#f2b705')) ?>;--secondary:<?= e(setting('secondary_color', '#d7141a')) ?>}</style>
+<meta name="theme-color" content="<?= e(setting('primary_color', '#0b4a24')) ?>">
+<style>:root{--primary:<?= e(setting('primary_color', '#0b4a24')) ?>;--accent:<?= e(setting('accent_color', '#f2b705')) ?>;--secondary:<?= e(setting('secondary_color', '#d7141a')) ?>}</style>
 </head>
 <body>
 <?php if (setting('announcement')): ?>

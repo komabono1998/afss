@@ -115,7 +115,7 @@ function seed_content(PDO $db): void
         'notify_email' => 'info@afss.ac.ug',
         'facebook' => '', 'twitter' => '', 'instagram' => '', 'youtube' => '', 'whatsapp' => '',
         'map_embed' => 'https://www.openstreetmap.org/export/embed.html?bbox=32.85%2C2.78%2C32.95%2C2.88&layer=mapnik',
-        'primary_color' => '#0b6b2e',
+        'primary_color' => '#0b4a24',
         'secondary_color' => '#d7141a',
         'accent_color' => '#f2b705',
         'logo' => '',
@@ -263,6 +263,11 @@ function migrate(PDO $db): void
         seed_alumni($db, true);
         $db->exec("UPDATE pages SET active = 0 WHERE slug = 'alumni'");
         $db->exec("INSERT OR REPLACE INTO settings (k,v) VALUES ('migr_alumni','1')");
+    }
+    if (!$db->query("SELECT 1 FROM settings WHERE k = 'migr_theme2'")->fetchColumn()) {
+        $pc = $db->query("SELECT v FROM settings WHERE k = 'primary_color'")->fetchColumn();
+        if (in_array($pc, [false, '#0b6b2e'], true)) $db->exec("INSERT OR REPLACE INTO settings (k,v) VALUES ('primary_color','#0b4a24')");
+        $db->exec("INSERT OR REPLACE INTO settings (k,v) VALUES ('migr_theme2','1')");
     }
     $ac = array_column($db->query('PRAGMA table_info(admissions_apps)')->fetchAll(PDO::FETCH_ASSOC), 'name');
     foreach (['admission_type', 'transfer_reason', 'results_file', 'recommendation_file'] as $c) if (!in_array($c, $ac, true)) $db->exec("ALTER TABLE admissions_apps ADD COLUMN $c TEXT");

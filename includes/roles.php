@@ -11,7 +11,7 @@ const ADMIN_MODULES = [
     'jobs' => 'Job vacancies', 'job_apps' => 'Job applications',
     'admissions' => 'Admission applications', 'scholarships' => 'Scholarships & bursaries', 'scholarship_apps' => 'Scholarship applications',
     'messages' => 'Contact messages', 'newsletter' => 'Subscribers & email',
-    'population' => 'School population', 'alumni_events' => 'Alumni activities & events', 'alumni_members' => 'Alumni members', 'settings' => 'Site settings', 'users' => 'Admin users',
+    'population' => 'School population', 'alumni_events' => 'Alumni activities & events', 'alumni_members' => 'Alumni members', 'alumni_page' => 'Alumni page text', 'settings' => 'Site settings', 'users' => 'Admin users',
 ];
 
 function roles(): array
@@ -36,7 +36,7 @@ function roles(): array
         'deputy_admin' => [
             'label' => 'Deputy Headteacher (Administration)',
             'desc' => 'Management profiles, job vacancies and applications, contact messages, events, news and student-life pages.',
-            'modules' => ['pages', 'news', 'events', 'albums', 'team', 'jobs', 'job_apps', 'messages', 'admissions', 'population', 'alumni_events', 'alumni_members'],
+            'modules' => ['pages', 'news', 'events', 'albums', 'team', 'jobs', 'job_apps', 'messages', 'admissions', 'population', 'alumni_events', 'alumni_members', 'alumni_page'],
             'scope' => ['pages' => ['menu_group', ['about', 'students', 'none']]],
         ],
         'bursar' => [
@@ -50,6 +50,12 @@ function roles(): array
             'desc' => 'Sports news, sports events and sports photo albums only.',
             'modules' => ['news', 'events', 'albums'],
             'scope' => ['news' => ['category', ['Sports']], 'events' => ['category', ['Sports']], 'albums' => ['category', 'sport']],
+        ],
+        'alumni_coordinator' => [
+            'label' => 'Alumni Coordinator',
+            'desc' => 'Everything on the Alumni page: activities and events, leadership profiles, alumni newsletters, members and page text.',
+            'modules' => ['alumni_events', 'alumni_members', 'alumni_page', 'team', 'issues'],
+            'scope' => ['team' => ['grp', ['alumni_patron', 'alumni_exec']], 'issues' => ['audience', ['alumni']]],
         ],
         'newsletter_editor' => [
             'label' => 'Newsletter Editor',

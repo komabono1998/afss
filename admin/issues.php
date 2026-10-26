@@ -3,6 +3,7 @@ require_once __DIR__ . '/_layout.php';
 $a = $_GET['a'] ?? 'list';
 $id = (int) ($_GET['id'] ?? 0);
 require_perm('issues');
+$scope = scope_for('issues');
 const LAYOUTS = ['image-right' => 'Text with image on the right', 'image-left' => 'Text with image on the left', 'full-width' => 'Large image above text', 'text-only' => 'Text only'];
 
 function rm_file(?string $p): void { if ($p && str_starts_with($p, 'uploads/')) @unlink(ROOT . '/' . $p); }
@@ -16,6 +17,7 @@ if (is_post()) {
     csrf_check();
     $do = $_POST['do'] ?? '';
     $issue = $id ? row('SELECT * FROM newsletter_issues WHERE id = ?', [$id]) : null;
+    if ($issue && !in_scope($scope, $issue)) deny();
 
     if ($do === 'save') {
         $title = post('title'); $date = post('issue_date');
@@ -32,6 +34,7 @@ if (is_post()) {
         if ($newPdf) { rm_file($pdf); $pdf = $newPdf; }
         $status = ($_POST['status'] ?? '') === 'published' ? 'published' : 'draft';
         $aud = ($_POST['audience'] ?? '') === 'alumni' ? 'alumni' : 'school';
+        if ($scope) $aud = $scope['values'][0];
         $vals = [$title, $date, post('edition'), trim((string) $_POST['summary']), trim((string) $_POST['intro']), $cover, $pdf, $status, $aud];
         if ($issue) {
             q('UPDATE newsletter_issues SET title=?,issue_date=?,edition=?,summary=?,intro=?,cover=?,pdf=?,status=?,audience=? WHERE id=?', array_merge($vals, [$id]));
@@ -44,6 +47,7 @@ if (is_post()) {
     }
     if ($do === 'delete_issue') {
         $iid = (int) $_POST['id'];
+        if ($scope && !in_scope($scope, row('SELECT audience FROM newsletter_issues WHERE id = ?', [$iid]))) deny();
         foreach (rows('SELECT image FROM newsletter_sections WHERE issue_id = ?', [$iid]) as $s) rm_file($s['image']);
         $i = row('SELECT cover,pdf FROM newsletter_issues WHERE id = ?', [$iid]);
         if ($i) { rm_file($i['cover']); rm_file($i['pdf']); }
@@ -97,6 +101,7 @@ if (is_post()) {
 }
 
 $issue = $id ? row('SELECT * FROM newsletter_issues WHERE id = ?', [$id]) : null;
+if ($issue && !in_scope($scope, $issue)) deny();
 
 if ($a === 'new' || $a === 'edit') {
     if ($a === 'edit' && !$issue) redirect('admin/issues.php');
@@ -112,7 +117,7 @@ if ($a === 'new' || $a === 'edit') {
         <div class="f"><label>Issue date *</label><input type="date" name="issue_date" value="<?= e($issue['issue_date'] ?? date('Y-m-d')) ?>" required><small>Used for the month and year. A future date schedules publishing.</small></div>
         <div class="f"><label>Edition label (optional)</label><input type="text" name="edition" value="<?= e($issue['edition'] ?? '') ?>" placeholder="e.g. Vol. 4, No. 3"></div>
         <div class="f"><label>Status</label><select name="status"><option value="draft" <?= ($issue['status'] ?? 'draft') === 'draft' ? 'selected' : '' ?>>Draft (hidden)</option><option value="published" <?= ($issue['status'] ?? '') === 'published' ? 'selected' : '' ?>>Published</option></select></div>
-        <div class="f"><label>Audience</label><select name="audience"><option value="school" <?= ($issue['audience'] ?? 'school') === 'school' ? 'selected' : '' ?>>School newsletter (News page)</option><option value="alumni" <?= ($issue['audience'] ?? '') === 'alumni' ? 'selected' : '' ?>>Alumni newsletter (Alumni page)</option></select></div>
+        <?php if ($scope): ?><input type="hidden" name="audience" value="alumni"><div class="f"><label>Audience</label><input type="text" value="Alumni newsletter" disabled></div><?php else: ?><div class="f"><label>Audience</label><select name="audience"><option value="school" <?= ($issue['audience'] ?? 'school') === 'school' ? 'selected' : '' ?>>School newsletter (News page)</option><option value="alumni" <?= ($issue['audience'] ?? '') === 'alumni' ? 'selected' : '' ?>>Alumni newsletter (Alumni page)</option></select></div><?php endif; ?>
       </div>
       <div class="f"><label>Short summary</label><textarea name="summary" placeholder="One or two sentences for the archive and the email."><?= e($issue['summary'] ?? '') ?></textarea></div>
       <div class="f"><label>Editor's note / introduction (HTML)</label><textarea class="html" name="intro" style="min-height:150px"><?= e($issue['intro'] ?? '') ?></textarea></div>
@@ -161,7 +166,7 @@ if ($a === 'new' || $a === 'edit') {
     <?php endif; admin_foot(); exit;
 }
 
-$items = rows('SELECT i.*, (SELECT COUNT(*) FROM newsletter_sections s WHERE s.issue_id = i.id) AS n FROM newsletter_issues i ORDER BY issue_date DESC, id DESC');
+$items = rows('SELECT i.*, (SELECT COUNT(*) FROM newsletter_sections s WHERE s.issue_id = i.id) AS n FROM newsletter_issues i' . ($scope ? " WHERE i.audience = 'alumni'" : '') . ' ORDER BY issue_date DESC, id DESC');
 admin_head('Monthly Newsletter');
 ?>
 <div class="bar"><a class="btn accent" href="issues.php?a=new">+ New issue</a><span class="muted"><?= count($items) ?> issue(s) · <a href="<?= e(url('newsletters.php')) ?>" target="_blank">View on site ↗</a></span></div>

@@ -12,8 +12,8 @@ function admin_nav(): array
         ],
         'Recruitment' => [['crud.php?e=jobs', '💼 Job Vacancies'], ['inbox.php?t=job_apps', '📨 Job Applications']],
         'Admissions' => [['inbox.php?t=admissions', '🎓 Applications'], ['crud.php?e=scholarships', '🏅 Scholarships & Bursaries'], ['inbox.php?t=scholarship_apps', '📝 Scholarship Applications']],
-        'Alumni' => [['crud.php?e=alumni_events', '🎉 Alumni Events'], ['inbox.php?t=alumni_members', '🎓 Alumni Members']],
-        'Communication' => [['inbox.php?t=messages', '✉ Messages'], ['issues.php', '🗞 Monthly Newsletter'], ['newsletter.php', '📬 Subscribers & Email']],
+        'Alumni' => [['crud.php?e=alumni_events', '🎉 Alumni Events'], ['inbox.php?t=alumni_members', '🎓 Alumni Members'], ['alumni_page.php', '📝 Alumni Page Text']],
+        'Communication' => [['inbox.php?t=messages', '✉ Messages'], ['newsletter.php', '📬 Subscribers & Email']],
         'System' => [['settings.php', '⚙ Site Settings'], ['users.php', '👤 Admin Users'], ['account.php', '🔑 My Account']],
     ];
 }
@@ -22,7 +22,7 @@ function nav_module(string $href): ?string
 {
     if (preg_match('/^crud\.php\?e=(\w+)/', $href, $m)) return $m[1];
     if (preg_match('/^inbox\.php\?t=(\w+)/', $href, $m)) return $m[1];
-    return ['population.php' => 'population', 'issues.php' => 'issues', 'albums.php' => 'albums', 'newsletter.php' => 'newsletter', 'settings.php' => 'settings', 'users.php' => 'users'][$href] ?? null;
+    return ['alumni_page.php' => 'alumni_page', 'population.php' => 'population', 'issues.php' => 'issues', 'albums.php' => 'albums', 'newsletter.php' => 'newsletter', 'settings.php' => 'settings', 'users.php' => 'users'][$href] ?? null;
 }
 function badge_counts(): array
 {
@@ -46,7 +46,7 @@ function admin_head(string $title): void
 <title><?= e($title) ?> · Admin · <?= e(setting('short_name', 'AFSS')) ?></title>
 <link rel="stylesheet" href="<?= asset('assets/css/admin.css') ?>">
 <link rel="icon" href="<?= e(media(setting('logo') ?: 'assets/img/logo.webp')) ?>">
-<style>:root{--primary:<?= e(setting('primary_color', '#0b6b2e')) ?>;--accent:<?= e(setting('accent_color', '#f2b705')) ?>;--secondary:<?= e(setting('secondary_color', '#d7141a')) ?>}</style>
+<style>:root{--primary:<?= e(setting('primary_color', '#0b4a24')) ?>;--accent:<?= e(setting('accent_color', '#f2b705')) ?>;--secondary:<?= e(setting('secondary_color', '#d7141a')) ?>}</style>
 </head><body>
 <aside class="side" id="side">
   <a class="logo" href="index.php"><img src="<?= e(media(setting('logo') ?: 'assets/img/logo.webp')) ?>" alt=""><span><b><?= e(setting('short_name', 'AFSS')) ?></b> Admin<small>School portal</small></span></a>
@@ -54,7 +54,8 @@ function admin_head(string $title): void
       $links = array_filter($links, fn($l) => !nav_module($l[0]) || can(nav_module($l[0])));
       if (!$links) continue; ?>
     <div class="grp"><?= e($group) ?></div>
-    <?php foreach ($links as [$href, $label]): $n = $badges[$href] ?? 0; ?>
+    <?php foreach ($links as [$href, $label]): $n = $badges[$href] ?? 0;
+        if ($ME['role'] === 'alumni_coordinator') $label = ['issues.php' => '🗞 Alumni Newsletter', 'crud.php?e=team' => '🏛 Alumni Leadership'][$href] ?? $label; ?>
       <a href="<?= e($href) ?>" class="<?= $cur === $href || (str_contains($href, '?') === false && basename($href) === basename($_SERVER['SCRIPT_NAME']) && !str_contains($cur, '?')) ? 'on' : '' ?>"><?= $label ?><?php if ($n): ?><span class="pill"><?= $n ?></span><?php endif; ?></a>
     <?php endforeach; ?>
   <?php endforeach; ?>

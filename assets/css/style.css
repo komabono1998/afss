@@ -1,5 +1,5 @@
 *,*::before,*::after{box-sizing:border-box}
-:root{--primary:#0b6b2e;--accent:#f2b705;--secondary:#d7141a;--primary-dark:color-mix(in srgb,var(--primary) 55%,#000);--primary-2:color-mix(in srgb,var(--primary) 78%,#3cb86a);--tint:color-mix(in srgb,var(--primary) 8%,#fff);--ink:#1c2733;--muted:#5d6b7a;--bg:#f6f7f9;--card:#fff;--line:#e3e7ec;--radius:14px;--shadow:0 6px 24px rgba(10,60,30,.10);--font:'Inter',system-ui,-apple-system,Segoe UI,Roboto,sans-serif;--serif:'Playfair Display',Georgia,serif}
+:root{--primary:#0b4a24;--accent:#f2b705;--secondary:#d7141a;--primary-dark:color-mix(in srgb,var(--primary) 55%,#000);--primary-2:color-mix(in srgb,var(--primary) 88%,#1f6f3d);--tint:color-mix(in srgb,var(--primary) 5%,#fff);--ink:#1c2733;--muted:#5d6b7a;--bg:#f6f7f9;--card:#fff;--line:#e3e7ec;--radius:14px;--shadow:0 6px 24px rgba(10,60,30,.10);--font:'Inter',system-ui,-apple-system,Segoe UI,Roboto,sans-serif;--serif:'Playfair Display',Georgia,serif}
 html{scroll-behavior:smooth}
 body{margin:0;font-family:var(--font);color:var(--ink);background:#fff;line-height:1.65;font-size:16px}
 img{max-width:100%;display:block}
@@ -249,3 +249,14 @@ a:hover{color:var(--secondary)}
  .sub{display:block;position:static;box-shadow:none;border:0;padding:0 0 0 1rem;min-width:0}
  .caret{display:none}
 }
+
+/* darker, calmer green: green only for key surfaces, neutrals elsewhere */
+.cta-band{background:linear-gradient(120deg,var(--primary-dark),var(--primary))}
+.slide.noimg{background:radial-gradient(circle at 80% 20%,rgba(242,183,5,.18),transparent 45%),linear-gradient(135deg,var(--primary-dark),var(--primary))}
+.banner{background:radial-gradient(circle at 85% 0,rgba(242,183,5,.16),transparent 40%),linear-gradient(135deg,var(--primary-dark),var(--primary))}
+.card .thumb{background:linear-gradient(135deg,var(--primary-dark),var(--primary))}
+.avatar{background:linear-gradient(135deg,var(--primary-dark),var(--primary))}
+.main-nav a:hover,.main-nav a.active{background:var(--tint)}
+.adminbar{background:#1c2733;color:#fff;font-size:.85rem}
+.adminbar .container{display:flex;gap:1rem;flex-wrap:wrap;align-items:center;padding:.5rem 0}
+.adminbar a{color:var(--accent);font-weight:600}.adminbar a:hover{color:#fff}

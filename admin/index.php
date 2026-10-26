@@ -60,14 +60,15 @@ if ($attn): ?>
 <?php
 $tiles = [
     ['📰', 'Post news', 'crud.php?e=news&a=new', 'news'], ['📅', 'Add event', 'crud.php?e=events&a=new', 'events'],
-    ['📷', 'New photo album', 'albums.php?a=new', 'albums'], ['🎉', 'Add alumni event', 'crud.php?e=alumni_events&a=new', 'alumni_events'], ['🗞', 'New newsletter issue', 'issues.php?a=new', 'issues'],
+    ['📷', 'New photo album', 'albums.php?a=new', 'albums'], ['🏛', 'Alumni leadership', 'crud.php?e=team', 'team_alumni'], ['🎉', 'Add alumni event', 'crud.php?e=alumni_events&a=new', 'alumni_events'], ['🗞', 'New newsletter issue', 'issues.php?a=new', 'issues'],
     ['💼', 'Post vacancy', 'crud.php?e=jobs&a=new', 'jobs'], ['🏅', 'Add scholarship', 'crud.php?e=scholarships&a=new', 'scholarships'],
     ['🎓', 'Review admissions', 'inbox.php?t=admissions', 'admissions'], ['📄', 'Edit pages', 'crud.php?e=pages', 'pages'],
     ['🖼', 'Hero slides', 'crud.php?e=slides', 'slides'], ['🏛', 'Management profiles', 'crud.php?e=team', 'team'],
-    ['👥', 'School population', 'population.php', 'population'], ['📬', 'Subscribers & email', 'newsletter.php', 'newsletter'],
+    ['👥', 'School population', 'population.php', 'population'], ['📝', 'Alumni page text', 'alumni_page.php', 'alumni_page'], ['📬', 'Subscribers & email', 'newsletter.php', 'newsletter'],
     ['⚙', 'Site settings', 'settings.php', 'settings'], ['👤', 'Admin users', 'users.php', 'users'],
 ];
-$tiles = array_filter($tiles, fn($t) => can($t[3]));
+$tiles = array_filter($tiles, fn($t) => $t[3] === 'team_alumni' ? ($ME['role'] === 'alumni_coordinator') : can($t[3]));
+if ($ME['role'] === 'alumni_coordinator') $tiles = array_map(fn($t) => $t[2] === 'issues.php?a=new' ? ['🗞', 'New alumni newsletter', $t[2], $t[3]] : ($t[2] === 'crud.php?e=team' ? ['🏛', 'Alumni leadership', $t[2], $t[3]] : $t), $tiles);
 ?>
 <h3 class="sec">Quick links</h3>
 <div class="tiles">
