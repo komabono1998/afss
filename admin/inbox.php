@@ -4,7 +4,7 @@ require_once __DIR__ . '/_layout.php';
 // Table whitelist: label, statuses, list columns, searchable columns
 $T = [
     'admissions' => ['table' => 'admissions_apps', 'label' => 'Admission Applications', 'statuses' => ['new', 'reviewing', 'accepted', 'rejected'],
-        'cols' => ['ref' => 'Reference', 'first_name' => 'Applicant', 'entry_class' => 'Class', 'guardian_phone' => 'Guardian phone', 'created_at' => 'Received', 'status' => 'Status'],
+        'cols' => ['ref' => 'Reference', 'first_name' => 'Applicant', 'entry_class' => 'Class', 'admission_type' => 'Type', 'guardian_phone' => 'Guardian phone', 'created_at' => 'Received', 'status' => 'Status'],
         'search' => ['ref', 'first_name', 'last_name', 'guardian_name', 'guardian_phone']],
     'job_apps' => ['table' => 'job_apps', 'label' => 'Job Applications', 'statuses' => ['new', 'reviewing', 'shortlisted', 'rejected'],
         'cols' => ['name' => 'Applicant', 'job_title' => 'Position', 'email' => 'Email', 'created_at' => 'Received', 'status' => 'Status'],
@@ -33,6 +33,7 @@ if (is_post()) {
             $cv = val('SELECT cv_file FROM job_apps WHERE id = ?', [$pid]);
             if ($cv) @unlink(PRIVATE_DIR . '/' . basename($cv));
         }
+        if ($t === 'admissions') foreach (['results_file', 'recommendation_file'] as $cf) { $fn = val("SELECT $cf FROM admissions_apps WHERE id = ?", [$pid]); if ($fn) @unlink(PRIVATE_DIR . '/' . basename($fn)); }
         q("DELETE FROM $table WHERE id = ?", [$pid]);
         flash('Deleted.');
         redirect("admin/$self");
@@ -66,7 +67,7 @@ if ($id) {
         <?php foreach ($r as $k => $v): if ($v === null || $v === '' || $k === 'id') continue; ?>
           <dt><?= e(ucwords(str_replace('_', ' ', $k))) ?></dt>
           <dd><?php
-            if ($k === 'cv_file') echo '<a href="download.php?f=' . urlencode($v) . '">Download CV</a>';
+            if (in_array($k, ['cv_file', 'results_file', 'recommendation_file'], true)) echo '<a href="download.php?f=' . urlencode($v) . '">⬇ Download ' . ucwords(str_replace('_file', '', $k)) . ' (PDF)</a>';
             elseif ($k === 'email' || $k === 'guardian_email') echo '<a href="mailto:' . e($v) . '">' . e($v) . '</a>';
             elseif ($k === 'status') echo '<span class="badge ' . e($v) . '">' . e($v) . '</span>';
             else echo e($v); ?></dd>

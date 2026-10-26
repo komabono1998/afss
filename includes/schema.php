@@ -45,6 +45,7 @@ function install_schema(PDO $db): void
         nationality TEXT, level_applied TEXT, entry_class TEXT, combination TEXT, previous_school TEXT,
         index_number TEXT, aggregates TEXT, boarding TEXT, guardian_name TEXT, guardian_relation TEXT,
         guardian_phone TEXT, guardian_email TEXT, address TEXT, notes TEXT,
+        admission_type TEXT, transfer_reason TEXT, results_file TEXT, recommendation_file TEXT,
         status TEXT DEFAULT 'new', created_at TEXT DEFAULT CURRENT_TIMESTAMP
     );
     CREATE TABLE job_apps (
@@ -181,6 +182,8 @@ function migrate(PDO $db): void
 {
     $cols = array_column($db->query('PRAGMA table_info(team)')->fetchAll(PDO::FETCH_ASSOC), 'name');
     foreach (['email', 'phone', 'term'] as $c) if (!in_array($c, $cols, true)) $db->exec("ALTER TABLE team ADD COLUMN $c TEXT");
+    $ac = array_column($db->query('PRAGMA table_info(admissions_apps)')->fetchAll(PDO::FETCH_ASSOC), 'name');
+    foreach (['admission_type', 'transfer_reason', 'results_file', 'recommendation_file'] as $c) if (!in_array($c, $ac, true)) $db->exec("ALTER TABLE admissions_apps ADD COLUMN $c TEXT");
     $done = $db->query("SELECT 1 FROM settings WHERE k = 'migr_pta'")->fetchColumn();
     if (!$done) {
         if (!$db->query("SELECT 1 FROM team WHERE grp = 'pta' LIMIT 1")->fetchColumn()) {
