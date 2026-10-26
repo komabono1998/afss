@@ -492,3 +492,6 @@ a:hover{color:var(--secondary)}
 .ex span{font-size:1.7rem}.ex b{display:block;margin:.3rem 0 .1rem;color:var(--primary)}.ex small{color:var(--muted)}
 .ab-reg{padding:2.5rem 0}.ab-reg .narrow{max-width:760px;margin:0 auto}
 @media(max-width:900px){.ab-story-in,.ab-vm-in{grid-template-columns:1fr;gap:1.6rem}.ab-photo{max-width:340px;margin:0 auto}.ab-hero{padding:3.5rem 0 6rem}}
+
+/* the school motto, wherever it appears inside text */
+.motto-hl{font-style:italic;font-weight:800;color:var(--secondary);letter-spacing:.01em;border-bottom:2px solid var(--accent)}

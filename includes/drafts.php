@@ -14,7 +14,7 @@ function page_drafts(): array
   <li><strong>Care.</strong> Health services, counselling and a listening culture make the school a safe home for every child, and our confidential reporting channel is open to everyone.</li>
   <li><strong>Growth.</strong> We keep investing in classrooms, laboratories, the library and e-learning so that our learners are ready for the world they will lead.</li>
 </ul>
-<p>I invite you to walk with us: visit the school, take part in our events, support a learner, or share your ideas. Together we will keep building a school that lives up to its motto, <em>Sapientia et Servitium</em>: wisdom and service.</p>
+<p>I invite you to walk with us: visit the school, take part in our events, support a learner, or share your ideas. Together we will keep building a school that lives up to its motto, <strong class="motto-hl">Sapientia et Servitium</strong>: wisdom and service.</p>
 <p>God bless you, and God bless Archbishop Flynn Secondary School.</p>
 <p><strong>The Administrator</strong><br>Archbishop Flynn Secondary School, Pader</p>
 HTML,

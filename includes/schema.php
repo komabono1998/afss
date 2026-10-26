@@ -441,7 +441,7 @@ function alumni_default(string $key): string
     return [
         'alumni_name' => 'AFSS Old Students Association (AFSSOSA)',
         'alumni_intro' => 'Once an AFSS learner, always part of the family. Stay connected with classmates, support the school and take part in alumni activities.',
-        'alumni_about' => '<p>The alumni association brings together former students of Archbishop Flynn Secondary School to keep the spirit of <em>Sapientia et Servitium</em> alive, support current learners and give back to the school community.</p>',
+        'alumni_about' => '<p>The alumni association brings together former students of Archbishop Flynn Secondary School to keep the spirit of <strong class="motto-hl">Sapientia et Servitium</strong> alive, support current learners and give back to the school community.</p>',
         'alumni_email' => '',
         'alumni_phone' => '',
         'alumni_payment_info' => '',
