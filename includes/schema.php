@@ -36,8 +36,12 @@ function install_schema(PDO $db): void
         id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, role TEXT, grp TEXT DEFAULT 'administration',
         bio TEXT, photo TEXT, sort INTEGER DEFAULT 0, email TEXT, phone TEXT, term TEXT
     );
+    CREATE TABLE albums (
+        id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL, slug TEXT UNIQUE NOT NULL, category TEXT DEFAULT 'General',
+        event_date TEXT, term TEXT, description TEXT, cover TEXT, active INTEGER DEFAULT 1
+    );
     CREATE TABLE gallery (
-        id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, category TEXT DEFAULT 'Campus', image TEXT NOT NULL,
+        id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, category TEXT DEFAULT 'Campus', image TEXT NOT NULL, album_id INTEGER,
         sort INTEGER DEFAULT 0
     );
     CREATE TABLE admissions_apps (
@@ -95,6 +99,14 @@ function seed_content(PDO $db): void
         'moes_reg' => 'PSS/A/209', 'licence' => 'ME/22/4831', 'uneb_centre' => 'U2848',
         'mission' => 'To promote equal opportunities for boys and girls, academic excellence, and human and moral formation, laying a strong and reliable academic, human and moral foundation for adult life.',
         'vision' => 'A centre of excellence that nurtures wise, responsible and service-minded citizens.',
+        'gallery_categories' => "Sports Day
+Music, Dance & Drama (MDD) Day
+Visitation Day
+Graduation
+Religious Celebrations
+Academic Events
+Clubs & Societies
+Campus Life",
         'footer_text' => 'Archbishop Flynn Secondary School — Sapientia et Servitium.',
     ];
     foreach ($defaults as $k => $v) $set->execute([$k, $v]);
@@ -182,6 +194,17 @@ function migrate(PDO $db): void
 {
     $cols = array_column($db->query('PRAGMA table_info(team)')->fetchAll(PDO::FETCH_ASSOC), 'name');
     foreach (['email', 'phone', 'term'] as $c) if (!in_array($c, $cols, true)) $db->exec("ALTER TABLE team ADD COLUMN $c TEXT");
+    $db->exec("CREATE TABLE IF NOT EXISTS albums (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL, slug TEXT UNIQUE NOT NULL, category TEXT DEFAULT 'General', event_date TEXT, term TEXT, description TEXT, cover TEXT, active INTEGER DEFAULT 1)");
+    $gc = array_column($db->query('PRAGMA table_info(gallery)')->fetchAll(PDO::FETCH_ASSOC), 'name');
+    if (!in_array('album_id', $gc, true)) $db->exec('ALTER TABLE gallery ADD COLUMN album_id INTEGER');
+    if (!$db->query("SELECT 1 FROM settings WHERE k = 'gallery_categories'")->fetchColumn()) $db->exec("INSERT INTO settings (k,v) VALUES ('gallery_categories', 'Sports Day'||char(10)||'Music, Dance & Drama (MDD) Day'||char(10)||'Visitation Day'||char(10)||'Graduation'||char(10)||'Religious Celebrations'||char(10)||'Academic Events'||char(10)||'Clubs & Societies'||char(10)||'Campus Life')");
+    foreach ($db->query("SELECT DISTINCT category FROM gallery WHERE album_id IS NULL")->fetchAll(PDO::FETCH_COLUMN) as $cat) {
+        $cat = $cat ?: 'Campus Life';
+        $slug = strtolower(trim(preg_replace('/[^A-Za-z0-9]+/', '-', $cat), '-')) . '-' . substr(md5($cat), 0, 4);
+        $db->prepare("INSERT OR IGNORE INTO albums (title,slug,category,event_date) VALUES (?,?,?,date('now'))")->execute([$cat, $slug, $cat]);
+        $aid = $db->query("SELECT id FROM albums WHERE slug = " . $db->quote($slug))->fetchColumn();
+        $db->prepare("UPDATE gallery SET album_id = ? WHERE album_id IS NULL AND COALESCE(category,'Campus Life') = ?")->execute([$aid, $cat]);
+    }
     $ac = array_column($db->query('PRAGMA table_info(admissions_apps)')->fetchAll(PDO::FETCH_ASSOC), 'name');
     foreach (['admission_type', 'transfer_reason', 'results_file', 'recommendation_file'] as $c) if (!in_array($c, $ac, true)) $db->exec("ALTER TABLE admissions_apps ADD COLUMN $c TEXT");
     $done = $db->query("SELECT 1 FROM settings WHERE k = 'migr_pta'")->fetchColumn();

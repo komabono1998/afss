@@ -26,6 +26,9 @@ $groups = [
         'stat_years' => ['Stat 3 value', 'text'], 'stat_years_l' => ['Stat 3 label', 'text'],
         'stat_firstgrade' => ['Stat 4 value', 'text'], 'stat_firstgrade_l' => ['Stat 4 label', 'text'],
     ],
+    'Photo gallery' => [
+        'gallery_categories' => ['Event / function categories', 'textarea', 'One per line. These appear when creating albums and as filters on the gallery page.'],
+    ],
     'Admissions' => [
         'admissions_open' => ['Accept online applications', 'check'],
         'intake_text' => ['Intake message', 'textarea', 'Shown on the home page, admissions page and call-to-action.'],

@@ -92,15 +92,4 @@ return [
             'sort' => ['Display order', 'number', 'default' => 0],
         ],
     ],
-    'gallery' => [
-        'label' => 'Gallery', 'singular' => 'photo', 'table' => 'gallery', 'order' => 'sort, id DESC',
-        'list' => ['image' => 'Photo', 'title' => 'Caption', 'category' => 'Album', 'sort' => 'Order'],
-        'search' => ['title', 'category'],
-        'fields' => [
-            'image' => ['Photo', 'image', 'required' => true],
-            'title' => ['Caption', 'text'],
-            'category' => ['Album', 'text', 'default' => 'Campus', 'help' => 'Photos with the same album name are grouped together.'],
-            'sort' => ['Display order', 'number', 'default' => 0],
-        ],
-    ],
 ];

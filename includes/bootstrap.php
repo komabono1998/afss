@@ -196,3 +196,10 @@ function require_admin(): array
     if (!$u) redirect('admin/login.php');
     return $u;
 }
+
+/** Event/function categories for photo albums (one per line in Site Settings). */
+function gallery_categories(): array
+{
+    $c = array_values(array_filter(array_map('trim', preg_split('/\R/', setting('gallery_categories')))));
+    return $c ?: ['Campus Life'];
+}
