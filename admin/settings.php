@@ -21,7 +21,8 @@ $groups = [
         'youtube' => ['YouTube URL', 'text'], 'whatsapp' => ['WhatsApp link', 'text'],
     ],
     'Home page' => [
-        'announcement' => ['Announcement bar text', 'text', 'Leave empty to hide the top bar.'],
+        'announcement' => ['Announcement bar text', 'text', 'Shown at the left of the top bar. Leave empty to show only the clock and contact details.'],
+        'show_clock' => ['Show the live date & time in the top bar', 'check'],
         'stat_students' => ['Stat 1 value', 'text'], 'stat_students_l' => ['Stat 1 label', 'text'],
         'stat_teachers' => ['Stat 2 value', 'text'], 'stat_teachers_l' => ['Stat 2 label', 'text'],
         'stat_years' => ['Stat 3 value', 'text'], 'stat_years_l' => ['Stat 3 label', 'text'],

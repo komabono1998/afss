@@ -60,3 +60,36 @@ document.addEventListener('click', function (e) {
   if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(text).then(done);
   else { var t = document.createElement('textarea'); t.value = text; t.style.position = 'fixed'; t.style.opacity = '0'; document.body.appendChild(t); t.select(); try { document.execCommand('copy'); done(); } catch (x) {} document.body.removeChild(t); }
 });
+
+// live date & time (top bar), shown in the school's time zone whatever the visitor's device says
+(function () {
+  var box = document.getElementById('live-clock');
+  if (!box) return;
+  var tz = box.getAttribute('data-tz') || 'Africa/Kampala', dateEl = box.querySelector('.clock-date'),
+      h = box.querySelector('.h'), m = box.querySelector('.m'), s = box.querySelector('.s'), ap = box.querySelector('.ampm'), tzEl = box.querySelector('.clock-tz');
+  function fmt(opts) { try { return new Intl.DateTimeFormat('en-GB', Object.assign({ timeZone: tz }, opts)); } catch (e) { return new Intl.DateTimeFormat('en-GB', opts); } }
+  var fDate = fmt({ weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }),
+      fTime = fmt({ hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true }),
+      fTz = fmt({ timeZoneName: 'short' });
+  var eat = { 'Africa/Kampala': 1, 'Africa/Nairobi': 1, 'Africa/Dar_es_Salaam': 1, 'Africa/Addis_Ababa': 1 };
+  try {
+    var z = fTz.formatToParts(new Date()).filter(function (p) { return p.type === 'timeZoneName'; })[0];
+    tzEl.textContent = eat[tz] ? 'EAT' : (z ? z.value : '');
+  } catch (e) {}
+  function set(el, v) {
+    if (el.textContent === v) return;
+    el.textContent = v;
+    el.classList.remove('tick'); void el.offsetWidth; el.classList.add('tick');   // restart the slide-in animation
+  }
+  function tick() {
+    var now = new Date(), parts = {};
+    fTime.formatToParts(now).forEach(function (p) { parts[p.type] = p.value; });
+    set(h, parts.hour); set(m, parts.minute); set(s, parts.second);
+    if (ap && parts.dayPeriod) ap.textContent = parts.dayPeriod.toUpperCase();
+    var d = fDate.format(now).replace(',', ''); if (dateEl.textContent !== d) dateEl.textContent = d;
+    box.setAttribute('aria-label', 'Current date and time: ' + d + ', ' + parts.hour + ':' + parts.minute + ' ' + (parts.dayPeriod || ''));
+    setTimeout(tick, 1000 - (now.getMilliseconds()));                                  // next tick lands on the second
+  }
+  document.addEventListener('visibilitychange', function () { if (!document.hidden) tick(); });
+  tick();
+})();

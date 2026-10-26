@@ -186,6 +186,7 @@ Academic Events
 Clubs & Societies
 Campus Life",
         'donate_intro' => donate_default('donate_intro'), 'donate_thanks' => donate_default('donate_thanks'), 'partnership_text' => donate_default('partnership_text'), 'partnership_types' => donate_default('partnership_types'), 'donate_button' => '1',
+        'show_clock' => '1',
         'reg_prefix' => 'AFSS',
         'api_enabled' => '0', 'api_key_hash' => '', 'api_key_hint' => '', 'api_guardian' => '0',
         'whistle_intro' => whistle_default('whistle_intro'), 'whistle_categories' => whistle_default('whistle_categories'),

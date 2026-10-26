@@ -293,3 +293,23 @@ a:hover{color:var(--secondary)}
 .brand-text strong{font-size:1.75rem;max-width:none;letter-spacing:.05em;line-height:1;color:var(--primary)}
 .brand-text small{display:none}
 @media(max-width:640px){.brand img{height:50px}.brand-text strong{font-size:1.45rem}}
+
+/* live clock in the top bar */
+.topbar-in{align-items:center}
+.clock{display:inline-flex;align-items:center;gap:.65rem;font-variant-numeric:tabular-nums;color:#fff;letter-spacing:.02em;animation:clockIn .9s cubic-bezier(.2,.8,.2,1) both}
+.clock-dot{width:9px;height:9px;border-radius:50%;background:#5ee08a;box-shadow:0 0 0 0 rgba(94,224,138,.65);animation:livePulse 2s ease-out infinite;flex:none}
+.clock-date{opacity:.92;white-space:nowrap}
+.clock-time{display:inline-flex;align-items:baseline;gap:.05rem;padding:.12rem .6rem;border-radius:999px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);overflow:hidden}
+.clock-time .t{display:inline-block;min-width:1.15ch;text-align:center;font-weight:700}
+.clock-time .s{color:var(--accent)}
+.clock-time .t.tick{animation:digitIn .3s ease-out}
+.clock-time .sep{opacity:.9;margin:0 .06rem;animation:colonBlink 1s steps(1,end) infinite}
+.clock-time .ampm{margin-left:.4rem;font-size:.68rem;font-weight:700;letter-spacing:.08em;color:var(--accent)}
+.clock-tz{opacity:.7;font-size:.7rem;letter-spacing:.08em}
+@keyframes clockIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
+@keyframes digitIn{0%{transform:translateY(-45%);opacity:.25}100%{transform:none;opacity:1}}
+@keyframes colonBlink{0%,100%{opacity:.95}50%{opacity:.25}}
+@keyframes livePulse{0%{box-shadow:0 0 0 0 rgba(94,224,138,.65)}70%{box-shadow:0 0 0 8px rgba(94,224,138,0)}100%{box-shadow:0 0 0 0 rgba(94,224,138,0)}}
+@media(max-width:900px){.topbar-in{justify-content:center}.announce:empty{display:none}}
+@media(max-width:560px){.clock-date,.clock-tz{display:none}.topbar-in{gap:.4rem}}
+@media(prefers-reduced-motion:reduce){.clock,.clock-dot,.clock-time .t.tick,.clock-time .sep{animation:none!important}}

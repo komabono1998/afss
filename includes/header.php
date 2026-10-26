@@ -46,10 +46,18 @@ $logo = setting('logo') ?: 'assets/img/logo.webp';
 <style>:root{--primary:<?= e(setting('primary_color', '#0b4a24')) ?>;--accent:<?= e(setting('accent_color', '#f2b705')) ?>;--secondary:<?= e(setting('secondary_color', '#d7141a')) ?>}</style>
 </head>
 <body>
-<?php if (setting('announcement')): ?>
+<?php $showClock = setting('show_clock') !== '0'; if (setting('announcement') || $showClock): ?>
 <div class="topbar">
   <div class="container topbar-in">
-    <span class="announce">📣 <?= e(setting('announcement')) ?></span>
+    <span class="announce"><?php if (setting('announcement')): ?>📣 <?= e(setting('announcement')) ?><?php endif; ?></span>
+    <?php if ($showClock): ?>
+    <span class="clock" id="live-clock" data-tz="<?= e(date_default_timezone_get()) ?>" role="timer" aria-label="Current date and time">
+      <i class="clock-dot" aria-hidden="true"></i>
+      <span class="clock-date"><?= e(date('l, j F Y')) ?></span>
+      <span class="clock-time"><b class="t h"><?= e(date('h')) ?></b><b class="sep">:</b><b class="t m"><?= e(date('i')) ?></b><b class="sep">:</b><b class="t s"><?= e(date('s')) ?></b><small class="ampm"><?= e(date('A')) ?></small></span>
+      <small class="clock-tz">EAT</small>
+    </span>
+    <?php endif; ?>
     <span class="topbar-contact">
       <?php if (setting('phone')): ?><a href="tel:<?= e(preg_replace('/\s+/', '', setting('phone'))) ?>">☎ <?= e(setting('phone')) ?></a><?php endif; ?>
       <?php if (setting('email')): ?><a href="mailto:<?= e(setting('email')) ?>">✉ <?= e(setting('email')) ?></a><?php endif; ?>
