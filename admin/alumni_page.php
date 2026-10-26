@@ -16,11 +16,13 @@ $fields = [
 ];
 if (is_post()) {
     csrf_check();
-    foreach ($fields as $k => $_) save_setting($k, in_array($k, ['alumni_about', 'alumni_intro', 'alumni_payment_info', 'alumni_card_note'], true) ? trim((string) ($_POST[$k] ?? '')) : post($k));
+    foreach ($fields as $k => $_) if (array_key_exists($k, $_POST)) save_setting($k, in_array($k, ['alumni_about', 'alumni_intro', 'alumni_payment_info', 'alumni_card_note'], true) ? trim((string) ($_POST[$k] ?? '')) : post($k));
     save_setting('alumni_validity_months', (string) max(1, min(120, (int) post('alumni_validity_months') ?: 12)));
     save_setting('alumni_prefix', strtoupper(preg_replace('/[^A-Za-z0-9]/', '', post('alumni_prefix'))) ?: 'AFSSOSA');
-    save_setting('alumni_require_photo', isset($_POST['alumni_require_photo']) ? '1' : '0');
-    save_setting('alumni_require_proof', isset($_POST['alumni_require_proof']) ? '1' : '0');
+    if (array_key_exists('alumni_name', $_POST)) {
+        save_setting('alumni_require_photo', isset($_POST['alumni_require_photo']) ? '1' : '0');
+        save_setting('alumni_require_proof', isset($_POST['alumni_require_proof']) ? '1' : '0');
+    }
     try {
         $new = handle_upload('constitution_file', ['pdf' => 'application/pdf'], UPLOAD_DIR, 'constitution_', 15);
         if (!empty($_POST['constitution_remove']) && setting('alumni_constitution')) { @unlink(ROOT . '/' . setting('alumni_constitution')); save_setting('alumni_constitution', ''); }

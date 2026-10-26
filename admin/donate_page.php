@@ -10,8 +10,8 @@ $fields = [
 ];
 if (is_post()) {
     csrf_check();
-    foreach ($fields as $k => $_) save_setting($k, trim((string) ($_POST[$k] ?? '')));
-    save_setting('donate_button', isset($_POST['donate_button']) ? '1' : '0');
+    foreach ($fields as $k => $_) if (array_key_exists($k, $_POST)) save_setting($k, trim((string) $_POST[$k]));
+    if (array_key_exists('donate_intro', $_POST)) save_setting('donate_button', isset($_POST['donate_button']) ? '1' : '0');
     flash('Donate page saved.');
     redirect('admin/donate_page.php');
 }

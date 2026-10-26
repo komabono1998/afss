@@ -60,10 +60,10 @@ if (is_post()) {
                     if (!empty($_POST[$k . '_remove'])) save_setting($k, '');
                 } catch (RuntimeException $ex) { flash($f[0] . ': ' . $ex->getMessage(), 'err'); $err = true; }
             } elseif ($f[1] === 'check') {
-                save_setting($k, isset($_POST[$k]) ? '1' : '0');
+                if (isset($_POST['cb_' . $k])) save_setting($k, isset($_POST[$k]) ? '1' : '0');   // only boxes that were on the form
             } elseif ($f[1] === 'color') {
                 if (preg_match('/^#[0-9a-fA-F]{6}$/', post($k))) save_setting($k, post($k));
-            } else {
+            } elseif (array_key_exists($k, $_POST)) {                     // only fields that were actually sent
                 save_setting($k, post($k));
             }
         }
@@ -79,7 +79,7 @@ admin_head('Site Settings');
   <div class="card"><h2><?= e($g) ?></h2><div class="cols">
   <?php foreach ($fields as $k => $f): $v = setting($k); ?>
     <div class="f">
-      <?php if ($f[1] === 'check'): ?><label><input type="checkbox" name="<?= e($k) ?>" value="1" <?= $v === '1' ? 'checked' : '' ?>> <?= e($f[0]) ?></label>
+      <?php if ($f[1] === 'check'): ?><input type="hidden" name="cb_<?= e($k) ?>" value="1"><label><input type="checkbox" name="<?= e($k) ?>" value="1" <?= $v === '1' ? 'checked' : '' ?>> <?= e($f[0]) ?></label>
       <?php else: ?><label><?= e($f[0]) ?></label>
         <?php if ($f[1] === 'textarea'): ?><textarea name="<?= e($k) ?>"><?= e($v) ?></textarea>
         <?php elseif ($f[1] === 'color'): ?><input type="color" name="<?= e($k) ?>" value="<?= e($v ?: '#000000') ?>" style="height:42px;width:90px;padding:2px">

@@ -313,3 +313,35 @@ a:hover{color:var(--secondary)}
 @media(max-width:900px){.topbar-in{justify-content:center}.announce:empty{display:none}}
 @media(max-width:560px){.clock-date,.clock-tz{display:none}.topbar-in{gap:.4rem}}
 @media(prefers-reduced-motion:reduce){.clock,.clock-dot,.clock-time .t.tick,.clock-time .sep{animation:none!important}}
+
+/* ===== home page: light theme so the white-backed crest blends in ===== */
+.hero{background:#fdfefd}
+.slide.noimg{background:
+  radial-gradient(760px 460px at 86% 12%,color-mix(in srgb,var(--accent) 24%,transparent),transparent 62%),
+  radial-gradient(820px 520px at 4% 105%,color-mix(in srgb,var(--primary) 11%,transparent),transparent 62%),
+  linear-gradient(180deg,#fdfefd 0%,color-mix(in srgb,var(--primary) 7%,#fff) 100%)}
+.slide.noimg::before{background:radial-gradient(circle at 1px 1px,color-mix(in srgb,var(--primary) 16%,transparent) 1.1px,transparent 1.6px) 0 0/24px 24px;-webkit-mask-image:linear-gradient(100deg,transparent 0,#000 45%);mask-image:linear-gradient(100deg,transparent 0,#000 45%)}
+.slide.noimg h1{color:var(--primary)}
+.slide.noimg p{color:#3a4654}
+.slide.noimg .eyebrow{color:var(--secondary)}
+.slide.noimg .btn-outline{border-color:var(--primary);color:var(--primary)}
+.slide.noimg .btn-outline:hover{background:var(--primary);color:#fff}
+.hero-dots button{background:color-mix(in srgb,var(--primary) 30%,transparent);box-shadow:0 0 0 1px rgba(255,255,255,.75)}
+.hero-dots button.on{background:var(--secondary)}
+
+.crest-stage{position:absolute;right:max(4%,calc((100% - 1180px)/2));top:0;bottom:0;margin:auto 0;width:min(46vh,430px);height:min(46vh,430px);display:none}   /* no transform here: it would isolate the blend */
+.crest-stage::before{content:"";position:absolute;inset:-9%;border-radius:50%;background:radial-gradient(circle,color-mix(in srgb,var(--accent) 38%,transparent) 0,color-mix(in srgb,var(--accent) 14%,transparent) 46%,transparent 70%);animation:crestGlow 7s ease-in-out infinite}
+.crest-stage .hero-crest{position:relative;right:auto;top:auto;transform:none;height:auto;width:100%;opacity:1;filter:none;display:block;mix-blend-mode:multiply;animation:crestFloat 7s ease-in-out infinite}
+@media(min-width:1000px){.crest-stage{display:block}}
+@keyframes crestFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
+@keyframes crestGlow{0%,100%{transform:scale(.96);opacity:.85}50%{transform:scale(1.05);opacity:1}}
+@media(prefers-reduced-motion:reduce){.crest-stage::before,.crest-stage .hero-crest{animation:none}}
+
+.home .stats-grid{border:1px solid color-mix(in srgb,var(--primary) 12%,transparent);box-shadow:0 18px 44px color-mix(in srgb,var(--primary) 16%,transparent)}
+.home .section.alt{background:linear-gradient(180deg,color-mix(in srgb,var(--primary) 6%,#fff),#fff)}
+.home .about-img{background:radial-gradient(circle at 50% 45%,color-mix(in srgb,var(--accent) 22%,#fff),#fff 70%);border:1px solid color-mix(in srgb,var(--primary) 10%,transparent)}
+.home .about-img .crest-big{mix-blend-mode:multiply}
+
+/* a little more air between the brand and the menu on laptop widths */
+@media(min-width:1280px) and (max-width:1439px){.main-nav a{padding:.55rem .5rem}.brand{margin-right:1.2rem}}
+.about-img .crest-big~.badge{display:none}   /* the crest already carries the motto; the badge only covered its ribbon */

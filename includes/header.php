@@ -45,7 +45,7 @@ $logo = setting('logo') ?: 'assets/img/logo.webp';
 <meta name="theme-color" content="<?= e(setting('primary_color', '#0b4a24')) ?>">
 <style>:root{--primary:<?= e(setting('primary_color', '#0b4a24')) ?>;--accent:<?= e(setting('accent_color', '#f2b705')) ?>;--secondary:<?= e(setting('secondary_color', '#d7141a')) ?>}</style>
 </head>
-<body>
+<body<?= basename($_SERVER['SCRIPT_NAME']) === 'index.php' ? ' class="home"' : '' ?>>
 <?php $showClock = setting('show_clock') !== '0'; if (setting('announcement') || $showClock): ?>
 <div class="topbar">
   <div class="container topbar-in">

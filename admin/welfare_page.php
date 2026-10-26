@@ -31,7 +31,7 @@ if ($only) unset($show['clubs']);
 
 if (is_post()) {
     csrf_check();
-    foreach ($show as $b) foreach ($b[1] as $k => $_) save_setting($k, trim((string) ($_POST[$k] ?? '')));
+    foreach ($show as $b) foreach ($b[1] as $k => $_) if (array_key_exists($k, $_POST)) save_setting($k, trim((string) $_POST[$k]));
     // keep the short intro on the standalone pages in step with the page text
     $allowed = [];
     foreach ($show as $b) foreach ($b[1] as $k => $_) $allowed[] = $k;     // only the blocks this role may edit
