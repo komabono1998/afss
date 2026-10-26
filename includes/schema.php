@@ -113,6 +113,7 @@ function install_schema(PDO $db): void
         name TEXT, class_name TEXT, role_text TEXT, contact TEXT, preferred_time TEXT, message TEXT, status TEXT DEFAULT 'new', notes TEXT,
         created_at TEXT DEFAULT CURRENT_TIMESTAMP, updated_at TEXT DEFAULT CURRENT_TIMESTAMP
     );
+    CREATE TABLE password_resets (id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER NOT NULL, token_hash TEXT NOT NULL, expires_at TEXT NOT NULL, used_at TEXT, created_at TEXT DEFAULT CURRENT_TIMESTAMP);
     CREATE TABLE albums (
         id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL, slug TEXT UNIQUE NOT NULL, category TEXT DEFAULT 'General',
         event_date TEXT, term TEXT, description TEXT, cover TEXT, active INTEGER DEFAULT 1
@@ -356,6 +357,7 @@ function migrate(PDO $db): void
         seed_welfare($db);
         $db->exec("INSERT OR REPLACE INTO settings (k,v) VALUES ('migr_welfare','1')");
     }
+    $db->exec("CREATE TABLE IF NOT EXISTS password_resets (id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER NOT NULL, token_hash TEXT NOT NULL, expires_at TEXT NOT NULL, used_at TEXT, created_at TEXT DEFAULT CURRENT_TIMESTAMP);");
     $tmc = array_column($db->query('PRAGMA table_info(team)')->fetchAll(PDO::FETCH_ASSOC), 'name');
     if (!in_array('subjects', $tmc, true)) $db->exec('ALTER TABLE team ADD COLUMN subjects TEXT');
     if (!$db->query("SELECT 1 FROM settings WHERE k = 'migr_giving'")->fetchColumn()) {
