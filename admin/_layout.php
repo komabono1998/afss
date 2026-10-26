@@ -71,10 +71,17 @@ function admin_head(string $title): void
     <button class="burger" onclick="document.getElementById('side').classList.toggle('open')" aria-label="Menu">☰</button>
     <h1><?= e($title) ?></h1>
     <span class="grow"></span>
+    <?php if (can('settings')): $off = maintenance_on(); ?>
+    <form class="live-switch" method="post" action="maintenance.php" onsubmit="return confirm('<?= $off ? 'Bring the website back online for everyone?' : 'Take the website offline? Visitors will see a \'back soon\' page until you switch it back on.' ?>')">
+      <?= csrf_field() ?><input type="hidden" name="action" value="<?= $off ? 'on' : 'off' ?>">
+      <button type="submit" class="ls <?= $off ? 'is-off' : 'is-on' ?>" title="<?= $off ? 'Website is offline. Click to go live' : 'Website is live. Click to take it offline for maintenance' ?>"><i></i><?= $off ? 'Offline · Go live' : 'Live · Take offline' ?></button>
+    </form>
+    <?php endif; ?>
     <a class="btn ghost" href="<?= url() ?>" target="_blank">View site ↗</a>
     <span class="who"><?= e($ME['name']) ?> · <?= e(role_label($ME['role'])) ?></span>
     <a class="btn" href="logout.php">Log out</a>
   </div>
+  <?php if (maintenance_on()): ?><div class="maint-banner">🚧 <b>Website is OFFLINE.</b> Visitors see the maintenance page. <?php if (can('settings')): ?><a href="index.php#site-status">Manage</a><?php endif; ?></div><?php endif; ?>
   <div class="body">
   <?php foreach ((flash() ?? []) as [$t, $m]): ?><div class="alert alert-<?= e($t) ?>"><?= e($m) ?></div><?php endforeach;
 }

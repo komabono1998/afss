@@ -23,6 +23,29 @@ $count = fn(string $sql, array $par = []) => (int) val($sql, $par);
   <a class="btn ghost light" href="<?= url() ?>" target="_blank">View website ↗</a>
 </section>
 
+<?php if (can('settings')): $off = maintenance_on(); ?>
+<section class="site-status <?= $off ? 'off' : 'on' ?>" id="site-status">
+  <div class="ss-main">
+    <span class="ss-dot"></span>
+    <div><h3><?= $off ? 'Website is OFFLINE (maintenance mode)' : 'Website is LIVE' ?></h3>
+      <p><?= $off ? 'Visitors see a "We\'ll be back soon" page. Signed-in admins can still browse the site and the admin area works normally.' : 'Everyone can see the website. Switch it off while you carry out improvements or maintenance.' ?></p></div>
+  </div>
+  <form method="post" action="maintenance.php" class="ss-form">
+    <?= csrf_field() ?>
+    <label for="mm">Message visitors will see</label>
+    <textarea id="mm" name="message" rows="2" maxlength="600"><?= e(setting('maintenance_message')) ?></textarea>
+    <div class="ss-btns">
+      <?php if ($off): ?>
+        <button class="btn go" name="action" value="on" type="submit">⏻ Bring the website back online</button>
+      <?php else: ?>
+        <button class="btn stop" name="action" value="off" type="submit" onclick="return confirm('Take the website offline? Visitors will see the maintenance page until you switch it back on.')">⏻ Take the website offline</button>
+      <?php endif; ?>
+      <button class="btn ghost" name="action" value="save" type="submit">Save message only</button>
+    </div>
+  </form>
+</section>
+<?php endif; ?>
+
 <?php
 $attn = [
     ['📝', 'Admission applications', 'admissions_apps', 'inbox.php?t=admissions', 'admissions'],

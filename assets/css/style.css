@@ -416,3 +416,4 @@ a:hover{color:var(--secondary)}
 .stay .hp{position:absolute;left:-9999px}
 @media(max-width:1000px){.pillar-row,.prog-grid{grid-template-columns:repeat(3,1fr)}.ne-grid,.stay-in{grid-template-columns:1fr;gap:2rem}}
 @media(max-width:600px){.pillar-row,.prog-grid{grid-template-columns:repeat(2,1fr)}.home .stat b{font-size:2.1rem}.home .stat{border-right:0}}
+.maint-bar{background:#d7141a;color:#fff;text-align:center;padding:.5rem 1rem;font-size:.88rem}.maint-bar a{color:#ffe27a;font-weight:700;text-decoration:underline}

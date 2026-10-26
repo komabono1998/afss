@@ -261,3 +261,44 @@ function population(): array
         'teaching' => $teaching, 'support' => $support, 'staff' => $teaching + $support, 'updated' => setting('pop_updated'),
     ];
 }
+
+// ---------- maintenance mode ----------
+function maintenance_on(): bool { return setting('maintenance_mode') === '1'; }
+
+/** While maintenance mode is on, visitors get a 503 notice page; the admin area and signed-in admins are exempt. */
+function maintenance_gate(): void
+{
+    if (PHP_SAPI === 'cli' || !maintenance_on()) return;
+    $script = str_replace('\\', '/', (string) ($_SERVER['SCRIPT_NAME'] ?? ''));
+    if (str_contains($script, '/admin/') || str_contains($script, '/api/') || admin_user()) return;
+    http_response_code(503);
+    header('Retry-After: 3600');
+    header('Cache-Control: no-store');
+    $logo = media(setting('logo') ?: 'assets/img/logo.webp');
+    $wa = whatsapp_link();
+    ?><!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex">
+<title>Back soon · <?= e(setting('school_name')) ?></title>
+<style>
+*{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;padding:1.5rem;font:16px/1.6 Inter,system-ui,-apple-system,Segoe UI,sans-serif;color:#fff;background:radial-gradient(900px 600px at 15% 10%,rgba(242,183,5,.16),transparent 60%),radial-gradient(800px 600px at 90% 100%,rgba(215,20,26,.2),transparent 60%),#090d0b}
+.box{max-width:560px;text-align:center}.box img{width:110px;background:#fff;border-radius:18px;padding:8px}
+.stripe{height:5px;width:120px;margin:1.4rem auto;border-radius:4px;background:linear-gradient(90deg,#0b6b34 0 34%,#f2b705 34% 67%,#d7141a 67%)}
+h1{font-size:2rem;margin:.2rem 0 .6rem;line-height:1.2}p{color:rgba(255,255,255,.82);margin:.4rem 0}
+.contact{margin-top:1.6rem;display:flex;gap:.7rem;justify-content:center;flex-wrap:wrap}
+.contact a{color:#090d0b;background:#f2b705;text-decoration:none;font-weight:700;padding:.65rem 1.1rem;border-radius:999px}.contact a.g{background:#25d366;color:#fff}
+small{display:block;margin-top:2rem}small a{color:rgba(255,255,255,.55)}
+</style></head><body><div class="box">
+<img src="<?= e($logo) ?>" alt="<?= e(setting('school_name')) ?> crest">
+<div class="stripe"></div>
+<h1>We'll be back soon</h1>
+<p><?= nl2br(e(setting('maintenance_message') ?: 'We are making some improvements to our website. Please check back shortly.')) ?></p>
+<div class="contact">
+<?php if (setting('phone')): ?><a href="tel:<?= e(preg_replace('/[^\d+]/', '', setting('phone'))) ?>">☎ <?= e(setting('phone')) ?></a><?php endif; ?>
+<?php if ($wa): ?><a class="g" href="<?= e($wa) ?>">WhatsApp support</a><?php endif; ?>
+<?php if (setting('email')): ?><a href="mailto:<?= e(setting('email')) ?>">✉ Email us</a><?php endif; ?>
+</div>
+<small><a href="<?= e(url('admin/')) ?>">Staff sign-in</a></small>
+</div></body></html><?php
+    exit;
+}
+maintenance_gate();

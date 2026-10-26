@@ -188,6 +188,7 @@ Clubs & Societies
 Campus Life",
         'donate_intro' => donate_default('donate_intro'), 'donate_thanks' => donate_default('donate_thanks'), 'partnership_text' => donate_default('partnership_text'), 'partnership_types' => donate_default('partnership_types'), 'donate_button' => '1',
         'show_clock' => '1',
+        'maintenance_mode' => '0', 'maintenance_message' => 'We are making some improvements to our website. Please check back shortly.',
         'reg_prefix' => 'AFSS',
         'api_enabled' => '0', 'api_key_hash' => '', 'api_key_hint' => '', 'api_guardian' => '0',
         'whistle_intro' => whistle_default('whistle_intro'), 'whistle_categories' => whistle_default('whistle_categories'),
@@ -323,6 +324,8 @@ function migrate(PDO $db): void
         if (!in_array($c, $am, true)) $db->exec("ALTER TABLE alumni_members ADD COLUMN $c $def");
     $db->exec('CREATE UNIQUE INDEX IF NOT EXISTS ux_alumni_member_no ON alumni_members(member_no)');
     $db->exec('CREATE TABLE IF NOT EXISTS alumni_log (id INTEGER PRIMARY KEY AUTOINCREMENT, member_id INTEGER, user_name TEXT, action TEXT, detail TEXT, created_at TEXT DEFAULT CURRENT_TIMESTAMP)');
+    $db->exec("INSERT OR IGNORE INTO settings (k,v) VALUES ('maintenance_mode','0')");
+    $db->exec("INSERT OR IGNORE INTO settings (k,v) VALUES ('maintenance_message','We are making some improvements to our website. Please check back shortly.')");
     if (!$db->query("SELECT 1 FROM settings WHERE k = 'migr_whatsapp'")->fetchColumn()) {   // official WhatsApp support line
         $db->exec("INSERT OR IGNORE INTO settings (k,v) VALUES ('whatsapp','')");
         $db->exec("UPDATE settings SET v = 'https://wa.me/256772587683' WHERE k = 'whatsapp' AND TRIM(v) = ''");
