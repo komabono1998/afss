@@ -1,0 +1,103 @@
+<?php
+// Declarative config that drives the generic CRUD screen (admin/crud.php).
+// field types: text, textarea, html, date, number, select, image, check, url
+return [
+    'slides' => [
+        'label' => 'Hero Slides', 'singular' => 'slide', 'table' => 'slides', 'order' => 'sort ASC, id DESC',
+        'list' => ['image' => 'Image', 'title' => 'Title', 'sort' => 'Order', 'active' => 'Active'],
+        'search' => ['title'],
+        'fields' => [
+            'title' => ['Headline', 'text', 'required' => true],
+            'subtitle' => ['Sub-text', 'textarea'],
+            'image' => ['Background image', 'image', 'help' => 'Wide photo, at least 1600px wide.'],
+            'link_text' => ['Button text', 'text'],
+            'link_url' => ['Button link', 'text', 'help' => 'e.g. apply.php or https://…'],
+            'sort' => ['Display order', 'number', 'default' => 0],
+            'active' => ['Show on home page', 'check', 'default' => 1],
+        ],
+    ],
+    'pages' => [
+        'label' => 'Pages', 'singular' => 'page', 'table' => 'pages', 'order' => 'menu_group, sort, title', 'slug' => 'title',
+        'list' => ['title' => 'Title', 'menu_group' => 'Menu', 'sort' => 'Order', 'active' => 'Active'],
+        'search' => ['title', 'body'],
+        'fields' => [
+            'title' => ['Title', 'text', 'required' => true],
+            'slug' => ['URL slug', 'text', 'help' => 'Leave blank to generate from title. Pages are shown at page.php?slug=…'],
+            'summary' => ['Short summary', 'textarea', 'help' => 'Shown under the page title.'],
+            'body' => ['Content', 'html'],
+            'image' => ['Feature image', 'image'],
+            'menu_group' => ['Show in menu', 'select', 'options' => ['none' => 'Not in menu', 'about' => 'About', 'academics' => 'Academics', 'admissions' => 'Admissions', 'students' => 'Student Life']],
+            'sort' => ['Order in menu', 'number', 'default' => 0],
+            'active' => ['Published', 'check', 'default' => 1],
+        ],
+    ],
+    'news' => [
+        'label' => 'News & Stories', 'singular' => 'article', 'table' => 'news', 'order' => 'published_at DESC, id DESC', 'slug' => 'title',
+        'list' => ['image' => 'Image', 'title' => 'Title', 'category' => 'Category', 'published_at' => 'Date', 'status' => 'Status'],
+        'search' => ['title', 'body'],
+        'fields' => [
+            'title' => ['Title', 'text', 'required' => true],
+            'category' => ['Category', 'select', 'options' => ['News' => 'News', 'Academics' => 'Academics', 'Stories' => 'Stories', 'Student Life' => 'Student Life', 'Announcements' => 'Announcements', 'Sports' => 'Sports']],
+            'published_at' => ['Publish date', 'date', 'default' => 'today', 'help' => 'Future dates are scheduled and hidden until that day.'],
+            'excerpt' => ['Summary', 'textarea'],
+            'body' => ['Article', 'html'],
+            'image' => ['Cover image', 'image'],
+            'featured' => ['Feature on home page', 'check', 'default' => 0],
+            'status' => ['Status', 'select', 'options' => ['published' => 'Published', 'draft' => 'Draft']],
+        ],
+    ],
+    'events' => [
+        'label' => 'Events', 'singular' => 'event', 'table' => 'events', 'order' => 'start_date DESC',
+        'list' => ['title' => 'Event', 'start_date' => 'Starts', 'end_date' => 'Ends', 'category' => 'Category'],
+        'search' => ['title', 'location'],
+        'fields' => [
+            'title' => ['Title', 'text', 'required' => true],
+            'category' => ['Category', 'select', 'options' => ['School' => 'School', 'Academic' => 'Academic', 'Admissions' => 'Admissions', 'Calendar' => 'Calendar', 'Sports' => 'Sports', 'Religious' => 'Religious']],
+            'start_date' => ['Start date', 'date', 'required' => true, 'default' => 'today'],
+            'end_date' => ['End date', 'date', 'help' => 'Optional, for multi-day events.'],
+            'time_text' => ['Time', 'text', 'help' => 'e.g. 9:00 AM – 1:00 PM'],
+            'location' => ['Location', 'text'],
+            'description' => ['Description', 'textarea'],
+            'image' => ['Image', 'image'],
+        ],
+    ],
+    'jobs' => [
+        'label' => 'Job Vacancies', 'singular' => 'vacancy', 'table' => 'jobs', 'order' => 'id DESC', 'slug' => 'title',
+        'list' => ['title' => 'Position', 'department' => 'Department', 'deadline' => 'Deadline', 'status' => 'Status'],
+        'search' => ['title', 'department'],
+        'fields' => [
+            'title' => ['Job title', 'text', 'required' => true],
+            'department' => ['Department', 'text'],
+            'type' => ['Type', 'select', 'options' => ['Full-time' => 'Full-time', 'Part-time' => 'Part-time', 'Contract' => 'Contract', 'Volunteer' => 'Volunteer', 'Various' => 'Various']],
+            'location' => ['Location', 'text', 'default' => 'Pader, Uganda'],
+            'description' => ['Description', 'html'],
+            'requirements' => ['Requirements', 'html'],
+            'deadline' => ['Application deadline', 'date', 'help' => 'Vacancy hides automatically after this date.'],
+            'status' => ['Status', 'select', 'options' => ['open' => 'Open', 'closed' => 'Closed']],
+        ],
+    ],
+    'team' => [
+        'label' => 'Governance / Staff', 'singular' => 'person', 'table' => 'team', 'order' => "CASE grp WHEN 'board' THEN 1 WHEN 'director' THEN 2 ELSE 3 END, sort, id",
+        'list' => ['photo' => 'Photo', 'name' => 'Name', 'role' => 'Role', 'grp' => 'Group', 'sort' => 'Order'],
+        'search' => ['name', 'role'],
+        'fields' => [
+            'name' => ['Full name', 'text', 'required' => true],
+            'role' => ['Role / title', 'text'],
+            'grp' => ['Group', 'select', 'options' => ['board' => 'Board of Governors', 'director' => 'Director', 'administration' => 'School Administration Team']],
+            'bio' => ['Short bio', 'textarea'],
+            'photo' => ['Photo', 'image'],
+            'sort' => ['Display order', 'number', 'default' => 0],
+        ],
+    ],
+    'gallery' => [
+        'label' => 'Gallery', 'singular' => 'photo', 'table' => 'gallery', 'order' => 'sort, id DESC',
+        'list' => ['image' => 'Photo', 'title' => 'Caption', 'category' => 'Album', 'sort' => 'Order'],
+        'search' => ['title', 'category'],
+        'fields' => [
+            'image' => ['Photo', 'image', 'required' => true],
+            'title' => ['Caption', 'text'],
+            'category' => ['Album', 'text', 'default' => 'Campus', 'help' => 'Photos with the same album name are grouped together.'],
+            'sort' => ['Display order', 'number', 'default' => 0],
+        ],
+    ],
+];

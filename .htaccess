@@ -1,0 +1,5 @@
+Options -Indexes
+ErrorDocument 404 /afss/404.php
+<FilesMatch "\.(sqlite|db|log)$">
+  Require all denied
+</FilesMatch>
