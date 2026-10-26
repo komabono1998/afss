@@ -23,6 +23,11 @@ $groups = [
     'Home page' => [
         'announcement' => ['Announcement bar text', 'text', 'Shown at the left of the top bar. Leave empty to show only the clock and contact details.'],
         'show_clock' => ['Show the live date & time in the top bar', 'check'],
+        'founders_show' => ['Show the Founders\' Story section on the home page', 'check'],
+        'founders_title' => ['Founders\' story heading', 'text'],
+        'founders_story' => ['Founders\' story', 'textarea', 'Leave a blank line between paragraphs. Replace the draft with the real story of the school.'],
+        'founders_image' => ['Founders\' photo', 'image', 'Until you upload one, a picture placeholder is shown.'],
+        'founders_caption' => ['Photo caption', 'text'],
         'stat_students' => ['Stat 1 value', 'text'], 'stat_students_l' => ['Stat 1 label', 'text'],
         'stat_teachers' => ['Stat 2 value', 'text'], 'stat_teachers_l' => ['Stat 2 label', 'text'],
         'stat_years' => ['Stat 3 value', 'text'], 'stat_years_l' => ['Stat 3 label', 'text'],

@@ -99,6 +99,24 @@ include __DIR__ . '/includes/header.php';
   </div>
 </section>
 
+<?php if (setting('founders_show') !== '0' && trim((string) setting('founders_story')) !== ''): ?>
+<section class="section founders">
+  <div class="container founders-in">
+    <figure class="founders-pic reveal">
+      <?php if (setting('founders_image')): ?><img src="<?= e(media(setting('founders_image'))) ?>" alt="<?= e(setting('founders_caption')) ?>" loading="lazy">
+      <?php else: ?><div class="founders-ph" role="img" aria-label="Founders photo coming soon"><svg viewBox="0 0 64 64" width="64" height="64" aria-hidden="true"><circle cx="32" cy="24" r="10" fill="currentColor"/><path d="M12 56c0-11 9-19 20-19s20 8 20 19z" fill="currentColor"/></svg><span>Founders' photo<br>coming soon</span></div><?php endif; ?>
+      <?php if (setting('founders_caption')): ?><figcaption><?= e(setting('founders_caption')) ?></figcaption><?php endif; ?>
+    </figure>
+    <div class="reveal">
+      <span class="eyebrow">Our beginnings</span>
+      <h2><?= e(setting('founders_title')) ?></h2>
+      <?php foreach (preg_split('/\R{2,}/', trim((string) setting('founders_story'))) as $para): ?><p><?= nl2br(e(trim($para))) ?></p><?php endforeach; ?>
+      <a class="btn btn-ghost" href="<?= url('page.php?slug=about-us') ?>">More about our school</a>
+    </div>
+  </div>
+</section>
+<?php endif; ?>
+
 <section class="section news-events">
   <div class="container ne-grid">
     <div class="reveal">
