@@ -27,6 +27,37 @@ include __DIR__ . '/includes/header.php';
   <div class="hero-dots"></div>
 </section>
 
+<section class="pillars" aria-label="Why choose us"><div class="container">
+  <div class="pillar-row">
+    <?php foreach ([
+      ['📖', 'p-gold', 'Academic Excellence', 'Strong O and A level teaching, a reading culture and e-learning.'],
+      ['✝', 'p-green', 'Faith &amp; Character', 'Moral formation rooted in wisdom, service and discipline.'],
+      ['🏠', 'p-blue', 'Boarding Community', 'A safe, caring co-educational home away from home.'],
+      ['🎓', 'p-gold', 'Bursaries &amp; Access', 'Scholarships and equal opportunities for deserving learners.'],
+      ['🌿', 'p-leaf', 'Life Beyond Class', 'Clubs, sports, health care and counselling for every learner.'],
+    ] as [$ic, $cl, $t, $d]): ?>
+    <div class="pillar reveal"><span class="pillar-ico <?= $cl ?>"><?= $ic ?></span><h3><?= $t ?></h3><p><?= $d ?></p></div>
+    <?php endforeach; ?>
+  </div>
+</div></section>
+
+<section class="section programs">
+  <div class="container">
+    <div class="section-head"><span class="eyebrow">Explore</span><h2>Explore <?= e(setting('short_name')) ?></h2><p>Quick access to the key areas of school life.</p></div>
+    <div class="prog-grid">
+      <?php foreach ([
+        ['🏛', 'pg-1', 'About &amp; Governance', 'Our story, leadership and the Board of Governors.', 'governance.php'],
+        ['📚', 'pg-2', 'Academics', 'O and A level programmes, departments and library.', 'page.php?slug=academics'],
+        ['🎓', 'pg-3', 'Admissions', 'Entry requirements, fees and how to apply.', 'admissions.php'],
+        ['⚽', 'pg-4', 'Student Life', 'Clubs, health, counselling and sport.', 'clubs.php'],
+        ['🤝', 'pg-5', 'Alumni', 'AFSSOSA leadership, events and membership.', 'alumni.php'],
+      ] as [$ic, $cl, $t, $d, $l]): ?>
+      <a class="prog reveal" href="<?= url($l) ?>"><span class="prog-img <?= $cl ?>"><i><?= $ic ?></i></span><h3><?= $t ?></h3><p><?= $d ?></p></a>
+      <?php endforeach; ?>
+    </div>
+  </div>
+</section>
+
 <section class="stats"><div class="container"><div class="stats-grid">
   <?php $pop = population(); $over = ['students' => [$pop['students'], 'Learners'], 'teachers' => [$pop['staff'], 'Dedicated Staff']];
   foreach (['students', 'teachers', 'years', 'firstgrade'] as $k):
@@ -68,48 +99,22 @@ include __DIR__ . '/includes/header.php';
   </div>
 </section>
 
-<section class="section alt">
-  <div class="container">
-    <div class="section-head"><span class="eyebrow">Explore</span><h2>Everything you need to know</h2><p>Quick access to the key areas of school life.</p></div>
-    <div class="grid g4">
-      <?php foreach ([
-        ['🏛', 'About & Governance', 'Our story, leadership and the Board of Governors.', 'governance.php'],
-        ['📚', 'Academics', 'O and A level programmes, departments and library.', 'page.php?slug=academics'],
-        ['🎓', 'Admissions', 'Entry requirements, fees and how to apply.', 'admissions.php'],
-        ['⚽', 'Student Life', 'Clubs, health, counselling and alumni.', 'clubs.php'],
-      ] as [$ic, $t, $d, $l]): ?>
-      <a class="card feature reveal" href="<?= url($l) ?>"><div class="ico"><?= $ic ?></div><h3><?= e($t) ?></h3><p><?= e($d) ?></p><span class="more">Read more →</span></a>
-      <?php endforeach; ?>
-    </div>
-  </div>
-</section>
-
-<section class="section">
-  <div class="container">
-    <div class="section-head"><span class="eyebrow">News &amp; Stories</span><h2>Latest from our community</h2></div>
-    <div class="grid g3">
-      <?php foreach ($news as $n): ?>
-      <a class="card reveal" href="<?= url('news.php?s=' . $n['slug']) ?>">
-        <div class="thumb"><?php if ($n['image']): ?><img src="<?= e(media($n['image'])) ?>" alt="" loading="lazy"><?php else: ?>AFSS<?php endif; ?></div>
-        <div class="card-body"><span class="tag"><?= e($n['category']) ?></span><h3><?= e($n['title']) ?></h3><p><?= e($n['excerpt'] ?: excerpt($n['body'])) ?></p><span class="meta"><?= fmt_date($n['published_at']) ?></span></div>
-      </a>
-      <?php endforeach; ?>
-    </div>
-    <p style="text-align:center;margin-top:2rem"><a class="btn btn-ghost" href="<?= url('news.php') ?>">All news &amp; stories</a></p>
-  </div>
-</section>
-
-<section class="section alt">
-  <div class="container split">
+<section class="section news-events">
+  <div class="container ne-grid">
     <div class="reveal">
-      <span class="eyebrow">Calendar</span><h2>Upcoming events</h2>
-      <p>Stay in step with school life — open days, examinations, parents' meetings and more.</p>
-      <a class="btn btn-primary" href="<?= url('events.php') ?>">Full events calendar</a>
+      <div class="ne-head"><h2>Latest News</h2><a href="<?= url('news.php') ?>">All news &amp; stories →</a></div>
+      <?php foreach ($news as $n): ?>
+      <a class="ne-item" href="<?= url('news.php?s=' . $n['slug']) ?>">
+        <?php if ($n['image']): ?><img src="<?= e(media($n['image'])) ?>" alt="" loading="lazy"><?php endif; ?>
+        <span><span class="tag"><?= e($n['category']) ?></span><b><?= e($n['title']) ?></b><small><?= fmt_date($n['published_at']) ?></small></span>
+      </a>
+      <?php endforeach; if (!$news): ?><p>No news published yet.</p><?php endif; ?>
     </div>
-    <div class="grid reveal" style="gap:.9rem">
+    <div class="reveal">
+      <div class="ne-head"><h2>Upcoming Events</h2><a href="<?= url('events.php') ?>">Full calendar →</a></div>
       <?php foreach ($events as $ev): ?>
-      <div class="event-row"><div class="date-box"><b><?= fmt_date($ev['start_date'], 'j') ?></b><small><?= fmt_date($ev['start_date'], 'M') ?></small></div>
-        <div><h3><?= e($ev['title']) ?></h3><span class="meta"><?= e(trim(($ev['time_text'] ?: '') . ($ev['location'] ? ' · ' . $ev['location'] : ''), ' ·')) ?></span></div></div>
+      <div class="ne-event"><div class="ne-date"><small><?= fmt_date($ev['start_date'], 'M') ?></small><b><?= fmt_date($ev['start_date'], 'j') ?></b></div>
+        <span><b><?= e($ev['title']) ?></b><small><?= e(trim(($ev['time_text'] ?: '') . ($ev['location'] ? ' · ' . $ev['location'] : ''), ' ·')) ?></small></span></div>
       <?php endforeach; if (!$events): ?><p>No upcoming events at the moment.</p><?php endif; ?>
     </div>
   </div>
@@ -124,4 +129,14 @@ include __DIR__ . '/includes/header.php';
     <?php if ($jobs): ?><a class="btn btn-outline" href="<?= url('careers.php') ?>">Work with us (<?= $jobs ?> open)</a><?php endif; ?>
   </div>
 </section>
+
+<section class="stay"><div class="container stay-in">
+  <div><h2>Stay Connected</h2><p>News, events and stories from <?= e(setting('short_name')) ?> in your inbox.</p></div>
+  <form class="stay-form" method="post" action="<?= url('subscribe.php') ?>">
+    <?= csrf_field() ?>
+    <input type="text" name="website" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+    <input type="email" name="email" placeholder="Email address" required aria-label="Email address">
+    <button type="submit">Sign up</button>
+  </form>
+</div></section>
 <?php include __DIR__ . '/includes/footer.php'; ?>
