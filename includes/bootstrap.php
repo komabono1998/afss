@@ -109,6 +109,26 @@ function page_tokens(string $html): string
 {
     return strtr($html, ['{{school_phone}}' => e(setting('phone')), '{{school_email}}' => e(setting('email')), '{{school_address}}' => e(setting('address')), '{{school_name}}' => e(setting('school_name'))]);
 }
+/** Official WhatsApp support line as a wa.me link. The setting may hold a full link or just a phone number. */
+function whatsapp_link(string $text = ''): string
+{
+    $v = trim((string) setting('whatsapp'));
+    if ($v === '') return '';
+    if (preg_match('#^https?://#i', $v)) return $v;
+    $digits = preg_replace('/\D+/', '', $v);
+    if (strlen($digits) === 10 && $digits[0] === '0') $digits = '256' . substr($digits, 1);   // local Ugandan format
+    return strlen($digits) >= 9 ? 'https://wa.me/' . $digits . ($text !== '' ? '?text=' . rawurlencode($text) : '') : '';
+}
+/** Readable number for the WhatsApp line (from the link or the number typed in admin). */
+function whatsapp_display(): string
+{
+    $v = trim((string) setting('whatsapp'));
+    if (preg_match('#wa\.me/\+?(\d+)#i', $v, $m)) $d = $m[1];
+    elseif (preg_match('#^https?://#i', $v)) return '';
+    else $d = preg_replace('/\D+/', '', $v);
+    if (strlen($d) === 12 && strpos($d, '256') === 0) return '+256 ' . substr($d, 3, 3) . ' ' . substr($d, 6, 3) . ' ' . substr($d, 9);
+    return $d !== '' ? '+' . $d : '';
+}
 function link_url(string $u): string
 {
     return preg_match('#^(https?:)?//#', $u) ? $u : url($u);

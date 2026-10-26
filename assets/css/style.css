@@ -193,6 +193,10 @@ a.card:hover{transform:translateY(-4px);box-shadow:0 14px 34px rgba(10,60,30,.18
  .stats-grid{grid-template-columns:repeat(2,1fr)}.stat{border-bottom:1px solid var(--line)}
  .section{padding:3.2rem 0}.topbar-contact{display:none}.cal td{height:62px}.cal .ev{font-size:0}.cal .ev::before{content:"•";font-size:.9rem}
 }
+.wa-fab{position:fixed;left:1.2rem;bottom:1.2rem;z-index:60;display:inline-flex;align-items:center;gap:.5rem;background:#25d366;color:#fff;padding:.7rem 1rem;border-radius:999px;font-weight:700;font-size:.9rem;box-shadow:0 6px 18px rgba(0,0,0,.25);text-decoration:none}
+.wa-fab:hover{background:#1ebe5a;color:#fff}
+@media(max-width:600px){.wa-fab span{display:none}.wa-fab{padding:.8rem}}
+@media print{.wa-fab{display:none!important}}
 @media print{.site-header,.topbar,.site-footer,.to-top,.no-print{display:none!important}}
 
 /* monthly newsletter */

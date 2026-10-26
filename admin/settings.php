@@ -18,7 +18,7 @@ $groups = [
     ],
     'Social media' => [
         'facebook' => ['Facebook URL', 'text'], 'twitter' => ['X / Twitter URL', 'text'], 'instagram' => ['Instagram URL', 'text'],
-        'youtube' => ['YouTube URL', 'text'], 'whatsapp' => ['WhatsApp link', 'text'],
+        'youtube' => ['YouTube URL', 'text'], 'whatsapp' => ['WhatsApp support line (number or wa.me link)', 'text'],
     ],
     'Home page' => [
         'announcement' => ['Announcement bar text', 'text', 'Shown at the left of the top bar. Leave empty to show only the clock and contact details.'],

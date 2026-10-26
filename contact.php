@@ -26,6 +26,7 @@ include __DIR__ . '/includes/banner.php';
     <div class="grid" style="gap:1rem;margin-bottom:1.5rem">
       <div class="card"><div class="card-body"><strong>📍 Address</strong><br><?= e(setting('address')) ?></div></div>
       <div class="card"><div class="card-body"><strong>☎ Phone</strong><br><?= e(setting('phone')) ?><?= setting('phone2') ? '<br>' . e(setting('phone2')) : '' ?></div></div>
+      <?php if (whatsapp_link()): ?><div class="card"><div class="card-body"><strong>💬 WhatsApp support</strong><br><a href="<?= e(whatsapp_link('Hello, I need some help.')) ?>" target="_blank" rel="noopener"><?= e(whatsapp_display() ?: 'Chat with us on WhatsApp') ?></a><br><small class="muted">Official school support line. Tap to start a chat.</small></div></div><?php endif; ?>
       <div class="card"><div class="card-body"><strong>✉ Email</strong><br><a href="mailto:<?= e(setting('email')) ?>"><?= e(setting('email')) ?></a></div></div>
     </div>
     <?php if (setting('map_embed')): ?><iframe title="Map" src="<?= e(setting('map_embed')) ?>" style="width:100%;height:280px;border:0;border-radius:14px" loading="lazy"></iframe><?php endif; ?>

@@ -163,7 +163,7 @@ function seed_content(PDO $db): void
         'phone2' => '+256 772 587 683',
         'email' => 'info@afss.ac.ug',
         'notify_email' => 'info@afss.ac.ug',
-        'facebook' => '', 'twitter' => '', 'instagram' => '', 'youtube' => '', 'whatsapp' => '',
+        'facebook' => '', 'twitter' => '', 'instagram' => '', 'youtube' => '', 'whatsapp' => 'https://wa.me/256772587683',
         'map_embed' => 'https://www.openstreetmap.org/export/embed.html?bbox=32.85%2C2.78%2C32.95%2C2.88&layer=mapnik',
         'primary_color' => '#0b4a24',
         'secondary_color' => '#d7141a',
@@ -323,6 +323,11 @@ function migrate(PDO $db): void
         if (!in_array($c, $am, true)) $db->exec("ALTER TABLE alumni_members ADD COLUMN $c $def");
     $db->exec('CREATE UNIQUE INDEX IF NOT EXISTS ux_alumni_member_no ON alumni_members(member_no)');
     $db->exec('CREATE TABLE IF NOT EXISTS alumni_log (id INTEGER PRIMARY KEY AUTOINCREMENT, member_id INTEGER, user_name TEXT, action TEXT, detail TEXT, created_at TEXT DEFAULT CURRENT_TIMESTAMP)');
+    if (!$db->query("SELECT 1 FROM settings WHERE k = 'migr_whatsapp'")->fetchColumn()) {   // official WhatsApp support line
+        $db->exec("INSERT OR IGNORE INTO settings (k,v) VALUES ('whatsapp','')");
+        $db->exec("UPDATE settings SET v = 'https://wa.me/256772587683' WHERE k = 'whatsapp' AND TRIM(v) = ''");
+        $db->exec("INSERT OR REPLACE INTO settings (k,v) VALUES ('migr_whatsapp','1')");
+    }
     if (!$db->query("SELECT 1 FROM settings WHERE k = 'migr_alumni_cards'")->fetchColumn()) {
         $db->exec("UPDATE alumni_members SET status = 'approved' WHERE status = 'verified'");   // old wording
         $db->exec("UPDATE alumni_members SET status = 'rejected' WHERE status = 'ignored'");
