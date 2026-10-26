@@ -4,8 +4,8 @@ require_once __DIR__ . '/_layout.php';
 // Table whitelist: label, statuses, list columns, searchable columns
 $T = [
     'admissions' => ['table' => 'admissions_apps', 'label' => 'Admission Applications', 'statuses' => ['new', 'reviewing', 'accepted', 'rejected'],
-        'cols' => ['ref' => 'Reference', 'first_name' => 'Applicant', 'entry_class' => 'Class', 'admission_type' => 'Type', 'guardian_phone' => 'Guardian phone', 'created_at' => 'Received', 'status' => 'Status'],
-        'pdf' => ['ref', 'first_name', 'last_name', 'gender', 'dob', 'level_applied', 'entry_class', 'admission_type', 'guardian_name', 'guardian_phone', 'created_at', 'status'],
+        'cols' => ['ref' => 'Reference', 'first_name' => 'Applicant', 'district' => 'District', 'entry_class' => 'Class', 'admission_type' => 'Type', 'guardian_phone' => 'Guardian phone', 'created_at' => 'Received', 'status' => 'Status'],
+        'pdf' => ['ref', 'first_name', 'last_name', 'gender', 'dob', 'district', 'level_applied', 'entry_class', 'admission_type', 'guardian_name', 'guardian_phone', 'created_at', 'status'],
         'search' => ['ref', 'first_name', 'last_name', 'guardian_name', 'guardian_phone']],
     'scholarship_apps' => ['table' => 'scholarship_apps', 'label' => 'Scholarship Applications', 'statuses' => ['new', 'reviewing', 'awarded', 'declined'],
         'cols' => ['name' => 'Learner', 'scholarship_title' => 'Award', 'current_class' => 'Class', 'phone' => 'Phone', 'created_at' => 'Received', 'status' => 'Status'],
@@ -39,6 +39,19 @@ if (is_post()) {
         q("UPDATE $table SET status = ? WHERE id = ?", [$_POST['status'], $pid]);
         flash('Status updated.');
         redirect("admin/$self&id=$pid");
+    }
+    if ($do === 'enrol' && $t === 'admissions') {
+        if (!can('students_manage')) deny();
+        $app = row('SELECT * FROM admissions_apps WHERE id = ?', [$pid]);
+        $cs = (int) ($_POST['cs'] ?? 0);
+        if (!$app) redirect("admin/$self");
+        if (val('SELECT COUNT(*) FROM students WHERE application_ref = ?', [$app['ref']])) { flash('This applicant is already in the student database.', 'err'); redirect("admin/$self&id=$pid"); }
+        if (!$cs || !can_manage_student($cs)) { flash('Choose a class/stream to place the student in.', 'err'); redirect("admin/$self&id=$pid"); }
+        [$sid, $reg] = add_student(['first_name' => $app['first_name'], 'last_name' => $app['last_name'], 'gender' => $app['gender'], 'dob' => $app['dob'] ?: null, 'district' => $app['district'] ?? '',
+            'guardian_name' => $app['guardian_name'], 'guardian_phone' => $app['guardian_phone'], 'guardian_email' => $app['guardian_email'], 'application_ref' => $app['ref']], $cs, 'admission application ' . $app['ref']);
+        q("UPDATE admissions_apps SET status = 'accepted' WHERE id = ?", [$pid]);
+        flash("{$app['first_name']} {$app['last_name']} was registered as a student: $reg.");
+        redirect("admin/students.php?a=view&id=$sid");
     }
     if ($do === 'delete') {
         if ($t === 'job_apps') {
@@ -105,6 +118,11 @@ if ($id) {
       <form method="post" action="<?= e($self) ?>" style="display:flex;gap:.5rem"><?= csrf_field() ?><input type="hidden" name="do" value="status"><input type="hidden" name="id" value="<?= $id ?>">
         <select name="status" style="padding:.4rem;border-radius:8px"><?php foreach ($C['statuses'] as $s): ?><option <?= $r['status'] === $s ? 'selected' : '' ?>><?= e($s) ?></option><?php endforeach; ?></select>
         <button class="btn">Update status</button></form>
+      <?php if ($t === 'admissions' && can('students_manage')): $enrolled = row('SELECT id,reg_no FROM students WHERE application_ref = ?', [$r['ref']]); ?>
+        <?php if ($enrolled): ?><a class="btn" href="students.php?a=view&id=<?= $enrolled['id'] ?>">Student <?= e($enrolled['reg_no']) ?> →</a>
+        <?php else: ?><form method="post" action="<?= e($self) ?>" style="display:flex;gap:.4rem"><?= csrf_field() ?><input type="hidden" name="do" value="enrol"><input type="hidden" name="id" value="<?= $id ?>">
+          <select name="cs" required style="padding:.4rem;border-radius:8px"><option value="">Enrol in class…</option><?php foreach (class_streams() as $c): ?><option value="<?= $c['id'] ?>"><?= e($c['label']) ?></option><?php endforeach; ?></select><button class="btn accent">Register as student</button></form><?php endif; ?>
+      <?php endif; ?>
       <button class="btn ghost" onclick="window.print()">Print</button>
       <form method="post" action="<?= e($self) ?>" data-confirm="Delete this record permanently?"><?= csrf_field() ?><input type="hidden" name="do" value="delete"><input type="hidden" name="id" value="<?= $id ?>"><button class="btn danger">Delete</button></form>
     </div></div>

@@ -26,6 +26,7 @@
         <li><a href="<?= url('events.php') ?>">Events &amp; Calendar</a></li>
         <li><a href="<?= url('careers.php') ?>">Careers</a></li>
         <li><a href="<?= url('contact.php') ?>">Contact</a></li>
+        <li><a href="<?= url('whistleblower.php') ?>">Report a Concern</a></li>
       </ul>
     </div>
     <div>

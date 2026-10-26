@@ -11,7 +11,7 @@ const ADMIN_MODULES = [
     'jobs' => 'Job vacancies', 'job_apps' => 'Job applications',
     'admissions' => 'Admission applications', 'scholarships' => 'Scholarships & bursaries', 'scholarship_apps' => 'Scholarship applications',
     'messages' => 'Contact messages', 'newsletter' => 'Subscribers & email',
-    'population' => 'School population', 'alumni_events' => 'Alumni activities & events', 'alumni_members' => 'Alumni members', 'alumni_page' => 'Alumni page text', 'settings' => 'Site settings', 'users' => 'Admin users',
+    'population' => 'School population', 'alumni_events' => 'Alumni activities & events', 'alumni_members' => 'Alumni members', 'alumni_page' => 'Alumni page text', 'students' => 'Student database (view)', 'students_manage' => 'Student database (edit & upload)', 'classes' => 'Classes & streams', 'students_api' => 'Student data API', 'whistleblower' => 'Whistle-blower reports', 'settings' => 'Site settings', 'users' => 'Admin users',
 ];
 
 function roles(): array
@@ -30,26 +30,31 @@ function roles(): array
         'deputy_academics' => [
             'label' => 'Deputy Headteacher (Academics)',
             'desc' => 'Academic and About pages, news, events, photo albums, admissions and scholarship applications.',
-            'modules' => ['pages', 'news', 'events', 'albums', 'admissions', 'scholarships', 'scholarship_apps', 'population'],
+            'modules' => ['pages', 'news', 'events', 'albums', 'admissions', 'scholarships', 'scholarship_apps', 'population', 'students', 'students_manage', 'classes'],
             'scope' => ['pages' => ['menu_group', ['academics', 'about']]],
         ],
         'deputy_admin' => [
             'label' => 'Deputy Headteacher (Administration)',
             'desc' => 'Management profiles, job vacancies and applications, contact messages, events, news and student-life pages.',
-            'modules' => ['pages', 'news', 'events', 'albums', 'team', 'jobs', 'job_apps', 'messages', 'admissions', 'population', 'alumni_events', 'alumni_members', 'alumni_page'],
+            'modules' => ['pages', 'news', 'events', 'albums', 'team', 'jobs', 'job_apps', 'messages', 'admissions', 'population', 'alumni_events', 'alumni_members', 'alumni_page', 'students', 'students_manage', 'classes'],
             'scope' => ['pages' => ['menu_group', ['about', 'students', 'none']]],
         ],
         'bursar' => [
             'label' => 'Bursar',
             'desc' => 'Fees and admissions pages, scholarships and bursaries, and their applications.',
-            'modules' => ['pages', 'scholarships', 'scholarship_apps', 'admissions'],
+            'modules' => ['pages', 'scholarships', 'scholarship_apps', 'admissions', 'students'],
             'scope' => ['pages' => ['menu_group', ['admissions']]],
         ],
         'sports_tutor' => [
             'label' => 'Sports Tutor',
             'desc' => 'Sports news, sports events and sports photo albums only.',
-            'modules' => ['news', 'events', 'albums'],
+            'modules' => ['news', 'events', 'albums', 'students'],
             'scope' => ['news' => ['category', ['Sports']], 'events' => ['category', ['Sports']], 'albums' => ['category', 'sport']],
+        ],
+        'class_teacher' => [
+            'label' => 'Class Teacher',
+            'desc' => 'Uploads and updates the student records of the class and streams assigned to them, and can look up any student in the school database.',
+            'modules' => ['students', 'students_manage'],
         ],
         'alumni_coordinator' => [
             'label' => 'Alumni Coordinator',
@@ -60,7 +65,7 @@ function roles(): array
         'newsletter_editor' => [
             'label' => 'Newsletter Editor',
             'desc' => 'Monthly newsletter issues, subscriber emails, news and photo albums.',
-            'modules' => ['issues', 'newsletter', 'news', 'albums'],
+            'modules' => ['issues', 'newsletter', 'news', 'albums', 'students'],
         ],
     ];
 }

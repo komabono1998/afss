@@ -22,6 +22,9 @@ if (session_status() === PHP_SESSION_NONE) {
 require_once __DIR__ . '/schema.php';
 require_once __DIR__ . '/roles.php';
 require_once __DIR__ . '/export.php';
+require_once __DIR__ . '/districts.php';
+require_once __DIR__ . '/import.php';
+require_once __DIR__ . '/students.php';
 
 function db(): PDO
 {
@@ -161,6 +164,8 @@ function handle_upload(string $field, array $types, string $dir, string $prefix,
     $okMimes = [$types[$ext]];
     if ($ext === 'doc') $okMimes[] = 'application/CDFV2';
     if ($ext === 'docx') $okMimes[] = 'application/zip';
+    if ($ext === 'xlsx') $okMimes[] = 'application/zip';
+    if ($ext === 'csv') array_push($okMimes, 'text/plain', 'application/csv', 'application/vnd.ms-excel', 'text/x-csv');
     if (!in_array($mime, $okMimes, true) && !($ext === 'doc' && str_contains($mime, 'ms'))) {
         throw new RuntimeException('File content does not match its extension.');
     }
@@ -212,10 +217,21 @@ function population(): array
     $n = fn($k) => max(0, (int) preg_replace('/\D/', '', setting($k)));
     $boys = $n('pop_boys'); $girls = $n('pop_girls');
     $students = $n('pop_students') ?: $boys + $girls;
+    $o = $n('pop_o_level'); $a = $n('pop_a_level');
+    try {
+        $live = (int) val("SELECT COUNT(*) FROM students WHERE status = 'present'");
+        if ($live > 0) {   // real records beat typed-in figures
+            $students = $live;
+            $boys = (int) val("SELECT COUNT(*) FROM students WHERE status = 'present' AND gender = 'Male'");
+            $girls = (int) val("SELECT COUNT(*) FROM students WHERE status = 'present' AND gender = 'Female'");
+            $o = (int) val("SELECT COUNT(*) FROM students s JOIN class_streams c ON c.id = s.class_stream_id WHERE s.status = 'present' AND c.level = 'O Level'");
+            $a = (int) val("SELECT COUNT(*) FROM students s JOIN class_streams c ON c.id = s.class_stream_id WHERE s.status = 'present' AND c.level = 'A Level'");
+        }
+    } catch (Throwable $e) { /* table not ready yet */ }
     $teaching = $n('pop_teaching'); $support = $n('pop_support');
     return [
         'students' => $students, 'boys' => $boys, 'girls' => $girls,
-        'o_level' => $n('pop_o_level'), 'a_level' => $n('pop_a_level'), 'boarding' => $n('pop_boarding'), 'day' => $n('pop_day'),
+        'o_level' => $o, 'a_level' => $a, 'boarding' => $n('pop_boarding'), 'day' => $n('pop_day'),
         'teaching' => $teaching, 'support' => $support, 'staff' => $teaching + $support, 'updated' => setting('pop_updated'),
     ];
 }

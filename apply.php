@@ -10,7 +10,7 @@ if (is_post()) {
     if (!in_array(post('admission_type'), ['New admission', 'Transfer'], true)) $errors[] = 'Please choose New admission or Transfer.';
     if ($isTransfer && post('transfer_reason') === '') $errors[] = 'Please give the reason for transfer.';
     $req = ['first_name' => 'First name', 'last_name' => 'Last name', 'gender' => 'Gender', 'dob' => 'Date of birth',
-        'level_applied' => 'Level', 'entry_class' => 'Entry class', 'guardian_name' => 'Parent/guardian name', 'guardian_phone' => 'Parent/guardian phone'];
+        'level_applied' => 'Level', 'entry_class' => 'Entry class', 'district' => 'District', 'guardian_name' => 'Parent/guardian name', 'guardian_phone' => 'Parent/guardian phone'];
     foreach ($req as $k => $l) if (post($k) === '') $errors[] = "$l is required.";
     if (post('guardian_email') !== '' && !filter_var(post('guardian_email'), FILTER_VALIDATE_EMAIL)) $errors[] = 'Guardian email is not valid.';
     if (post('dob') !== '' && !strtotime(post('dob'))) $errors[] = 'Date of birth is not valid.';
@@ -29,7 +29,7 @@ if (is_post()) {
     if (!$errors) {
         $ref = 'AFSS-' . date('y') . '-' . strtoupper(bin2hex(random_bytes(3)));
         $cols = ['first_name', 'last_name', 'gender', 'dob', 'nationality', 'level_applied', 'entry_class', 'combination', 'previous_school',
-            'index_number', 'aggregates', 'boarding', 'guardian_name', 'guardian_relation', 'guardian_phone', 'guardian_email', 'address', 'notes'];
+            'index_number', 'aggregates', 'boarding', 'guardian_name', 'guardian_relation', 'guardian_phone', 'guardian_email', 'address', 'notes', 'district'];
         $vals = array_map('post', $cols);
         $cols = array_merge($cols, ['admission_type', 'transfer_reason', 'results_file', 'recommendation_file']);
         $vals = array_merge($vals, [post('admission_type'), $isTransfer ? post('transfer_reason') : '', $results, $recommendation]);
@@ -66,6 +66,7 @@ $sel = fn($k, $opts) => implode('', array_map(fn($o) => '<option' . (($_POST[$k]
         <div class="field"><label class="req">Last name</label><input name="last_name" value="<?= old('last_name') ?>" required></div>
         <div class="field"><label class="req">Gender</label><select name="gender"><option value="">Select…</option><?= $sel('gender', ['Female', 'Male']) ?></select></div>
         <div class="field"><label class="req">Date of birth</label><input type="date" name="dob" value="<?= old('dob') ?>" required></div>
+        <div class="field"><label class="req">District</label><select name="district" required><?= district_options(post('district')) ?></select></div>
         <div class="field"><label>Nationality</label><input name="nationality" value="<?= old('nationality', 'Ugandan') ?>"></div>
         <div class="field"><label>Boarding / Day</label><select name="boarding"><?= $sel('boarding', ['Boarding', 'Day']) ?></select></div>
       </div>

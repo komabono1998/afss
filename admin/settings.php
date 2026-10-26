@@ -27,6 +27,10 @@ $groups = [
         'stat_years' => ['Stat 3 value', 'text'], 'stat_years_l' => ['Stat 3 label', 'text'],
         'stat_firstgrade' => ['Stat 4 value', 'text'], 'stat_firstgrade_l' => ['Stat 4 label', 'text'],
     ],
+    'Whistle-blower page' => [
+        'whistle_intro' => ['Page introduction', 'textarea', 'Shown at the top of the public Report a Concern page.'],
+        'whistle_categories' => ['Concern types (one per line)', 'textarea', 'These fill the dropdown. An “Other (type your own)” option is always added automatically.'],
+    ],
     'Photo gallery' => [
         'gallery_categories' => ['Event / function categories', 'textarea', 'One per line. These appear when creating albums and as filters on the gallery page.'],
     ],

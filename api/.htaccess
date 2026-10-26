@@ -1,0 +1,8 @@
+Options -Indexes
+# Apache drops the Authorization header unless it is passed on explicitly
+SetEnvIf Authorization "(.+)" HTTP_AUTHORIZATION=$1
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteCond %{HTTP:Authorization} .
+RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+</IfModule>

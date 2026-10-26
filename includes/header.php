@@ -75,7 +75,7 @@ $logo = setting('logo') ?: 'assets/img/logo.webp';
         <?= nav_item('News', url('news.php'), [['News & Stories', url('news.php')], ['Monthly Newsletter', url('newsletters.php')]]) ?>
         <?= nav_item('Events', url('events.php')) ?>
         <?= nav_item('Careers', url('careers.php')) ?>
-        <?= nav_item('Contact', url('contact.php')) ?>
+        <?= nav_item('Contact', url('contact.php'), [['Contact Us', url('contact.php')], ['Report a Concern (confidential)', url('whistleblower.php')]]) ?>
       </ul>
       <a class="btn btn-accent nav-cta" href="<?= url('apply.php') ?>">Apply Now</a>
     </nav>

@@ -10,10 +10,11 @@ function admin_nav(): array
             ['crud.php?e=slides', '🖼 Hero Slides'], ['crud.php?e=pages', '📄 Pages'], ['crud.php?e=news', '📰 News & Stories'], ['issues.php', '🗞 Monthly Newsletter'],
             ['crud.php?e=events', '📅 Events'], ['albums.php', '📷 Photo Albums'], ['crud.php?e=team', '🏛 Management Profiles'],
         ],
+        'Students' => [['students.php', '🎓 Student Database'], ['classes.php', '🏫 Classes & Streams'], ['student_api.php', '🔌 Student Data API']],
         'Recruitment' => [['crud.php?e=jobs', '💼 Job Vacancies'], ['inbox.php?t=job_apps', '📨 Job Applications']],
         'Admissions' => [['inbox.php?t=admissions', '🎓 Applications'], ['crud.php?e=scholarships', '🏅 Scholarships & Bursaries'], ['inbox.php?t=scholarship_apps', '📝 Scholarship Applications']],
         'Alumni' => [['crud.php?e=alumni_events', '🎉 Alumni Events'], ['inbox.php?t=alumni_members', '🎓 Alumni Members'], ['alumni_page.php', '📝 Alumni Page Text']],
-        'Communication' => [['inbox.php?t=messages', '✉ Messages'], ['newsletter.php', '📬 Subscribers & Email']],
+        'Communication' => [['inbox.php?t=messages', '✉ Messages'], ['whistle.php', '🕊 Whistle-blower Reports'], ['newsletter.php', '📬 Subscribers & Email']],
         'System' => [['settings.php', '⚙ Site Settings'], ['users.php', '👤 Admin Users'], ['account.php', '🔑 My Account']],
     ];
 }
@@ -22,7 +23,7 @@ function nav_module(string $href): ?string
 {
     if (preg_match('/^crud\.php\?e=(\w+)/', $href, $m)) return $m[1];
     if (preg_match('/^inbox\.php\?t=(\w+)/', $href, $m)) return $m[1];
-    return ['alumni_page.php' => 'alumni_page', 'population.php' => 'population', 'issues.php' => 'issues', 'albums.php' => 'albums', 'newsletter.php' => 'newsletter', 'settings.php' => 'settings', 'users.php' => 'users'][$href] ?? null;
+    return ['students.php' => 'students', 'classes.php' => 'classes', 'student_api.php' => 'students_api', 'whistle.php' => 'whistleblower', 'alumni_page.php' => 'alumni_page', 'population.php' => 'population', 'issues.php' => 'issues', 'albums.php' => 'albums', 'newsletter.php' => 'newsletter', 'settings.php' => 'settings', 'users.php' => 'users'][$href] ?? null;
 }
 function badge_counts(): array
 {
@@ -30,6 +31,7 @@ function badge_counts(): array
         'inbox.php?t=admissions' => (int) val("SELECT COUNT(*) FROM admissions_apps WHERE status='new'"),
         'inbox.php?t=job_apps' => (int) val("SELECT COUNT(*) FROM job_apps WHERE status='new'"),
         'inbox.php?t=messages' => (int) val("SELECT COUNT(*) FROM messages WHERE status='new'"),
+        'whistle.php' => (int) val("SELECT COUNT(*) FROM whistle_reports WHERE status='new'"),
         'inbox.php?t=alumni_members' => (int) val("SELECT COUNT(*) FROM alumni_members WHERE status='new'"),
         'inbox.php?t=scholarship_apps' => (int) val("SELECT COUNT(*) FROM scholarship_apps WHERE status='new'"),
     ];

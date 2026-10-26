@@ -65,6 +65,26 @@ function install_schema(PDO $db): void
         location TEXT, message TEXT, newsletter INTEGER DEFAULT 0, token TEXT, status TEXT DEFAULT 'new', created_at TEXT DEFAULT CURRENT_TIMESTAMP,
         profession TEXT, workplace TEXT, photo TEXT, proof_file TEXT, consent INTEGER DEFAULT 0, consent_at TEXT
     );
+    CREATE TABLE class_streams (
+        id INTEGER PRIMARY KEY AUTOINCREMENT, class_name TEXT NOT NULL, stream_name TEXT DEFAULT '', level TEXT DEFAULT 'O Level',
+        teacher_id INTEGER, sort INTEGER DEFAULT 0, active INTEGER DEFAULT 1
+    );
+    CREATE TABLE students (
+        id INTEGER PRIMARY KEY AUTOINCREMENT, reg_no TEXT UNIQUE NOT NULL, reg_year INTEGER, reg_seq INTEGER,
+        first_name TEXT NOT NULL, last_name TEXT, other_names TEXT, gender TEXT, dob TEXT, district TEXT,
+        class_stream_id INTEGER, guardian_name TEXT, guardian_phone TEXT, guardian_email TEXT, external_id TEXT,
+        status TEXT DEFAULT 'present', status_reason TEXT, status_date TEXT, notes TEXT, application_ref TEXT,
+        created_by INTEGER, created_at TEXT DEFAULT CURRENT_TIMESTAMP, updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE student_log (
+        id INTEGER PRIMARY KEY AUTOINCREMENT, student_id INTEGER, user_name TEXT, action TEXT, detail TEXT, created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE whistle_reports (
+        id INTEGER PRIMARY KEY AUTOINCREMENT, ref TEXT UNIQUE, secret_hash TEXT, category TEXT, category_other TEXT, details TEXT,
+        incident_date TEXT, location TEXT, people_involved TEXT, anonymous INTEGER DEFAULT 1, reporter_name TEXT, reporter_contact TEXT,
+        relationship TEXT, attachment TEXT, status TEXT DEFAULT 'new', response TEXT, notes TEXT, followups TEXT,
+        created_at TEXT DEFAULT CURRENT_TIMESTAMP, updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
     CREATE TABLE albums (
         id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL, slug TEXT UNIQUE NOT NULL, category TEXT DEFAULT 'General',
         event_date TEXT, term TEXT, description TEXT, cover TEXT, active INTEGER DEFAULT 1
@@ -77,7 +97,7 @@ function install_schema(PDO $db): void
         id INTEGER PRIMARY KEY AUTOINCREMENT, ref TEXT, first_name TEXT, last_name TEXT, gender TEXT, dob TEXT,
         nationality TEXT, level_applied TEXT, entry_class TEXT, combination TEXT, previous_school TEXT,
         index_number TEXT, aggregates TEXT, boarding TEXT, guardian_name TEXT, guardian_relation TEXT,
-        guardian_phone TEXT, guardian_email TEXT, address TEXT, notes TEXT,
+        guardian_phone TEXT, guardian_email TEXT, address TEXT, notes TEXT, district TEXT,
         admission_type TEXT, transfer_reason TEXT, results_file TEXT, recommendation_file TEXT,
         status TEXT DEFAULT 'new', created_at TEXT DEFAULT CURRENT_TIMESTAMP
     );
@@ -137,6 +157,9 @@ Religious Celebrations
 Academic Events
 Clubs & Societies
 Campus Life",
+        'reg_prefix' => 'AFSS',
+        'api_enabled' => '0', 'api_key_hash' => '', 'api_key_hint' => '', 'api_guardian' => '0',
+        'whistle_intro' => whistle_default('whistle_intro'), 'whistle_categories' => whistle_default('whistle_categories'),
         'footer_text' => 'Archbishop Flynn Secondary School — Sapientia et Servitium.',
     ];
     foreach ($defaults as $k => $v) $set->execute([$k, $v]);
@@ -272,6 +295,13 @@ function migrate(PDO $db): void
         if (in_array($pc, [false, '#0b6b2e'], true)) $db->exec("INSERT OR REPLACE INTO settings (k,v) VALUES ('primary_color','#0b4a24')");
         $db->exec("INSERT OR REPLACE INTO settings (k,v) VALUES ('migr_theme2','1')");
     }
+    $db->exec("CREATE TABLE IF NOT EXISTS class_streams ( id INTEGER PRIMARY KEY AUTOINCREMENT, class_name TEXT NOT NULL, stream_name TEXT DEFAULT '', level TEXT DEFAULT 'O Level', teacher_id INTEGER, sort INTEGER DEFAULT 0, active INTEGER DEFAULT 1 ); CREATE TABLE IF NOT EXISTS students ( id INTEGER PRIMARY KEY AUTOINCREMENT, reg_no TEXT UNIQUE NOT NULL, reg_year INTEGER, reg_seq INTEGER, first_name TEXT NOT NULL, last_name TEXT, other_names TEXT, gender TEXT, dob TEXT, district TEXT, class_stream_id INTEGER, guardian_name TEXT, guardian_phone TEXT, guardian_email TEXT, external_id TEXT, status TEXT DEFAULT 'present', status_reason TEXT, status_date TEXT, notes TEXT, application_ref TEXT, created_by INTEGER, created_at TEXT DEFAULT CURRENT_TIMESTAMP, updated_at TEXT DEFAULT CURRENT_TIMESTAMP ); CREATE TABLE IF NOT EXISTS student_log ( id INTEGER PRIMARY KEY AUTOINCREMENT, student_id INTEGER, user_name TEXT, action TEXT, detail TEXT, created_at TEXT DEFAULT CURRENT_TIMESTAMP ); CREATE TABLE IF NOT EXISTS whistle_reports ( id INTEGER PRIMARY KEY AUTOINCREMENT, ref TEXT UNIQUE, secret_hash TEXT, category TEXT, category_other TEXT, details TEXT, incident_date TEXT, location TEXT, people_involved TEXT, anonymous INTEGER DEFAULT 1, reporter_name TEXT, reporter_contact TEXT, relationship TEXT, attachment TEXT, status TEXT DEFAULT 'new', response TEXT, notes TEXT, created_at TEXT DEFAULT CURRENT_TIMESTAMP, updated_at TEXT DEFAULT CURRENT_TIMESTAMP );");
+    $adc = array_column($db->query('PRAGMA table_info(admissions_apps)')->fetchAll(PDO::FETCH_ASSOC), 'name');
+    if (!in_array('district', $adc, true)) $db->exec('ALTER TABLE admissions_apps ADD COLUMN district TEXT');
+    $wbc = array_column($db->query('PRAGMA table_info(whistle_reports)')->fetchAll(PDO::FETCH_ASSOC), 'name');
+    if (!in_array('followups', $wbc, true)) $db->exec('ALTER TABLE whistle_reports ADD COLUMN followups TEXT');
+    $ins2 = $db->prepare('INSERT OR IGNORE INTO settings (k,v) VALUES (?,?)');
+    foreach (['reg_prefix' => 'AFSS', 'api_enabled' => '0', 'api_key_hash' => '', 'api_key_hint' => '', 'api_guardian' => '0', 'whistle_intro' => whistle_default('whistle_intro'), 'whistle_categories' => whistle_default('whistle_categories')] as $k2 => $v2) $ins2->execute([$k2, $v2]);
     $ac = array_column($db->query('PRAGMA table_info(admissions_apps)')->fetchAll(PDO::FETCH_ASSOC), 'name');
     foreach (['admission_type', 'transfer_reason', 'results_file', 'recommendation_file'] as $c) if (!in_array($c, $ac, true)) $db->exec("ALTER TABLE admissions_apps ADD COLUMN $c TEXT");
     $done = $db->query("SELECT 1 FROM settings WHERE k = 'migr_pta'")->fetchColumn();
@@ -340,4 +370,12 @@ function seed_alumni(PDO $db, bool $withSettings = false): void
         $e->execute(['Annual General Meeting (AGM)', 'agm', 'AGM', 'Members meet to review the year, elect leaders and plan ahead.', '<p>Alumni gather for the Annual General Meeting to receive reports, elect the Executive Committee and decide the association\'s priorities.</p>' . $note, 'All paid-up and registered alumni are welcome.', 2]);
         $e->execute(['Alumni Dinner', 'alumni-dinner', 'Dinner', 'An evening of reunion, awards and fundraising for school projects.', '<p>The Alumni Dinner is a night to reconnect, celebrate achievements and raise support for the school and its learners.</p>' . $note, 'Ask the Treasurer or Publicity Secretary about tickets.', 3]);
     }
+}
+
+function whistle_default(string $key): string
+{
+    return [
+        'whistle_intro' => 'Parents, students, staff, alumni and community members can report any concern about the safety, welfare or integrity of our school. You may give your name or stay completely anonymous. Every report is treated seriously and in confidence.',
+        'whistle_categories' => "Corruption or misuse of school funds\nBribery for admissions, marks or bursaries\nFee or bursary irregularities\nBullying or harassment\nSexual abuse or exploitation\nChild protection concern\nCorporal punishment or physical abuse\nTeacher misconduct or absenteeism\nExamination malpractice\nDrug or substance abuse\nDiscrimination or exclusion\nUnsafe buildings or facilities\nPoor sanitation, health or feeding",
+    ][$key] ?? '';
 }
