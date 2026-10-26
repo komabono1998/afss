@@ -219,7 +219,7 @@ Campus Life",
         ['library-services', 'Library Services', 'Books, e-resources and reading culture.', '<p>The AFSS library supports learning with textbooks, readers and e-resources, and promotes a strong reading culture across all class levels.</p>', 'academics', 4],
         ['e-learning', 'e-Learning Platform', 'Learn anywhere with our e-campus.', '<p>The AFSS e-campus extends learning beyond the classroom. Details to be updated from the admin panel.</p>', 'academics', 5],
         ['admission-requirements', 'Minimum Entry Requirements', 'What you need to join AFSS.', '<h2>S.1 Entry</h2><p>Primary Leaving Examination (PLE) results slip and completed application form.</p><h2>S.5 Entry</h2><p>UCE results slip showing the minimum requirements for the chosen combination.</p><h2>Transfers</h2><p>Latest report card, transfer letter and a recommendation from the previous school.</p><p><em>Please confirm exact requirements with the school office; this text can be edited in the admin panel.</em></p>', 'admissions', 1],
-        ['tuition-and-fees', 'Tuition and Fees Payment', 'Fees structure and payment options.', '<p>The fees structure and payment channels are published here. Bursaries are available for academic improvement, sports, discipline, disability and orphans.</p><p>Contact the school bursar for the current fees structure.</p>', 'admissions', 2],
+        ['tuition-and-fees', 'Tuition and Fees Payment', 'Fees structure and payment options.', fees_page_body(), 'admissions', 2],
         ['how-to-apply', 'How to Apply', 'Simple steps to apply.', '<ol><li>Complete the online application form.</li><li>Submit copies of your results slip and a recent passport photograph at the school office.</li><li>Receive your admission decision by phone or email.</li><li>Report on the stated date with the required items.</li></ol>', 'admissions', 3],
         ['clubs', 'School Clubs and Societies', 'Prefects, Interact, Debating, Patriotism, Writers and Scouting.', '<ul><li>Prefects Body</li><li>Interact Club</li><li>Debating Club</li><li>Patriotism Club</li><li>Writers Club</li><li>Scouting</li></ul>', 'students', 1],
         ['health-services', 'Health Services', 'Caring for learners’ wellbeing.', '<p>The school health unit provides first aid and basic care, and refers learners to nearby health facilities when necessary.</p>', 'students', 2],
@@ -366,6 +366,11 @@ function migrate(PDO $db): void
     $wi = $db->prepare('INSERT OR IGNORE INTO settings (k,v) VALUES (?,?)');
     foreach (welfare_settings() as $wk => $wv) $wi->execute([$wk, $wv]);
         $db->exec("INSERT OR REPLACE INTO settings (k,v) VALUES ('migr_giving','1')");
+    }
+    if (!$db->query("SELECT 1 FROM settings WHERE k = 'migr_fees_page'")->fetchColumn()) {
+        $db->prepare('UPDATE pages SET body = ? WHERE slug = ? AND body = ?')->execute([fees_page_body(), 'tuition-and-fees',
+            '<p>The fees structure and payment channels are published here. Bursaries are available for academic improvement, sports, discipline, disability and orphans.</p><p>Contact the school bursar for the current fees structure.</p>']);
+        $db->exec("INSERT OR REPLACE INTO settings (k,v) VALUES ('migr_fees_page','1')");
     }
     $ac = array_column($db->query('PRAGMA table_info(admissions_apps)')->fetchAll(PDO::FETCH_ASSOC), 'name');
     foreach (['admission_type', 'transfer_reason', 'results_file', 'recommendation_file'] as $c) if (!in_array($c, $ac, true)) $db->exec("ALTER TABLE admissions_apps ADD COLUMN $c TEXT");
@@ -542,4 +547,57 @@ function seed_welfare(PDO $db): void
     $new = ['clubs' => $s['clubs_intro'], 'health-services' => $s['health_intro'], 'counselling' => $s['counselling_intro']];
     $up = $db->prepare('UPDATE pages SET body = ? WHERE slug = ? AND body = ?');
     foreach ($old as $slug => [$body]) $up->execute(['<p>' . htmlspecialchars($new[$slug], ENT_QUOTES, 'UTF-8') . '</p>', $slug, $body]);
+}
+
+/**
+ * Starter content for the Tuition and Fees Payment page. It contains NO fee amounts, because only the school knows them:
+ * the table says "Ask the Bursar" until someone replaces it (Admin → Pages). {{school_phone}}, {{school_email}} and
+ * {{school_address}} are filled in from Site Settings when the page is shown.
+ */
+function fees_page_body(): string
+{
+    return <<<'HTML'
+<p>Fees are paid <strong>each term</strong>. This page explains what to expect, how to pay safely and where to get help if paying is difficult. The Bursar confirms the exact amounts for every class at the start of the year.</p>
+
+<h2>Fees at a glance</h2>
+<!-- Admin: replace "Ask the Bursar" with the current figures, for example UGX 1,200,000 -->
+<table>
+  <thead><tr><th>Learner</th><th>Day scholar (per term)</th><th>Boarder (per term)</th></tr></thead>
+  <tbody>
+    <tr><td>O Level (Senior 1 – Senior 4)</td><td>Ask the Bursar</td><td>Ask the Bursar</td></tr>
+    <tr><td>A Level (Senior 5 – Senior 6)</td><td>Ask the Bursar</td><td>Ask the Bursar</td></tr>
+  </tbody>
+</table>
+<p class="meta">For the full, current fees statement call <strong>{{school_phone}}</strong> or email <a href="mailto:{{school_email}}">{{school_email}}</a>.</p>
+
+<h2>What fees usually cover</h2>
+<ul class="checks">
+  <li>Tuition and teaching</li>
+  <li>Boarding and meals (for boarders)</li>
+  <li>Library, e-learning and learning resources</li>
+  <li>First aid and the school health unit</li>
+  <li>Clubs, sports and other co-curricular activities</li>
+</ul>
+<p>Uniform, scholastic materials and personal items are listed when your child reports for the term. Please ask the Bursar if you are unsure whether something is included.</p>
+
+<h2>How to pay</h2>
+<ol>
+  <li><strong>Get the fees statement</strong> for your child's class from the Bursar or the school office.</li>
+  <li><strong>Pay into the official school account</strong> by bank deposit or transfer, or by mobile money, using the payment details the Bursar gives you.</li>
+  <li><strong>Write the learner's full name, class and registration number</strong> as the payment reference, so we can match your payment quickly.</li>
+  <li><strong>Keep your proof of payment</strong> and show or send it to the Bursar to receive an official receipt.</li>
+</ol>
+<div class="notice">🔒 <strong>Pay safely.</strong> Pay only into the school's official accounts and codes confirmed by the Bursar. The school will never ask you to send fees to a personal number. If in doubt, call <strong>{{school_phone}}</strong> before you pay.</div>
+
+<h2>Finding it hard to pay?</h2>
+<p>No capable learner should miss out on education because of money. If paying fees on time is difficult, please speak to the Bursar early and in confidence so that a plan can be agreed, including paying in instalments where possible.</p>
+<p>Bursaries are available for <strong>academic improvement, sports, good conduct, disability and orphans</strong>.</p>
+<p><a class="btn btn-primary" href="scholarships.php">See bursaries and how to apply</a> <a class="btn btn-ghost" href="contact.php">Contact the Bursar</a></p>
+
+<h2>Frequently asked questions</h2>
+<details><summary>Can I pay in instalments?</summary><p>Please speak to the Bursar before the term opens so that a plan can be agreed and recorded.</p></details>
+<details><summary>How do I get a receipt?</summary><p>Bring or send your proof of payment (a bank slip or mobile-money confirmation) to the Bursar's office, and an official receipt will be issued.</p></details>
+<details><summary>Which registration number should I use?</summary><p>Use the learner's school registration number if you have one. New applicants can use their application reference until a registration number is issued.</p></details>
+<details><summary>Who do I contact about a payment problem?</summary><p>Call <strong>{{school_phone}}</strong>, email <a href="mailto:{{school_email}}">{{school_email}}</a> or visit the school office: {{school_address}}.</p></details>
+HTML;
 }

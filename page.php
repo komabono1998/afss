@@ -15,7 +15,7 @@ include __DIR__ . '/includes/banner.php';
 <div class="container content-wrap">
   <article class="prose">
     <?php if ($p['image']): ?><img src="<?= e(media($p['image'])) ?>" alt="<?= e($p['title']) ?>"><?php endif; ?>
-    <?= $p['body'] /* trusted admin-authored HTML */ ?>
+    <?= page_tokens($p['body']) /* trusted admin-authored HTML */ ?>
   </article>
   <aside class="sidebar">
     <?php if (count($siblings) > 1): ?>

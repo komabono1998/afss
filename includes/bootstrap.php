@@ -104,6 +104,11 @@ function unique_slug(string $table, string $title, int $ignoreId = 0): string
     while (val("SELECT COUNT(*) FROM $table WHERE slug = ? AND id != ?", [$slug, $ignoreId])) $slug = $base . '-' . $i++;
     return $slug;
 }
+/** Replace {{school_phone}}, {{school_email}}, {{school_address}}, {{school_name}} in admin-written page text with the current Site Settings. */
+function page_tokens(string $html): string
+{
+    return strtr($html, ['{{school_phone}}' => e(setting('phone')), '{{school_email}}' => e(setting('email')), '{{school_address}}' => e(setting('address')), '{{school_name}}' => e(setting('school_name'))]);
+}
 function link_url(string $u): string
 {
     return preg_match('#^(https?:)?//#', $u) ? $u : url($u);

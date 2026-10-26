@@ -25,7 +25,7 @@ include __DIR__ . '/includes/banner.php';
 <?php if ($tabs): ?>
 <section class="section alt"><div class="container" data-tabs>
   <div class="tabs"><?php foreach ($tabs as $t): ?><button type="button"><?= e($t['title']) ?></button><?php endforeach; ?></div>
-  <?php foreach ($tabs as $t): ?><div class="tabpane prose wide"><?= $t['body'] ?></div><?php endforeach; ?>
+  <?php foreach ($tabs as $t): ?><div class="tabpane prose wide"><?= page_tokens($t['body']) ?></div><?php endforeach; ?>
 </div></section>
 <?php endif; ?>
 <?php include __DIR__ . '/includes/footer.php'; ?>
