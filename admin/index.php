@@ -44,6 +44,7 @@ $attn = [
     ['📝', 'Admission applications', 'admissions_apps', 'inbox.php?t=admissions', 'admissions'],
     ['💼', 'Job applications', 'job_apps', 'inbox.php?t=job_apps', 'job_apps'],
     ['🏅', 'Scholarship applications', 'scholarship_apps', 'inbox.php?t=scholarship_apps', 'scholarship_apps'],
+    ['🎓', 'Alumni sign-ups', 'alumni_members', 'inbox.php?t=alumni_members', 'alumni_members'],
     ['✉', 'Messages', 'messages', 'inbox.php?t=messages', 'messages'],
 ];
 $attn = array_filter($attn, fn($a) => can($a[4]));
@@ -59,7 +60,7 @@ if ($attn): ?>
 <?php
 $tiles = [
     ['📰', 'Post news', 'crud.php?e=news&a=new', 'news'], ['📅', 'Add event', 'crud.php?e=events&a=new', 'events'],
-    ['📷', 'New photo album', 'albums.php?a=new', 'albums'], ['🗞', 'New newsletter issue', 'issues.php?a=new', 'issues'],
+    ['📷', 'New photo album', 'albums.php?a=new', 'albums'], ['🎉', 'Add alumni event', 'crud.php?e=alumni_events&a=new', 'alumni_events'], ['🗞', 'New newsletter issue', 'issues.php?a=new', 'issues'],
     ['💼', 'Post vacancy', 'crud.php?e=jobs&a=new', 'jobs'], ['🏅', 'Add scholarship', 'crud.php?e=scholarships&a=new', 'scholarships'],
     ['🎓', 'Review admissions', 'inbox.php?t=admissions', 'admissions'], ['📄', 'Edit pages', 'crud.php?e=pages', 'pages'],
     ['🖼', 'Hero slides', 'crud.php?e=slides', 'slides'], ['🏛', 'Management profiles', 'crud.php?e=team', 'team'],

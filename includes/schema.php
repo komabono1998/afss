@@ -47,13 +47,22 @@ function install_schema(PDO $db): void
         status TEXT DEFAULT 'new', created_at TEXT DEFAULT CURRENT_TIMESTAMP
     );
     CREATE TABLE newsletter_issues (
-        id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL, slug TEXT UNIQUE NOT NULL, issue_date TEXT NOT NULL,
+        id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL, slug TEXT UNIQUE NOT NULL, issue_date TEXT NOT NULL, audience TEXT DEFAULT 'school',
         edition TEXT, summary TEXT, intro TEXT, cover TEXT, pdf TEXT, status TEXT DEFAULT 'draft', sent_at TEXT,
         created_at TEXT DEFAULT CURRENT_TIMESTAMP
     );
     CREATE TABLE newsletter_sections (
         id INTEGER PRIMARY KEY AUTOINCREMENT, issue_id INTEGER NOT NULL, heading TEXT, body TEXT, image TEXT, caption TEXT,
         layout TEXT DEFAULT 'image-right', sort INTEGER DEFAULT 0
+    );
+    CREATE TABLE alumni_events (
+        id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL, slug TEXT UNIQUE NOT NULL, category TEXT DEFAULT 'Event',
+        event_date TEXT, end_date TEXT, time_text TEXT, venue TEXT, summary TEXT, description TEXT, image TEXT, contact_info TEXT,
+        sort INTEGER DEFAULT 0, active INTEGER DEFAULT 1
+    );
+    CREATE TABLE alumni_members (
+        id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, email TEXT, phone TEXT, year_left TEXT, last_class TEXT, occupation TEXT,
+        location TEXT, message TEXT, newsletter INTEGER DEFAULT 0, token TEXT, status TEXT DEFAULT 'new', created_at TEXT DEFAULT CURRENT_TIMESTAMP
     );
     CREATE TABLE albums (
         id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL, slug TEXT UNIQUE NOT NULL, category TEXT DEFAULT 'General',
@@ -132,6 +141,7 @@ Campus Life",
     foreach ($defaults as $k => $v) $set->execute([$k, $v]);
     foreach (['scholarships_intro', 'scholarships_apply'] as $k) $set->execute([$k, scholarship_default($k)]);
     seed_scholarships($db);
+    seed_alumni($db, true);
 
     $slide = $db->prepare('INSERT INTO slides (title,subtitle,link_text,link_url,sort) VALUES (?,?,?,?,?)');
     $slide->execute(['Welcome to Archbishop Flynn Secondary School', 'Wisdom and Service — educating the head, heart and hands in Pader, Uganda.', 'Apply for Admission', 'apply.php', 1]);
@@ -245,6 +255,15 @@ function migrate(PDO $db): void
         $db->exec("INSERT OR IGNORE INTO settings (k,v) VALUES ('secondary_color','#d7141a')");
         $db->exec("INSERT OR REPLACE INTO settings (k,v) VALUES ('migr_theme','1')");
     }
+    $db->exec("CREATE TABLE IF NOT EXISTS alumni_events (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL, slug TEXT UNIQUE NOT NULL, category TEXT DEFAULT 'Event', event_date TEXT, end_date TEXT, time_text TEXT, venue TEXT, summary TEXT, description TEXT, image TEXT, contact_info TEXT, sort INTEGER DEFAULT 0, active INTEGER DEFAULT 1)");
+    $db->exec("CREATE TABLE IF NOT EXISTS alumni_members (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, email TEXT, phone TEXT, year_left TEXT, last_class TEXT, occupation TEXT, location TEXT, message TEXT, newsletter INTEGER DEFAULT 0, token TEXT, status TEXT DEFAULT 'new', created_at TEXT DEFAULT CURRENT_TIMESTAMP)");
+    $nc = array_column($db->query('PRAGMA table_info(newsletter_issues)')->fetchAll(PDO::FETCH_ASSOC), 'name');
+    if (!in_array('audience', $nc, true)) $db->exec("ALTER TABLE newsletter_issues ADD COLUMN audience TEXT DEFAULT 'school'");
+    if (!$db->query("SELECT 1 FROM settings WHERE k = 'migr_alumni'")->fetchColumn()) {
+        seed_alumni($db, true);
+        $db->exec("UPDATE pages SET active = 0 WHERE slug = 'alumni'");
+        $db->exec("INSERT OR REPLACE INTO settings (k,v) VALUES ('migr_alumni','1')");
+    }
     $ac = array_column($db->query('PRAGMA table_info(admissions_apps)')->fetchAll(PDO::FETCH_ASSOC), 'name');
     foreach (['admission_type', 'transfer_reason', 'results_file', 'recommendation_file'] as $c) if (!in_array($c, $ac, true)) $db->exec("ALTER TABLE admissions_apps ADD COLUMN $c TEXT");
     $done = $db->query("SELECT 1 FROM settings WHERE k = 'migr_pta'")->fetchColumn();
@@ -280,4 +299,36 @@ function seed_scholarships(PDO $db): void
     ];
     $st = $db->prepare("INSERT OR IGNORE INTO scholarships (title,slug,type,summary,coverage,sponsor,eligibility,how_to_apply,documents,sort) VALUES (?,?,'Bursary',?,?,'AFSS',?,?,?,?)");
     foreach ($rows as $i => $r) $st->execute([$r[0], strtolower(trim(preg_replace('/[^A-Za-z0-9]+/', '-', $r[0]), '-')), $r[1], $r[2], $r[3] . $note, $howto, $r[4], $i + 1]);
+}
+
+function alumni_default(string $key): string
+{
+    return [
+        'alumni_name' => 'AFSS Old Students Association (AFSSOSA)',
+        'alumni_intro' => 'Once an AFSS learner, always part of the family. Stay connected with classmates, support the school and take part in alumni activities.',
+        'alumni_about' => '<p>The alumni association brings together former students of Archbishop Flynn Secondary School to keep the spirit of <em>Sapientia et Servitium</em> alive, support current learners and give back to the school community.</p>',
+        'alumni_email' => '',
+        'alumni_phone' => '',
+    ][$key] ?? '';
+}
+
+/** Starter alumni leadership and activities. Names and details are placeholders for the school to replace in the admin panel. */
+function seed_alumni(PDO $db, bool $withSettings = false): void
+{
+    if ($withSettings) {
+        $ins = $db->prepare('INSERT OR IGNORE INTO settings (k,v) VALUES (?,?)');
+        foreach (['alumni_name', 'alumni_intro', 'alumni_about', 'alumni_email', 'alumni_phone'] as $k) $ins->execute([$k, alumni_default($k)]);
+    }
+    if (!$db->query("SELECT 1 FROM team WHERE grp IN ('alumni_patron','alumni_exec') LIMIT 1")->fetchColumn()) {
+        $t = $db->prepare("INSERT INTO team (name,role,grp,bio,sort) VALUES ('Name to be updated',?,?,'',?)");
+        $t->execute(['Patron', 'alumni_patron', 1]);
+        foreach (['Chairperson', 'Vice Chairperson', 'General Secretary', 'Treasurer', 'Publicity Secretary', 'League Coordinator', 'Welfare Representative'] as $i => $r) $t->execute([$r, 'alumni_exec', $i + 1]);
+    }
+    if (!$db->query('SELECT 1 FROM alumni_events LIMIT 1')->fetchColumn()) {
+        $e = $db->prepare('INSERT INTO alumni_events (title,slug,category,summary,description,contact_info,sort) VALUES (?,?,?,?,?,?,?)');
+        $note = '<p><em>Sample description. Edit the details, dates and venue in the admin panel.</em></p>';
+        $e->execute(['AFSSOSA League', 'afssosa-league', 'League', 'The alumni sports league: classes and teams compete for the trophy.', '<p>The AFSSOSA League brings alumni together on the field. Graduating classes and groups field teams in friendly competition that builds bonds across generations.</p>' . $note, 'Contact the League Coordinator to register your team.', 1]);
+        $e->execute(['Annual General Meeting (AGM)', 'agm', 'AGM', 'Members meet to review the year, elect leaders and plan ahead.', '<p>Alumni gather for the Annual General Meeting to receive reports, elect the Executive Committee and decide the association\'s priorities.</p>' . $note, 'All paid-up and registered alumni are welcome.', 2]);
+        $e->execute(['Alumni Dinner', 'alumni-dinner', 'Dinner', 'An evening of reunion, awards and fundraising for school projects.', '<p>The Alumni Dinner is a night to reconnect, celebrate achievements and raise support for the school and its learners.</p>' . $note, 'Ask the Treasurer or Publicity Secretary about tickets.', 3]);
+    }
 }

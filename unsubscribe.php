@@ -1,7 +1,9 @@
 <?php
 require_once __DIR__ . '/includes/bootstrap.php';
 $t = (string) ($_GET['t'] ?? '');
-$done = $t !== '' && q('UPDATE subscribers SET active = 0 WHERE token = ?', [$t])->rowCount() > 0;
+$done = $t !== '' && (str_starts_with($t, 'a_')
+    ? q('UPDATE alumni_members SET newsletter = 0 WHERE token = ?', [substr($t, 2)])->rowCount() > 0
+    : q('UPDATE subscribers SET active = 0 WHERE token = ?', [$t])->rowCount() > 0);
 $pageTitle = 'Unsubscribe';
 $bannerTitle = 'Newsletter';
 include __DIR__ . '/includes/header.php';

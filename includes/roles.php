@@ -11,7 +11,7 @@ const ADMIN_MODULES = [
     'jobs' => 'Job vacancies', 'job_apps' => 'Job applications',
     'admissions' => 'Admission applications', 'scholarships' => 'Scholarships & bursaries', 'scholarship_apps' => 'Scholarship applications',
     'messages' => 'Contact messages', 'newsletter' => 'Subscribers & email',
-    'population' => 'School population', 'settings' => 'Site settings', 'users' => 'Admin users',
+    'population' => 'School population', 'alumni_events' => 'Alumni activities & events', 'alumni_members' => 'Alumni members', 'settings' => 'Site settings', 'users' => 'Admin users',
 ];
 
 function roles(): array
@@ -36,7 +36,7 @@ function roles(): array
         'deputy_admin' => [
             'label' => 'Deputy Headteacher (Administration)',
             'desc' => 'Management profiles, job vacancies and applications, contact messages, events, news and student-life pages.',
-            'modules' => ['pages', 'news', 'events', 'albums', 'team', 'jobs', 'job_apps', 'messages', 'admissions', 'population'],
+            'modules' => ['pages', 'news', 'events', 'albums', 'team', 'jobs', 'job_apps', 'messages', 'admissions', 'population', 'alumni_events', 'alumni_members'],
             'scope' => ['pages' => ['menu_group', ['about', 'students', 'none']]],
         ],
         'bursar' => [

@@ -9,6 +9,9 @@ $T = [
     'scholarship_apps' => ['table' => 'scholarship_apps', 'label' => 'Scholarship Applications', 'statuses' => ['new', 'reviewing', 'awarded', 'declined'],
         'cols' => ['name' => 'Learner', 'scholarship_title' => 'Award', 'current_class' => 'Class', 'phone' => 'Phone', 'created_at' => 'Received', 'status' => 'Status'],
         'search' => ['name', 'scholarship_title', 'guardian_name', 'phone']],
+    'alumni_members' => ['table' => 'alumni_members', 'label' => 'Alumni Members', 'statuses' => ['new', 'verified', 'ignored'],
+        'cols' => ['name' => 'Name', 'year_left' => 'Year left', 'email' => 'Email', 'phone' => 'Phone', 'created_at' => 'Joined', 'status' => 'Status'],
+        'search' => ['name', 'email', 'phone', 'year_left', 'occupation', 'location']],
     'job_apps' => ['table' => 'job_apps', 'label' => 'Job Applications', 'statuses' => ['new', 'reviewing', 'shortlisted', 'rejected'],
         'cols' => ['name' => 'Applicant', 'job_title' => 'Position', 'email' => 'Email', 'created_at' => 'Received', 'status' => 'Status'],
         'search' => ['name', 'email', 'job_title']],
@@ -47,7 +50,7 @@ if (is_post()) {
 
 // CSV export
 if (($_GET['export'] ?? '') === '1') {
-    $data = rows("SELECT * FROM $table ORDER BY id DESC");
+    $data = array_map(fn($r) => array_diff_key($r, ['token' => 1]), rows("SELECT * FROM $table ORDER BY id DESC"));
     header('Content-Type: text/csv; charset=utf-8');
     header('Content-Disposition: attachment; filename="' . $t . '-' . date('Ymd') . '.csv"');
     $out = fopen('php://output', 'w');
@@ -69,7 +72,7 @@ if ($id) {
     <p class="no-print"><a href="<?= e($self) ?>">← Back to <?= e($C['label']) ?></a></p>
     <div class="card">
       <dl class="kv">
-        <?php foreach ($r as $k => $v): if ($v === null || $v === '' || $k === 'id') continue; ?>
+        <?php foreach ($r as $k => $v): if ($v === null || $v === '' || $k === 'id' || $k === 'token') continue; ?>
           <dt><?= e(ucwords(str_replace('_', ' ', $k))) ?></dt>
           <dd><?php
             if (in_array($k, ['cv_file', 'results_file', 'recommendation_file', 'supporting_file'], true)) echo '<a href="download.php?f=' . urlencode($v) . '">⬇ Download ' . ucwords(str_replace('_file', '', $k)) . ' (PDF)</a>';

@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . '/includes/bootstrap.php';
-$issues = rows("SELECT * FROM newsletter_issues WHERE status = 'published' AND issue_date <= date('now') ORDER BY issue_date DESC, id DESC");
+$issues = rows("SELECT * FROM newsletter_issues WHERE status = 'published' AND audience = 'school' AND issue_date <= date('now') ORDER BY issue_date DESC, id DESC");
 $byYear = [];
 foreach ($issues as $i) $byYear[date('Y', strtotime($i['issue_date']))][] = $i;
 

@@ -31,13 +31,14 @@ if (is_post()) {
         if ($newCover) { rm_file($cover); $cover = $newCover; }
         if ($newPdf) { rm_file($pdf); $pdf = $newPdf; }
         $status = ($_POST['status'] ?? '') === 'published' ? 'published' : 'draft';
-        $vals = [$title, $date, post('edition'), trim((string) $_POST['summary']), trim((string) $_POST['intro']), $cover, $pdf, $status];
+        $aud = ($_POST['audience'] ?? '') === 'alumni' ? 'alumni' : 'school';
+        $vals = [$title, $date, post('edition'), trim((string) $_POST['summary']), trim((string) $_POST['intro']), $cover, $pdf, $status, $aud];
         if ($issue) {
-            q('UPDATE newsletter_issues SET title=?,issue_date=?,edition=?,summary=?,intro=?,cover=?,pdf=?,status=? WHERE id=?', array_merge($vals, [$id]));
+            q('UPDATE newsletter_issues SET title=?,issue_date=?,edition=?,summary=?,intro=?,cover=?,pdf=?,status=?,audience=? WHERE id=?', array_merge($vals, [$id]));
             flash('Issue saved.');
             redirect("admin/issues.php?a=edit&id=$id");
         }
-        q('INSERT INTO newsletter_issues (title,issue_date,edition,summary,intro,cover,pdf,status,slug) VALUES (?,?,?,?,?,?,?,?,?)', array_merge($vals, [unique_slug('newsletter_issues', $title)]));
+        q('INSERT INTO newsletter_issues (title,issue_date,edition,summary,intro,cover,pdf,status,audience,slug) VALUES (?,?,?,?,?,?,?,?,?,?)', array_merge($vals, [unique_slug('newsletter_issues', $title)]));
         flash('Issue created. Add stories below.');
         redirect('admin/issues.php?a=edit&id=' . db()->lastInsertId());
     }
@@ -74,7 +75,9 @@ if (is_post()) {
         if ($issue['status'] !== 'published') { flash('Publish the issue before emailing it.', 'err'); redirect("admin/issues.php?a=edit&id=$id"); }
         $host = (isset($_SERVER['HTTPS']) ? 'https://' : 'http://') . $_SERVER['HTTP_HOST'];
         $link = $host . url('newsletter.php?s=' . $issue['slug']);
-        $subs = rows('SELECT email,token FROM subscribers WHERE active = 1');
+        $subs = ($issue['audience'] ?? 'school') === 'alumni'
+            ? rows("SELECT email, 'a_' || token AS token FROM alumni_members WHERE newsletter = 1 AND status != 'ignored' AND email != ''")
+            : rows('SELECT email,token FROM subscribers WHERE active = 1');
         $ok = 0;
         foreach ($subs as $s) {
             $unsub = $host . url('unsubscribe.php?t=' . $s['token']);
@@ -109,6 +112,7 @@ if ($a === 'new' || $a === 'edit') {
         <div class="f"><label>Issue date *</label><input type="date" name="issue_date" value="<?= e($issue['issue_date'] ?? date('Y-m-d')) ?>" required><small>Used for the month and year. A future date schedules publishing.</small></div>
         <div class="f"><label>Edition label (optional)</label><input type="text" name="edition" value="<?= e($issue['edition'] ?? '') ?>" placeholder="e.g. Vol. 4, No. 3"></div>
         <div class="f"><label>Status</label><select name="status"><option value="draft" <?= ($issue['status'] ?? 'draft') === 'draft' ? 'selected' : '' ?>>Draft (hidden)</option><option value="published" <?= ($issue['status'] ?? '') === 'published' ? 'selected' : '' ?>>Published</option></select></div>
+        <div class="f"><label>Audience</label><select name="audience"><option value="school" <?= ($issue['audience'] ?? 'school') === 'school' ? 'selected' : '' ?>>School newsletter (News page)</option><option value="alumni" <?= ($issue['audience'] ?? '') === 'alumni' ? 'selected' : '' ?>>Alumni newsletter (Alumni page)</option></select></div>
       </div>
       <div class="f"><label>Short summary</label><textarea name="summary" placeholder="One or two sentences for the archive and the email."><?= e($issue['summary'] ?? '') ?></textarea></div>
       <div class="f"><label>Editor's note / introduction (HTML)</label><textarea class="html" name="intro" style="min-height:150px"><?= e($issue['intro'] ?? '') ?></textarea></div>
@@ -151,7 +155,7 @@ if ($a === 'new' || $a === 'edit') {
       </form>
     </div>
     <div class="card"><h2>Email this issue</h2>
-      <p class="muted">Sends the cover, summary and a "Read the newsletter" link to all <?= (int) val('SELECT COUNT(*) FROM subscribers WHERE active=1') ?> active subscribers.<?= $issue['sent_at'] ? ' Last sent ' . e(date('j M Y H:i', strtotime($issue['sent_at']))) . '.' : '' ?></p>
+      <p class="muted">Sends the cover, summary and a "Read the newsletter" link to all <?= (int) ($issue['audience'] === 'alumni' ? val("SELECT COUNT(*) FROM alumni_members WHERE newsletter=1 AND status != 'ignored' AND email != ''") : val('SELECT COUNT(*) FROM subscribers WHERE active=1')) ?> <?= $issue['audience'] === 'alumni' ? 'alumni who opted in' : 'active subscribers' ?>.<?= $issue['sent_at'] ? ' Last sent ' . e(date('j M Y H:i', strtotime($issue['sent_at']))) . '.' : '' ?></p>
       <form method="post" action="issues.php?a=edit&id=<?= $id ?>" data-confirm="Email this issue to all active subscribers?"><?= csrf_field() ?><input type="hidden" name="do" value="send"><button class="btn" <?= $issue['status'] === 'published' ? '' : 'disabled title="Publish first"' ?>>✉ Send to subscribers</button></form>
     </div>
     <?php endif; admin_foot(); exit;
@@ -165,7 +169,7 @@ admin_head('Monthly Newsletter');
   <thead><tr><th>Cover</th><th>Issue</th><th>Month</th><th>Stories</th><th>PDF</th><th>Status</th><th></th></tr></thead><tbody>
   <?php foreach ($items as $it): ?>
   <tr><td><?= $it['cover'] ? '<img class="thumb" src="' . e(media($it['cover'])) . '" alt="">' : '<span class="muted">—</span>' ?></td>
-    <td><a href="issues.php?a=edit&id=<?= $it['id'] ?>"><strong><?= e($it['title']) ?></strong></a><?= $it['edition'] ? '<br><small class="muted">' . e($it['edition']) . '</small>' : '' ?></td>
+    <td><a href="issues.php?a=edit&id=<?= $it['id'] ?>"><strong><?= e($it['title']) ?></strong></a><?= $it['edition'] ? '<br><small class="muted">' . e($it['edition']) . '</small>' : '' ?><?= ($it['audience'] ?? 'school') === 'alumni' ? ' <span class="badge">Alumni</span>' : '' ?></td>
     <td><?= e(date('F Y', strtotime($it['issue_date']))) ?></td><td><?= (int) $it['n'] ?></td><td><?= $it['pdf'] ? '✔' : '—' ?></td>
     <td><span class="badge <?= e($it['status']) ?>"><?= e($it['status']) ?></span></td>
     <td class="actions" style="justify-content:flex-end"><a class="btn sm" href="issues.php?a=edit&id=<?= $it['id'] ?>">Edit</a>

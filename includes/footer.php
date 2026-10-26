@@ -17,6 +17,7 @@
         <li><a href="<?= url('page.php?slug=about-us') ?>">About Us</a></li>
         <li><a href="<?= url('governance.php') ?>">Governance</a></li>
         <li><a href="<?= url('management.php?g=pta') ?>">PTA Committee</a></li>
+        <li><a href="<?= url('alumni.php') ?>">Alumni</a></li>
         <li><a href="<?= url('admissions.php') ?>">Admissions</a></li>
         <li><a href="<?= url('apply.php') ?>">Apply Online</a></li>
         <li><a href="<?= url('scholarships.php') ?>">Scholarships &amp; Bursaries</a></li>

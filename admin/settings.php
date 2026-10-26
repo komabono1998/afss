@@ -27,6 +27,13 @@ $groups = [
         'stat_years' => ['Stat 3 value', 'text'], 'stat_years_l' => ['Stat 3 label', 'text'],
         'stat_firstgrade' => ['Stat 4 value', 'text'], 'stat_firstgrade_l' => ['Stat 4 label', 'text'],
     ],
+    'Alumni page' => [
+        'alumni_name' => ['Association name', 'text'],
+        'alumni_intro' => ['Page introduction', 'textarea'],
+        'alumni_about' => ['About the association (HTML allowed)', 'textarea'],
+        'alumni_email' => ['Alumni contact email', 'text', 'Shown on the alumni page. Leave empty to use the school email.'],
+        'alumni_phone' => ['Alumni contact phone', 'text'],
+    ],
     'Photo gallery' => [
         'gallery_categories' => ['Event / function categories', 'textarea', 'One per line. These appear when creating albums and as filters on the gallery page.'],
     ],

@@ -240,3 +240,12 @@ a:hover{color:var(--secondary)}
 .stat b{color:var(--primary)}
 .brand-text strong{font-size:1rem;max-width:200px}
 @media(max-width:1320px){.brand-text small{display:none}.brand-text strong{font-size:.95rem}}
+.card.patron{border-top:4px solid var(--secondary)}
+.card.person{display:block;color:inherit}
+@media(max-width:1180px){
+ .nav-toggle{display:block}
+ .main-nav{display:none;position:absolute;left:0;right:0;top:100%;background:#fff;flex-direction:column;align-items:stretch;padding:1rem;box-shadow:0 20px 30px rgba(0,0,0,.1);max-height:80vh;overflow:auto}
+ .main-nav.open{display:flex}.main-nav>ul{flex-direction:column}
+ .sub{display:block;position:static;box-shadow:none;border:0;padding:0 0 0 1rem;min-width:0}
+ .caret{display:none}
+}
