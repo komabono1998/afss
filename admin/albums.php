@@ -2,6 +2,12 @@
 require_once __DIR__ . '/_layout.php';
 $a = $_GET['a'] ?? 'list';
 $id = (int) ($_GET['id'] ?? 0);
+require_perm('albums');
+$scope = scope_for('albums');
+if ($scope) {
+    $chkId = $id ?: (int) ($_POST['id'] ?? 0);
+    if ($chkId && !in_scope($scope, row('SELECT category FROM albums WHERE id = ?', [$chkId]))) deny();
+}
 
 function rm_file(?string $p): void { if ($p && str_starts_with($p, 'uploads/')) @unlink(ROOT . '/' . $p); }
 
@@ -34,7 +40,7 @@ if (is_post()) {
         if ($errors) { foreach ($errors as $er) flash($er, 'err'); redirect('admin/albums.php?a=' . ($id ? "edit&id=$id" : 'new')); }
         if (!empty($_POST['cover_remove'])) { rm_file($cover); $cover = ''; }
         if ($new) { rm_file($cover); $cover = $new; }
-        $vals = [$title, post('category') ?: 'General', $date ?: null, post('term'), trim((string) $_POST['description']), $cover, isset($_POST['active']) ? 1 : 0];
+        $vals = [$title, ($scope && !in_array(post('category'), $scope['values'], true)) ? $scope['values'][0] : (post('category') ?: 'General'), $date ?: null, post('term'), trim((string) $_POST['description']), $cover, isset($_POST['active']) ? 1 : 0];
         if ($rec) {
             q('UPDATE albums SET title=?,category=?,event_date=?,term=?,description=?,cover=?,active=? WHERE id=?', array_merge($vals, [$id]));
             flash('Album saved.');
@@ -85,7 +91,7 @@ $album = $id ? row('SELECT * FROM albums WHERE id = ?', [$id]) : null;
 if ($a === 'new' || $a === 'edit') {
     if ($a === 'edit' && !$album) redirect('admin/albums.php');
     admin_head($album ? 'Edit album' : 'New album');
-    $cats = gallery_categories();
+    $cats = $scope ? $scope['values'] : gallery_categories();
     if ($album && !in_array($album['category'], $cats, true)) array_unshift($cats, $album['category']);
     ?>
     <p><a href="albums.php">← All albums</a></p>
@@ -141,6 +147,7 @@ $year = $_GET['year'] ?? ''; $cat = $_GET['cat'] ?? '';
 $where = []; $params = [];
 if (preg_match('/^\d{4}$/', $year)) { $where[] = "strftime('%Y', event_date) = ?"; $params[] = $year; }
 if ($cat !== '') { $where[] = 'category = ?'; $params[] = $cat; }
+if ($scope) { $where[] = 'category IN (' . implode(',', array_fill(0, count($scope['values']), '?')) . ')'; $params = array_merge($params, $scope['values']); }
 $items = rows('SELECT a.*, (SELECT COUNT(*) FROM gallery g WHERE g.album_id = a.id) AS n, (SELECT image FROM gallery g WHERE g.album_id = a.id ORDER BY sort, id DESC LIMIT 1) AS first_img FROM albums a'
     . ($where ? ' WHERE ' . implode(' AND ', $where) : '') . ' ORDER BY event_date DESC, id DESC', $params);
 $years = array_column(rows("SELECT DISTINCT strftime('%Y', event_date) y FROM albums WHERE event_date IS NOT NULL ORDER BY y DESC"), 'y');

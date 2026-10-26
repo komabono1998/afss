@@ -20,6 +20,7 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 require_once __DIR__ . '/schema.php';
+require_once __DIR__ . '/roles.php';
 
 function db(): PDO
 {
@@ -187,7 +188,7 @@ function notify(string $subject, string $body, ?string $replyTo = null): void
 function admin_user(): ?array
 {
     static $u = false;
-    if ($u === false) $u = empty($_SESSION['uid']) ? null : row('SELECT id,name,email,role FROM users WHERE id = ?', [$_SESSION['uid']]);
+    if ($u === false) $u = empty($_SESSION['uid']) ? null : row('SELECT id,name,email,role FROM users WHERE id = ? AND active = 1', [$_SESSION['uid']]);
     return $u;
 }
 function require_admin(): array

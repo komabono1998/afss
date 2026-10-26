@@ -18,6 +18,7 @@ $T = [
 ];
 $t = $_GET['t'] ?? '';
 if (!isset($T[$t])) redirect('admin/index.php');
+require_perm($t);
 $C = $T[$t];
 $table = $C['table'];
 $self = 'inbox.php?t=' . $t;

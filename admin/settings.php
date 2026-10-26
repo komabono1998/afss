@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/_layout.php';
 
+require_perm('settings');
 // key => [label, type, help]
 $groups = [
     'School identity' => [

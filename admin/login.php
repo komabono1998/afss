@@ -23,15 +23,15 @@ if (is_post()) {
         }
     } else {
         $u = row('SELECT * FROM users WHERE email = ?', [strtolower(post('email'))]);
-        if ($u && password_verify((string) ($_POST['password'] ?? ''), $u['password'])) {
+        if ($u && password_verify((string) ($_POST['password'] ?? ''), $u['password']) && !$u['active']) {
+            $err = 'This account has been disabled. Contact an Administrator.';
+        } elseif ($u && password_verify((string) ($_POST['password'] ?? ''), $u['password'])) {
             session_regenerate_id(true);
             $_SESSION['uid'] = (int) $u['id'];
             unset($_SESSION['login_tries']);
             redirect('admin/index.php');
         }
-        $tries[] = time();
-        $_SESSION['login_tries'] = $tries;
-        $err = 'Incorrect email or password.';
+        if (!$err) { $tries[] = time(); $_SESSION['login_tries'] = $tries; $err = 'Incorrect email or password.'; }
     }
 }
 ?>

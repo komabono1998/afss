@@ -2,6 +2,7 @@
 require_once __DIR__ . '/_layout.php';
 $a = $_GET['a'] ?? 'list';
 $id = (int) ($_GET['id'] ?? 0);
+require_perm('issues');
 const LAYOUTS = ['image-right' => 'Text with image on the right', 'image-left' => 'Text with image on the left', 'full-width' => 'Large image above text', 'text-only' => 'Text only'];
 
 function rm_file(?string $p): void { if ($p && str_starts_with($p, 'uploads/')) @unlink(ROOT . '/' . $p); }

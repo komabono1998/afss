@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/_layout.php';
+require_perm('newsletter');
 $tab = $_GET['tab'] ?? 'subscribers';
 
 if (is_post()) {

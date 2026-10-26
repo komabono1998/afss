@@ -4,6 +4,12 @@ $all = require __DIR__ . '/entities.php';
 $key = $_GET['e'] ?? '';
 if (!isset($all[$key])) redirect('admin/index.php');
 $E = $all[$key];
+require_perm($key);
+$scope = scope_for($key);
+function scoped_options(array $opts, ?array $scope, string $field): array
+{
+    return ($scope && $scope['col'] === $field) ? array_intersect_key($opts, array_flip($scope['values'])) : $opts;
+}
 $table = $E['table']; // from trusted config only, never user input
 $action = $_GET['a'] ?? 'list';
 $id = (int) ($_GET['id'] ?? 0);
@@ -20,7 +26,7 @@ if (is_post()) {
     csrf_check();
     if (($_POST['do'] ?? '') === 'delete') {
         $rec = row("SELECT * FROM $table WHERE id = ?", [(int) $_POST['id']]);
-        if ($rec) {
+        if ($rec && in_scope($scope, $rec)) {
             foreach ($E['fields'] as $fk => $f) if ($f[1] === 'image' && !empty($rec[$fk]) && str_starts_with($rec[$fk], 'uploads/')) @unlink(ROOT . '/' . $rec[$fk]);
             q("DELETE FROM $table WHERE id = ?", [$rec['id']]);
             flash(ucfirst($E['singular']) . ' deleted.');
@@ -29,6 +35,7 @@ if (is_post()) {
     }
     // save
     $rec = $id ? row("SELECT * FROM $table WHERE id = ?", [$id]) : null;
+    if ($id && !in_scope($scope, $rec)) deny();
     $data = [];
     $errors = [];
     foreach ($E['fields'] as $fk => $f) {
@@ -51,6 +58,7 @@ if (is_post()) {
         if ($fk === 'slug') continue;
         $data[$fk] = ($v === '' && in_array($type, ['date'], true)) ? null : $v;
     }
+    if ($scope && !in_array($data[$scope['col']] ?? '', $scope['values'], true)) $data[$scope['col']] = $scope['values'][0];
     if (isset($E['fields']['slug'])) {
         $s = slugify(post('slug') !== '' ? post('slug') : (string) ($data[$E['slug']] ?? ''));
         $data['slug'] = unique_slug($table, $s, $id);
@@ -79,6 +87,7 @@ admin_head($E['label']);
 
 if ($action === 'new' || $action === 'edit') {
     $rec = $action === 'edit' ? row("SELECT * FROM $table WHERE id = ?", [$id]) : null;
+    if ($rec && !in_scope($scope, $rec)) deny();
     if ($action === 'edit' && !$rec) { echo '<div class="alert alert-err">Record not found.</div>'; admin_foot(); exit; }
     $d = $formData ?? $rec ?? [];
     $fields = $E['fields'];
@@ -103,7 +112,7 @@ if ($action === 'new' || $action === 'edit') {
             <?php elseif ($type === 'date'): ?><input type="date" id="f_<?= e($fk) ?>" name="<?= e($fk) ?>" value="<?= e($v) ?>">
             <?php elseif ($type === 'textarea'): ?><textarea id="f_<?= e($fk) ?>" name="<?= e($fk) ?>"><?= e($v) ?></textarea>
             <?php elseif ($type === 'html'): ?><textarea class="html" id="f_<?= e($fk) ?>" name="<?= e($fk) ?>"><?= e($v) ?></textarea><small>HTML allowed — use the toolbar for headings, bold, lists and links.</small><br>
-            <?php elseif ($type === 'select'): ?><select id="f_<?= e($fk) ?>" name="<?= e($fk) ?>"><?php foreach ($f['options'] as $ov => $ol): ?><option value="<?= e($ov) ?>" <?= (string) $v === (string) $ov ? 'selected' : '' ?>><?= e($ol) ?></option><?php endforeach; ?></select>
+            <?php elseif ($type === 'select'): ?><select id="f_<?= e($fk) ?>" name="<?= e($fk) ?>"><?php foreach (scoped_options($f['options'], $scope, $fk) as $ov => $ol): ?><option value="<?= e($ov) ?>" <?= (string) $v === (string) $ov ? 'selected' : '' ?>><?= e($ol) ?></option><?php endforeach; ?></select>
             <?php elseif ($type === 'image'): ?>
               <?php if (!empty($rec[$fk])): ?><img class="preview" src="<?= e(media($rec[$fk])) ?>" alt=""><label style="font-weight:400"><input type="checkbox" name="<?= e($fk) ?>_remove" value="1"> Remove current image</label><?php endif; ?>
               <input type="file" name="<?= e($fk) ?>_file" accept="image/*">
@@ -129,7 +138,8 @@ if ($search !== '') {
     $where = '(' . implode(' OR ', array_map(fn($c) => "$c LIKE ?", $E['search'])) . ')';
     $params = array_fill(0, count($E['search']), "%$search%");
 }
-$items = rows("SELECT * FROM $table WHERE $where ORDER BY {$E['order']} LIMIT 500", $params);
+[$scopeSql, $scopeParams] = scope_sql($scope);
+$items = rows("SELECT * FROM $table WHERE $where$scopeSql ORDER BY {$E['order']} LIMIT 500", array_merge($params, $scopeParams));
 ?>
 <div class="bar">
   <a class="btn accent" href="<?= e($self) ?>&a=new">+ New <?= e($E['singular']) ?></a>

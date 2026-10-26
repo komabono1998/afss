@@ -7,7 +7,7 @@ function install_schema(PDO $db): void
     CREATE TABLE settings (k TEXT PRIMARY KEY, v TEXT);
     CREATE TABLE users (
         id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, email TEXT UNIQUE NOT NULL,
-        password TEXT NOT NULL, role TEXT DEFAULT 'admin', created_at TEXT DEFAULT CURRENT_TIMESTAMP
+        password TEXT NOT NULL, role TEXT DEFAULT 'admin', active INTEGER DEFAULT 1, created_at TEXT DEFAULT CURRENT_TIMESTAMP
     );
     CREATE TABLE slides (
         id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL, subtitle TEXT, image TEXT,
@@ -235,6 +235,8 @@ function migrate(PDO $db): void
         $db->exec("INSERT OR REPLACE INTO settings (k,v) VALUES ('migr_scholarships','1')");
     }
     $db->exec("CREATE TABLE IF NOT EXISTS newsletter_issues ( id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL, slug TEXT UNIQUE NOT NULL, issue_date TEXT NOT NULL, edition TEXT, summary TEXT, intro TEXT, cover TEXT, pdf TEXT, status TEXT DEFAULT 'draft', sent_at TEXT, created_at TEXT DEFAULT CURRENT_TIMESTAMP ); CREATE TABLE IF NOT EXISTS newsletter_sections ( id INTEGER PRIMARY KEY AUTOINCREMENT, issue_id INTEGER NOT NULL, heading TEXT, body TEXT, image TEXT, caption TEXT, layout TEXT DEFAULT 'image-right', sort INTEGER DEFAULT 0 );");
+    $uc = array_column($db->query('PRAGMA table_info(users)')->fetchAll(PDO::FETCH_ASSOC), 'name');
+    if (!in_array('active', $uc, true)) $db->exec('ALTER TABLE users ADD COLUMN active INTEGER DEFAULT 1');
     $ac = array_column($db->query('PRAGMA table_info(admissions_apps)')->fetchAll(PDO::FETCH_ASSOC), 'name');
     foreach (['admission_type', 'transfer_reason', 'results_file', 'recommendation_file'] as $c) if (!in_array($c, $ac, true)) $db->exec("ALTER TABLE admissions_apps ADD COLUMN $c TEXT");
     $done = $db->query("SELECT 1 FROM settings WHERE k = 'migr_pta'")->fetchColumn();
