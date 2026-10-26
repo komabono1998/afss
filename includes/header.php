@@ -70,7 +70,7 @@ $logo = setting('logo');
         <?= nav_item('Academics', url('page.php?slug=academics'), group_children('academics')) ?>
         <?= nav_item('Admissions', url('admissions.php'), group_children('admissions', [['Apply Online', url('apply.php')], ['Scholarships & Bursaries', url('scholarships.php')]], true)) ?>
         <?= nav_item('Student Life', url('gallery.php'), group_children('students', [['Photo Gallery', url('gallery.php')]])) ?>
-        <?= nav_item('News', url('news.php')) ?>
+        <?= nav_item('News', url('news.php'), [['News & Stories', url('news.php')], ['Monthly Newsletter', url('newsletters.php')]]) ?>
         <?= nav_item('Events', url('events.php')) ?>
         <?= nav_item('Careers', url('careers.php')) ?>
         <?= nav_item('Contact', url('contact.php')) ?>

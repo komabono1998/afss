@@ -7,12 +7,12 @@ function admin_nav(): array
     return [
         'Overview' => [['index.php', '📊 Dashboard']],
         'Content' => [
-            ['crud.php?e=slides', '🖼 Hero Slides'], ['crud.php?e=pages', '📄 Pages'], ['crud.php?e=news', '📰 News & Stories'],
+            ['crud.php?e=slides', '🖼 Hero Slides'], ['crud.php?e=pages', '📄 Pages'], ['crud.php?e=news', '📰 News & Stories'], ['issues.php', '🗞 Monthly Newsletter'],
             ['crud.php?e=events', '📅 Events'], ['albums.php', '📷 Photo Albums'], ['crud.php?e=team', '🏛 Management Profiles'],
         ],
         'Recruitment' => [['crud.php?e=jobs', '💼 Job Vacancies'], ['inbox.php?t=job_apps', '📨 Job Applications']],
         'Admissions' => [['inbox.php?t=admissions', '🎓 Applications'], ['crud.php?e=scholarships', '🏅 Scholarships & Bursaries'], ['inbox.php?t=scholarship_apps', '📝 Scholarship Applications']],
-        'Communication' => [['inbox.php?t=messages', '✉ Messages'], ['newsletter.php', '📬 Newsletter']],
+        'Communication' => [['inbox.php?t=messages', '✉ Messages'], ['issues.php', '🗞 Monthly Newsletter'], ['newsletter.php', '📬 Subscribers & Email']],
         'System' => [['settings.php', '⚙ Site Settings'], ['users.php', '👤 Admin Users']],
     ];
 }

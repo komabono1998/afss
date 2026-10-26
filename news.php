@@ -83,7 +83,7 @@ $qs = fn(array $o) => '?' . http_build_query(array_filter(array_merge(['cat' => 
   </div>
 </section>
 <section class="cta-band"><div class="container">
-  <h2>Subscribe to our newsletter</h2><p>Be the first to read news, events and stories from AFSS.</p>
+  <h2>Subscribe to our newsletter</h2><p><a href="<?= url('newsletters.php') ?>" style="color:var(--accent);font-weight:600">Read past monthly issues →</a></p><p>Be the first to read news, events and stories from AFSS.</p>
   <form class="subscribe" method="post" action="<?= url('subscribe.php') ?>" style="max-width:460px;margin:0 auto;flex-direction:row"><?= csrf_field() ?>
     <input type="text" name="website" class="hp" tabindex="-1" autocomplete="off">
     <input type="email" name="email" placeholder="Your email address" required><button class="btn btn-accent">Subscribe</button></form>

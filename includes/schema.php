@@ -46,6 +46,15 @@ function install_schema(PDO $db): void
         school TEXT, guardian_name TEXT, phone TEXT, email TEXT, statement TEXT, supporting_file TEXT,
         status TEXT DEFAULT 'new', created_at TEXT DEFAULT CURRENT_TIMESTAMP
     );
+    CREATE TABLE newsletter_issues (
+        id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL, slug TEXT UNIQUE NOT NULL, issue_date TEXT NOT NULL,
+        edition TEXT, summary TEXT, intro TEXT, cover TEXT, pdf TEXT, status TEXT DEFAULT 'draft', sent_at TEXT,
+        created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE newsletter_sections (
+        id INTEGER PRIMARY KEY AUTOINCREMENT, issue_id INTEGER NOT NULL, heading TEXT, body TEXT, image TEXT, caption TEXT,
+        layout TEXT DEFAULT 'image-right', sort INTEGER DEFAULT 0
+    );
     CREATE TABLE albums (
         id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL, slug TEXT UNIQUE NOT NULL, category TEXT DEFAULT 'General',
         event_date TEXT, term TEXT, description TEXT, cover TEXT, active INTEGER DEFAULT 1
@@ -225,6 +234,7 @@ function migrate(PDO $db): void
         foreach (['scholarships_intro', 'scholarships_apply'] as $k) $ins->execute([$k, scholarship_default($k)]);
         $db->exec("INSERT OR REPLACE INTO settings (k,v) VALUES ('migr_scholarships','1')");
     }
+    $db->exec("CREATE TABLE IF NOT EXISTS newsletter_issues ( id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL, slug TEXT UNIQUE NOT NULL, issue_date TEXT NOT NULL, edition TEXT, summary TEXT, intro TEXT, cover TEXT, pdf TEXT, status TEXT DEFAULT 'draft', sent_at TEXT, created_at TEXT DEFAULT CURRENT_TIMESTAMP ); CREATE TABLE IF NOT EXISTS newsletter_sections ( id INTEGER PRIMARY KEY AUTOINCREMENT, issue_id INTEGER NOT NULL, heading TEXT, body TEXT, image TEXT, caption TEXT, layout TEXT DEFAULT 'image-right', sort INTEGER DEFAULT 0 );");
     $ac = array_column($db->query('PRAGMA table_info(admissions_apps)')->fetchAll(PDO::FETCH_ASSOC), 'name');
     foreach (['admission_type', 'transfer_reason', 'results_file', 'recommendation_file'] as $c) if (!in_array($c, $ac, true)) $db->exec("ALTER TABLE admissions_apps ADD COLUMN $c TEXT");
     $done = $db->query("SELECT 1 FROM settings WHERE k = 'migr_pta'")->fetchColumn();
