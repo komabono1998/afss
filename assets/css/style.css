@@ -430,3 +430,19 @@ a:hover{color:var(--secondary)}
 .founders p{font-size:1.05rem;color:var(--ink)}
 .founders p:first-of-type::first-letter{font-family:var(--serif);font-size:3.2rem;line-height:.9;float:left;padding:.15rem .5rem 0 0;color:var(--secondary);font-weight:700}
 @media(max-width:900px){.founders-in{grid-template-columns:1fr;gap:1.6rem}.founders-pic{max-width:340px;margin:0 auto}}
+
+/* student leadership structure chart */
+.org{margin:1.2rem 0 2rem;text-align:center}
+.org-top{display:inline-block;max-width:520px;background:var(--primary);color:#fff;border-radius:12px;padding:.8rem 1.3rem}
+.org-top b{display:block}.org-top small{color:rgba(255,255,255,.8)}
+.org-mid{background:#1f1f1f}
+.org-line{width:2px;height:26px;background:var(--accent);margin:0 auto}
+.org-branches{display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;position:relative;padding-top:26px}
+.org-branches::before{content:"";position:absolute;top:0;left:25%;right:25%;height:2px;background:var(--accent)}
+.org-col{position:relative;background:#fff;border:1px solid var(--line);border-radius:14px;padding:1rem;text-align:left}
+.org-col::before{content:"";position:absolute;top:-26px;left:50%;width:2px;height:26px;background:var(--accent)}
+.org-node{border-radius:10px;padding:.7rem 1rem;color:#fff;text-align:center;margin-bottom:.7rem}
+.org-node b{display:block}.org-node small{opacity:.85}
+.org-g{background:var(--primary)}.org-r{background:var(--secondary)}
+.org-col ul{margin:0;padding-left:1.2rem;font-size:.92rem}.org-col li{margin:.25rem 0}
+@media(max-width:700px){.org-branches{grid-template-columns:1fr}.org-branches::before{display:none}.org-col::before{display:none}.org-branches{padding-top:0}}

@@ -136,8 +136,88 @@ HTML],
 <p>To request any of these documents, please <a href="contact.php">contact the school</a> or call <strong>{{school_phone}}</strong>.</p>
 HTML],
         'student-leadership' => ['Student Leadership', 'The Prefects Body and student participation in school life.', 'students', 5, <<<'HTML'
-<p>Learning extends beyond lessons. AFSS encourages learners to develop confidence, responsibility, teamwork, service and a sense of belonging through student leadership, clubs, cultural activities, sport, faith formation and appropriate guidance and support.</p>
-<p>The <strong>Prefects Body</strong> provides a channel for student leadership and participation in school life. Prefects model good conduct, help staff keep the school running smoothly and carry the voice of learners to the administration. Updates on elections and student initiatives are shared on the News page.</p>
+<p>Learning extends beyond lessons. AFSS encourages learners to develop confidence, responsibility, teamwork, service and a sense of belonging through student leadership, clubs, cultural activities, sport, faith formation and appropriate guidance and support. Student leaders are the bridge between learners and the administration, and they help build the culture of the school.</p>
+
+<h2>Why student leadership matters</h2>
+<ul>
+  <li>It teaches responsibility, service, public speaking and teamwork.</li>
+  <li>It gives every learner a voice in school life.</li>
+  <li>It helps staff keep the school orderly, clean, safe and cheerful.</li>
+  <li>It prepares young people to lead in their families, churches and communities.</li>
+</ul>
+
+<h2>Structure of student leadership</h2>
+<div class="org">
+  <div class="org-top"><b>Head Teacher</b><small>Overall guidance</small></div>
+  <div class="org-line"></div>
+  <div class="org-top org-mid"><b>Deputy Head Teachers, Chaplain, Counsellor and Patron Teachers</b><small>Staff who mentor and supervise student leaders</small></div>
+  <div class="org-line"></div>
+  <div class="org-branches">
+    <div class="org-col">
+      <div class="org-node org-g"><b>Prefects Body</b><small>Led by the Head Prefects</small></div>
+      <ul>
+        <li>Head Prefect (Head Boy) and Head Prefect (Head Girl)</li>
+        <li>Deputy Head Prefects</li>
+        <li>Senior Prefects for key portfolios</li>
+        <li>Dormitory, house and class prefects</li>
+      </ul>
+    </div>
+    <div class="org-col">
+      <div class="org-node org-r"><b>UNSA School Chapter</b><small>Uganda National Students' Association</small></div>
+      <ul>
+        <li>Chairperson and Vice Chairperson</li>
+        <li>General Secretary</li>
+        <li>Secretaries for welfare, publicity, academics and sports</li>
+        <li>Class and house representatives</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<h2>The Prefects Body</h2>
+<p>The Prefects Body is the main channel for student leadership and participation in school life. Prefects model good conduct, help staff keep the school running smoothly and carry the voice of learners to the administration.</p>
+<table>
+  <thead><tr><th>Portfolio</th><th>Main responsibilities</th></tr></thead>
+  <tbody>
+    <tr><td>Head Prefects (Boy and Girl)</td><td>Lead the Prefects Body, represent learners at assemblies and school functions, and liaise with the Head Teacher and Deputies.</td></tr>
+    <tr><td>Deputy Head Prefects</td><td>Support the Head Prefects and stand in when they are away.</td></tr>
+    <tr><td>Academics Prefect</td><td>Promotes serious study, punctuality for lessons and prep, and good use of the library.</td></tr>
+    <tr><td>Discipline and Order Prefect</td><td>Helps maintain good conduct, orderly movement and respect for school rules.</td></tr>
+    <tr><td>Health and Sanitation Prefect</td><td>Promotes cleanliness, hygiene and care for the environment, and links learners to the school nurse.</td></tr>
+    <tr><td>Dining and Welfare Prefect</td><td>Keeps meal times orderly and brings welfare concerns to staff.</td></tr>
+    <tr><td>Games and Sports Prefect</td><td>Organises sports and games with the Sports Tutor.</td></tr>
+    <tr><td>Entertainment and Cultural Prefect</td><td>Coordinates music, drama, dance and school celebrations.</td></tr>
+    <tr><td>Dormitory, House and Class Prefects</td><td>Look after order, cleanliness and wellbeing in dormitories and classrooms.</td></tr>
+  </tbody>
+</table>
+
+<h2>UNSA at AFSS</h2>
+<p>The Uganda National Students' Association (UNSA) is the national body that represents learners in Uganda. At AFSS, the UNSA school chapter gives learners an organised voice, working hand in hand with the Prefects Body and the school administration to promote student welfare, rights and responsibilities, and active citizenship.</p>
+<ul>
+  <li><strong>Representation:</strong> brings learners' views, suggestions and concerns to the administration through proper channels.</li>
+  <li><strong>Welfare:</strong> encourages respect, safety and dignity for every learner.</li>
+  <li><strong>Civic education:</strong> builds understanding of leadership, democracy and responsible participation.</li>
+  <li><strong>Service:</strong> takes part in community and school improvement activities.</li>
+</ul>
+
+<h2>How student leaders are chosen</h2>
+<ol>
+  <li>Learners who meet the school's requirements for good conduct, academic effort and service are invited to stand.</li>
+  <li>Candidates are screened by the staff leadership and present their plans to the school community.</li>
+  <li>Leaders are chosen through the school's approved election and appointment process.</li>
+  <li>Newly chosen leaders are commissioned, usually at a school assembly, and take an oath to serve faithfully.</li>
+  <li>Leaders are guided by patron teachers and serve for the period set by the school.</li>
+</ol>
+
+<h2>Expectations of a student leader</h2>
+<ul>
+  <li>Be a role model in conduct, speech, dress and time-keeping.</li>
+  <li>Serve all learners fairly, without favouritism or bullying.</li>
+  <li>Keep confidential matters confidential, and report serious concerns to staff.</li>
+  <li>Balance leadership duties with studies.</li>
+</ul>
+
+<p class="notice">Portfolios and office-bearers are confirmed each year. Current student leaders are announced on the <a href="news.php">News</a> page. Questions about student leadership? <a href="contact.php">Contact the school</a>.</p>
 HTML],
         'faith-formation' => ['Faith Formation', 'Prayer, reflection and service in the Catholic tradition.', 'students', 6, <<<'HTML'
 <p>Rooted in the school's Catholic tradition, faith formation encourages reflection, compassion, service, respect and responsible living. It is part of the daily rhythm of school life, through prayer, Mass, religious celebrations and service activities, and it shapes the character we hope to see in every learner.</p>
