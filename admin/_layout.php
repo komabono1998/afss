@@ -5,7 +5,7 @@ $ME = require_admin();
 function admin_nav(): array
 {
     return [
-        'Overview' => [['index.php', '📊 Dashboard']],
+        'Overview' => [['index.php', '📊 Dashboard'], ['population.php', '👥 School Population']],
         'Content' => [
             ['crud.php?e=slides', '🖼 Hero Slides'], ['crud.php?e=pages', '📄 Pages'], ['crud.php?e=news', '📰 News & Stories'], ['issues.php', '🗞 Monthly Newsletter'],
             ['crud.php?e=events', '📅 Events'], ['albums.php', '📷 Photo Albums'], ['crud.php?e=team', '🏛 Management Profiles'],
@@ -21,7 +21,7 @@ function nav_module(string $href): ?string
 {
     if (preg_match('/^crud\.php\?e=(\w+)/', $href, $m)) return $m[1];
     if (preg_match('/^inbox\.php\?t=(\w+)/', $href, $m)) return $m[1];
-    return ['issues.php' => 'issues', 'albums.php' => 'albums', 'newsletter.php' => 'newsletter', 'settings.php' => 'settings', 'users.php' => 'users'][$href] ?? null;
+    return ['population.php' => 'population', 'issues.php' => 'issues', 'albums.php' => 'albums', 'newsletter.php' => 'newsletter', 'settings.php' => 'settings', 'users.php' => 'users'][$href] ?? null;
 }
 function badge_counts(): array
 {
@@ -43,10 +43,11 @@ function admin_head(string $title): void
 <meta name="robots" content="noindex">
 <title><?= e($title) ?> · Admin · <?= e(setting('short_name', 'AFSS')) ?></title>
 <link rel="stylesheet" href="<?= asset('assets/css/admin.css') ?>">
-<style>:root{--primary:<?= e(setting('primary_color', '#0b2a4a')) ?>;--accent:<?= e(setting('accent_color', '#c9962b')) ?>}</style>
+<link rel="icon" href="<?= e(media(setting('logo') ?: 'assets/img/logo.webp')) ?>">
+<style>:root{--primary:<?= e(setting('primary_color', '#0b6b2e')) ?>;--accent:<?= e(setting('accent_color', '#f2b705')) ?>;--secondary:<?= e(setting('secondary_color', '#d7141a')) ?>}</style>
 </head><body>
 <aside class="side" id="side">
-  <div class="logo"><b><?= e(setting('short_name', 'AFSS')) ?></b> Admin</div>
+  <a class="logo" href="index.php"><img src="<?= e(media(setting('logo') ?: 'assets/img/logo.webp')) ?>" alt=""><span><b><?= e(setting('short_name', 'AFSS')) ?></b> Admin<small>School portal</small></span></a>
   <?php foreach (admin_nav() as $group => $links):
       $links = array_filter($links, fn($l) => !nav_module($l[0]) || can(nav_module($l[0])));
       if (!$links) continue; ?>

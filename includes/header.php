@@ -24,7 +24,7 @@ function group_children(string $group, array $extra = [], bool $extraFirst = fal
     foreach (menu_pages($group) as $p) $c[] = [$p['title'], url('page.php?slug=' . $p['slug'])];
     return $extraFirst ? array_merge($extra, $c) : array_merge($c, $extra);
 }
-$logo = setting('logo');
+$logo = setting('logo') ?: 'assets/img/logo.webp';
 ?>
 <!doctype html>
 <html lang="en">
@@ -35,12 +35,14 @@ $logo = setting('logo');
 <meta name="description" content="<?= e(excerpt($pageDesc, 160)) ?>">
 <meta property="og:title" content="<?= e($fullTitle) ?>">
 <meta property="og:description" content="<?= e(excerpt($pageDesc, 160)) ?>">
-<?php if (!empty($pageImage)): ?><meta property="og:image" content="<?= e(media($pageImage)) ?>"><?php endif; ?>
+<meta property="og:image" content="<?= e(media(!empty($pageImage) ? $pageImage : (setting('logo') ?: 'assets/img/logo.webp'))) ?>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="<?= asset('assets/css/style.css') ?>">
-<style>:root{--primary:<?= e(setting('primary_color', '#0b2a4a')) ?>;--accent:<?= e(setting('accent_color', '#c9962b')) ?>}</style>
+<link rel="icon" href="<?= e(media($logo)) ?>">
+<meta name="theme-color" content="<?= e(setting('primary_color', '#0b6b2e')) ?>">
+<style>:root{--primary:<?= e(setting('primary_color', '#0b6b2e')) ?>;--accent:<?= e(setting('accent_color', '#f2b705')) ?>;--secondary:<?= e(setting('secondary_color', '#d7141a')) ?>}</style>
 </head>
 <body>
 <?php if (setting('announcement')): ?>
@@ -57,8 +59,8 @@ $logo = setting('logo');
 <header class="site-header" id="top">
   <div class="container header-in">
     <a class="brand" href="<?= url() ?>">
-      <?php if ($logo): ?><img src="<?= e(media($logo)) ?>" alt="<?= e(setting('school_name')) ?> logo">
-      <?php else: ?><span class="crest" aria-hidden="true"><svg viewBox="0 0 40 46" width="38" height="44"><path d="M20 2 4 8v14c0 11 7 19 16 22 9-3 16-11 16-22V8z" fill="var(--accent)"/><path d="M20 10v24M12 18h16" stroke="var(--primary)" stroke-width="3" stroke-linecap="round"/></svg></span><?php endif; ?>
+      <img src="<?= e(media($logo)) ?>" alt="<?= e(setting('school_name')) ?> logo">
+      <?php if (false): ?><span class="crest" aria-hidden="true"><svg viewBox="0 0 40 46" width="38" height="44"><path d="M20 2 4 8v14c0 11 7 19 16 22 9-3 16-11 16-22V8z" fill="var(--accent)"/><path d="M20 10v24M12 18h16" stroke="var(--primary)" stroke-width="3" stroke-linecap="round"/></svg></span><?php endif; ?>
       <span class="brand-text"><strong><?= e(setting('school_name')) ?></strong><small><?= e(setting('tagline')) ?></small></span>
     </a>
     <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false"><span></span><span></span><span></span></button>

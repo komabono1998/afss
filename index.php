@@ -23,12 +23,17 @@ include __DIR__ . '/includes/header.php';
     </div></div>
   </div>
   <?php endforeach; ?>
+  <img class="hero-crest" src="<?= e(media(setting('logo') ?: 'assets/img/logo.webp')) ?>" alt="" aria-hidden="true">
   <div class="hero-dots"></div>
 </section>
 
 <section class="stats"><div class="container"><div class="stats-grid">
-  <?php foreach (['students', 'teachers', 'years', 'firstgrade'] as $k): if (setting("stat_$k")): ?>
-  <div class="stat"><b><?= e(setting("stat_$k")) ?></b><span><?= e(setting("stat_{$k}_l")) ?></span></div>
+  <?php $pop = population(); $over = ['students' => [$pop['students'], 'Learners'], 'teachers' => [$pop['staff'], 'Dedicated Staff']];
+  foreach (['students', 'teachers', 'years', 'firstgrade'] as $k):
+    $real = isset($over[$k]) && $over[$k][0] > 0;
+    $val = $real ? number_format($over[$k][0]) : setting("stat_$k"); $lab = $real ? $over[$k][1] : setting("stat_{$k}_l");
+    if ($val): ?>
+  <div class="stat"><b><?= e($val) ?></b><span><?= e($lab) ?></span></div>
   <?php endif; endforeach; ?>
 </div></div></section>
 
@@ -47,7 +52,7 @@ include __DIR__ . '/includes/header.php';
       <a class="btn btn-primary" href="<?= url('page.php?slug=about-us') ?>">Learn more about us</a>
     </div>
     <div class="about-img reveal">
-      <?php if (!empty($about['image'])): ?><img src="<?= e(media($about['image'])) ?>" alt="Archbishop Flynn Secondary School campus"><?php endif; ?>
+      <?php if (!empty($about['image'])): ?><img src="<?= e(media($about['image'])) ?>" alt="Archbishop Flynn Secondary School campus"><?php else: ?><img class="crest-big" src="<?= e(media(setting('logo') ?: 'assets/img/logo.webp')) ?>" alt="<?= e(setting('school_name')) ?> crest"><?php endif; ?>
       <div class="badge">Sapientia et Servitium</div>
     </div>
   </div>

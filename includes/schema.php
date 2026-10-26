@@ -106,8 +106,9 @@ function seed_content(PDO $db): void
         'notify_email' => 'info@afss.ac.ug',
         'facebook' => '', 'twitter' => '', 'instagram' => '', 'youtube' => '', 'whatsapp' => '',
         'map_embed' => 'https://www.openstreetmap.org/export/embed.html?bbox=32.85%2C2.78%2C32.95%2C2.88&layer=mapnik',
-        'primary_color' => '#0b2a4a',
-        'accent_color' => '#c9962b',
+        'primary_color' => '#0b6b2e',
+        'secondary_color' => '#d7141a',
+        'accent_color' => '#f2b705',
         'logo' => '',
         'announcement' => 'Admissions are open — apply online today.',
         'admissions_open' => '1',
@@ -237,6 +238,13 @@ function migrate(PDO $db): void
     $db->exec("CREATE TABLE IF NOT EXISTS newsletter_issues ( id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL, slug TEXT UNIQUE NOT NULL, issue_date TEXT NOT NULL, edition TEXT, summary TEXT, intro TEXT, cover TEXT, pdf TEXT, status TEXT DEFAULT 'draft', sent_at TEXT, created_at TEXT DEFAULT CURRENT_TIMESTAMP ); CREATE TABLE IF NOT EXISTS newsletter_sections ( id INTEGER PRIMARY KEY AUTOINCREMENT, issue_id INTEGER NOT NULL, heading TEXT, body TEXT, image TEXT, caption TEXT, layout TEXT DEFAULT 'image-right', sort INTEGER DEFAULT 0 );");
     $uc = array_column($db->query('PRAGMA table_info(users)')->fetchAll(PDO::FETCH_ASSOC), 'name');
     if (!in_array('active', $uc, true)) $db->exec('ALTER TABLE users ADD COLUMN active INTEGER DEFAULT 1');
+    if (!$db->query("SELECT 1 FROM settings WHERE k = 'migr_theme'")->fetchColumn()) {
+        $get = fn($k) => $db->query("SELECT v FROM settings WHERE k = " . $db->quote($k))->fetchColumn();
+        if (in_array($get('primary_color'), [false, '#0b2a4a'], true)) $db->exec("INSERT OR REPLACE INTO settings (k,v) VALUES ('primary_color','#0b6b2e')");
+        if (in_array($get('accent_color'), [false, '#c9962b'], true)) $db->exec("INSERT OR REPLACE INTO settings (k,v) VALUES ('accent_color','#f2b705')");
+        $db->exec("INSERT OR IGNORE INTO settings (k,v) VALUES ('secondary_color','#d7141a')");
+        $db->exec("INSERT OR REPLACE INTO settings (k,v) VALUES ('migr_theme','1')");
+    }
     $ac = array_column($db->query('PRAGMA table_info(admissions_apps)')->fetchAll(PDO::FETCH_ASSOC), 'name');
     foreach (['admission_type', 'transfer_reason', 'results_file', 'recommendation_file'] as $c) if (!in_array($c, $ac, true)) $db->exec("ALTER TABLE admissions_apps ADD COLUMN $c TEXT");
     $done = $db->query("SELECT 1 FROM settings WHERE k = 'migr_pta'")->fetchColumn();

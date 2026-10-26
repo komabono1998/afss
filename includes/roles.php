@@ -11,7 +11,7 @@ const ADMIN_MODULES = [
     'jobs' => 'Job vacancies', 'job_apps' => 'Job applications',
     'admissions' => 'Admission applications', 'scholarships' => 'Scholarships & bursaries', 'scholarship_apps' => 'Scholarship applications',
     'messages' => 'Contact messages', 'newsletter' => 'Subscribers & email',
-    'settings' => 'Site settings', 'users' => 'Admin users',
+    'population' => 'School population', 'settings' => 'Site settings', 'users' => 'Admin users',
 ];
 
 function roles(): array
@@ -30,13 +30,13 @@ function roles(): array
         'deputy_academics' => [
             'label' => 'Deputy Headteacher (Academics)',
             'desc' => 'Academic and About pages, news, events, photo albums, admissions and scholarship applications.',
-            'modules' => ['pages', 'news', 'events', 'albums', 'admissions', 'scholarships', 'scholarship_apps'],
+            'modules' => ['pages', 'news', 'events', 'albums', 'admissions', 'scholarships', 'scholarship_apps', 'population'],
             'scope' => ['pages' => ['menu_group', ['academics', 'about']]],
         ],
         'deputy_admin' => [
             'label' => 'Deputy Headteacher (Administration)',
             'desc' => 'Management profiles, job vacancies and applications, contact messages, events, news and student-life pages.',
-            'modules' => ['pages', 'news', 'events', 'albums', 'team', 'jobs', 'job_apps', 'messages', 'admissions'],
+            'modules' => ['pages', 'news', 'events', 'albums', 'team', 'jobs', 'job_apps', 'messages', 'admissions', 'population'],
             'scope' => ['pages' => ['menu_group', ['about', 'students', 'none']]],
         ],
         'bursar' => [

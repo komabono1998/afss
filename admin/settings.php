@@ -8,7 +8,7 @@ $groups = [
         'school_name' => ['School name', 'text'], 'short_name' => ['Short name', 'text'], 'tagline' => ['Motto / tagline', 'text'],
         'intro' => ['Short description', 'textarea', 'Used in the footer and search-engine descriptions.'],
         'mission' => ['Mission statement', 'textarea'], 'vision' => ['Vision statement', 'textarea'],
-        'logo' => ['Logo', 'image', 'PNG with transparent background works best.'],
+        'logo' => ['Logo', 'image', 'Leave empty to use the AFSS crest that ships with the site.'],
         'moes_reg' => ['MoES registration no.', 'text'], 'licence' => ['Licence no.', 'text'], 'uneb_centre' => ['UNEB centre no.', 'text'],
     ],
     'Contact details' => [
@@ -39,7 +39,7 @@ $groups = [
         'intake_text' => ['Intake message', 'textarea', 'Shown on the home page, admissions page and call-to-action.'],
     ],
     'Appearance' => [
-        'primary_color' => ['Primary colour', 'color'], 'accent_color' => ['Accent colour', 'color'],
+        'primary_color' => ['Main colour (green)', 'color'], 'secondary_color' => ['Action colour (red)', 'color', 'Used for Apply buttons and highlights.'], 'accent_color' => ['Accent colour (gold)', 'color'],
     ],
 ];
 

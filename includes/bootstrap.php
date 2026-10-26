@@ -204,3 +204,17 @@ function gallery_categories(): array
     $c = array_values(array_filter(array_map('trim', preg_split('/\R/', setting('gallery_categories')))));
     return $c ?: ['Campus Life'];
 }
+
+/** School population figures entered by staff (dashboard + home page). */
+function population(): array
+{
+    $n = fn($k) => max(0, (int) preg_replace('/\D/', '', setting($k)));
+    $boys = $n('pop_boys'); $girls = $n('pop_girls');
+    $students = $n('pop_students') ?: $boys + $girls;
+    $teaching = $n('pop_teaching'); $support = $n('pop_support');
+    return [
+        'students' => $students, 'boys' => $boys, 'girls' => $girls,
+        'o_level' => $n('pop_o_level'), 'a_level' => $n('pop_a_level'), 'boarding' => $n('pop_boarding'), 'day' => $n('pop_day'),
+        'teaching' => $teaching, 'support' => $support, 'staff' => $teaching + $support, 'updated' => setting('pop_updated'),
+    ];
+}

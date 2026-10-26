@@ -34,22 +34,34 @@ if (is_post()) {
         if (!$err) { $tries[] = time(); $_SESSION['login_tries'] = $tries; $err = 'Incorrect email or password.'; }
     }
 }
+$logo = setting('logo') ?: 'assets/img/logo.webp';
 ?>
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex">
 <title><?= $hasUsers ? 'Admin Login' : 'Set up Administrator' ?> · <?= e(setting('short_name', 'AFSS')) ?></title>
+<link rel="icon" href="<?= e(media($logo)) ?>">
 <link rel="stylesheet" href="<?= asset('assets/css/admin.css') ?>">
-<style>:root{--primary:<?= e(setting('primary_color', '#0b2a4a')) ?>;--accent:<?= e(setting('accent_color', '#c9962b')) ?>}</style></head>
-<body class="center"><div class="login"><div class="card">
-  <h2 style="font-size:1.4rem;margin-bottom:.2rem"><?= e(setting('school_name')) ?></h2>
-  <p class="muted" style="margin-top:0"><?= $hasUsers ? 'Administrator sign in' : 'First-time setup: create the administrator account' ?></p>
-  <?php if ($err): ?><div class="alert alert-err"><?= e($err) ?></div><?php endif; ?>
-  <form method="post" autocomplete="on">
-    <?= csrf_field() ?>
-    <?php if (!$hasUsers): ?><div class="f"><label>Your name</label><input type="text" name="name" value="<?= old('name') ?>" required></div><?php endif; ?>
-    <div class="f"><label>Email</label><input type="email" name="email" value="<?= old('email') ?>" required autofocus></div>
-    <div class="f"><label>Password</label><input type="password" name="password" required></div>
-    <?php if (!$hasUsers): ?><div class="f"><label>Confirm password</label><input type="password" name="password2" required><small>At least 8 characters.</small></div><?php endif; ?>
-    <button class="btn accent" style="width:100%"><?= $hasUsers ? 'Sign in' : 'Create administrator' ?></button>
-  </form>
-  <p style="text-align:center;margin-bottom:0"><a href="<?= url() ?>">← Back to website</a></p>
-</div></div></body></html>
+<style>:root{--primary:<?= e(setting('primary_color', '#0b6b2e')) ?>;--accent:<?= e(setting('accent_color', '#f2b705')) ?>;--secondary:<?= e(setting('secondary_color', '#d7141a')) ?>}</style></head>
+<body class="auth">
+<main class="auth-wrap">
+  <section class="auth-brand">
+    <img src="<?= e(media($logo)) ?>" alt="<?= e(setting('school_name')) ?> crest">
+    <h1><?= e(setting('school_name')) ?></h1>
+    <p class="motto"><?= e(setting('tagline')) ?></p>
+    <p class="blurb">School administration portal — manage news, admissions, events, newsletters and more.</p>
+  </section>
+  <section class="auth-card">
+    <h2><?= $hasUsers ? 'Welcome back' : 'Set up your administrator account' ?></h2>
+    <p class="muted"><?= $hasUsers ? 'Sign in to continue to the admin dashboard.' : 'This first account will have full access. You can add staff with other roles later.' ?></p>
+    <?php if ($err): ?><div class="alert alert-err"><?= e($err) ?></div><?php endif; ?>
+    <form method="post" autocomplete="on">
+      <?= csrf_field() ?>
+      <?php if (!$hasUsers): ?><div class="f"><label>Your name</label><input type="text" name="name" value="<?= old('name') ?>" required></div><?php endif; ?>
+      <div class="f"><label>Email</label><input type="email" name="email" value="<?= old('email') ?>" required autofocus autocomplete="username"></div>
+      <div class="f"><label>Password</label><input type="password" name="password" required autocomplete="<?= $hasUsers ? 'current-password' : 'new-password' ?>"></div>
+      <?php if (!$hasUsers): ?><div class="f"><label>Confirm password</label><input type="password" name="password2" required autocomplete="new-password"><small>At least 8 characters.</small></div><?php endif; ?>
+      <button class="btn accent block"><?= $hasUsers ? 'Sign in' : 'Create administrator' ?></button>
+    </form>
+    <p class="back"><a href="<?= url() ?>">← Back to website</a></p>
+  </section>
+</main>
+</body></html>
