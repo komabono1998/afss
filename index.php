@@ -21,7 +21,7 @@ include __DIR__ . '/includes/header.php';
         <a class="btn btn-outline" href="<?= url('page.php?slug=about-us') ?>">Discover AFSS</a>
       </div>
     </div></div>
-    <?php if (!$s['image']): ?><div class="crest-stage" aria-hidden="true"><img class="hero-crest" src="<?= e(media(setting('logo') ?: 'assets/img/logo.webp')) ?>" alt=""></div><?php endif; ?>
+    <?php if (!$s['image']): ?><div class="crest-stage" aria-hidden="true"><i class="crest-rays"></i><img class="hero-crest" src="<?= e(media(setting('logo') ?: 'assets/img/logo.webp')) ?>" alt=""></div><?php endif; ?>
   </div>
   <?php endforeach; ?>
   <div class="hero-dots"></div>

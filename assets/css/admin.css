@@ -269,3 +269,9 @@ tr:hover td{background:#fafbf9}
 .chip b{color:var(--k)}
 .split-bar{background:var(--r)}.split-bar i{background:var(--g)}
 .notice-card{border-color:var(--y);background:#fffbe8}
+
+/* animated crest on the sign-in screens */
+@keyframes crestPop{0%{opacity:0;transform:scale(.4) rotateY(-120deg)}60%{opacity:1;transform:scale(1.08) rotateY(12deg)}100%{opacity:1;transform:none}}
+@keyframes crestBreathe{0%,100%{box-shadow:0 2px 8px rgba(0,0,0,.12)}50%{box-shadow:0 0 0 6px rgba(242,183,5,.35),0 2px 12px rgba(0,0,0,.15)}}
+.lg-brand img{animation:crestPop 1s cubic-bezier(.2,.9,.3,1.2) both,crestBreathe 5s ease-in-out 1.2s infinite}
+@media(prefers-reduced-motion:reduce){.lg-brand img{animation:none!important}}
