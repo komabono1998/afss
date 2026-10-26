@@ -11,7 +11,7 @@ const ADMIN_MODULES = [
     'jobs' => 'Job vacancies', 'job_apps' => 'Job applications',
     'admissions' => 'Admission applications', 'scholarships' => 'Scholarships & bursaries', 'scholarship_apps' => 'Scholarship applications',
     'messages' => 'Contact messages', 'newsletter' => 'Subscribers & email',
-    'population' => 'School population', 'alumni_events' => 'Alumni activities & events', 'alumni_members' => 'Alumni members', 'alumni_page' => 'Alumni page text', 'students' => 'Student database (view)', 'students_manage' => 'Student database (edit & upload)', 'classes' => 'Classes & streams', 'students_api' => 'Student data API', 'whistleblower' => 'Whistle-blower reports', 'settings' => 'Site settings', 'users' => 'Admin users',
+    'population' => 'School population', 'alumni_events' => 'Alumni activities & events', 'alumni_members' => 'Alumni members', 'alumni_page' => 'Alumni page text', 'students' => 'Student database (view)', 'students_manage' => 'Student database (edit & upload)', 'classes' => 'Classes & streams', 'students_api' => 'Student data API', 'whistleblower' => 'Whistle-blower reports', 'donation_methods' => 'Donation methods', 'donation_causes' => 'Giving causes', 'donor_pledges' => 'Donor enquiries', 'donate_page' => 'Donate page text', 'settings' => 'Site settings', 'users' => 'Admin users',
 ];
 
 function roles(): array
@@ -42,7 +42,7 @@ function roles(): array
         'bursar' => [
             'label' => 'Bursar',
             'desc' => 'Fees and admissions pages, scholarships and bursaries, and their applications.',
-            'modules' => ['pages', 'scholarships', 'scholarship_apps', 'admissions', 'students'],
+            'modules' => ['pages', 'scholarships', 'scholarship_apps', 'admissions', 'students', 'donation_methods', 'donation_causes', 'donor_pledges', 'donate_page'],
             'scope' => ['pages' => ['menu_group', ['admissions']]],
         ],
         'sports_tutor' => [

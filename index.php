@@ -110,6 +110,7 @@ include __DIR__ . '/includes/header.php';
     <h2>Begin your journey with <?= e(setting('short_name')) ?></h2>
     <p><?= e(setting('intake_text')) ?></p>
     <a class="btn btn-accent" href="<?= url('apply.php') ?>">Apply for Admission</a>
+    <a class="btn btn-gold" href="<?= url('donate.php') ?>">♥ Donate or partner with us</a>
     <?php if ($jobs): ?><a class="btn btn-outline" href="<?= url('careers.php') ?>">Work with us (<?= $jobs ?> open)</a><?php endif; ?>
   </div>
 </section>

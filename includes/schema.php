@@ -34,7 +34,7 @@ function install_schema(PDO $db): void
     );
     CREATE TABLE team (
         id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, role TEXT, grp TEXT DEFAULT 'administration',
-        bio TEXT, photo TEXT, sort INTEGER DEFAULT 0, email TEXT, phone TEXT, term TEXT
+        bio TEXT, photo TEXT, sort INTEGER DEFAULT 0, email TEXT, phone TEXT, term TEXT, subjects TEXT
     );
     CREATE TABLE scholarships (
         id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL, slug TEXT UNIQUE NOT NULL, type TEXT DEFAULT 'Bursary',
@@ -84,6 +84,17 @@ function install_schema(PDO $db): void
         incident_date TEXT, location TEXT, people_involved TEXT, anonymous INTEGER DEFAULT 1, reporter_name TEXT, reporter_contact TEXT,
         relationship TEXT, attachment TEXT, status TEXT DEFAULT 'new', response TEXT, notes TEXT, followups TEXT,
         created_at TEXT DEFAULT CURRENT_TIMESTAMP, updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE donation_methods (
+        id INTEGER PRIMARY KEY AUTOINCREMENT, type TEXT DEFAULT 'bank', title TEXT NOT NULL, bank_name TEXT, account_name TEXT, account_number TEXT,
+        branch TEXT, swift TEXT, currency TEXT, merchant_code TEXT, link_url TEXT, instructions TEXT, sort INTEGER DEFAULT 0, active INTEGER DEFAULT 1
+    );
+    CREATE TABLE donation_causes (
+        id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL, summary TEXT, image TEXT, target TEXT, sort INTEGER DEFAULT 0, active INTEGER DEFAULT 1
+    );
+    CREATE TABLE donor_pledges (
+        id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, organisation TEXT, email TEXT, phone TEXT, kind TEXT, cause TEXT, amount_text TEXT,
+        reference TEXT, message TEXT, status TEXT DEFAULT 'new', created_at TEXT DEFAULT CURRENT_TIMESTAMP
     );
     CREATE TABLE albums (
         id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL, slug TEXT UNIQUE NOT NULL, category TEXT DEFAULT 'General',
@@ -157,6 +168,7 @@ Religious Celebrations
 Academic Events
 Clubs & Societies
 Campus Life",
+        'donate_intro' => donate_default('donate_intro'), 'donate_thanks' => donate_default('donate_thanks'), 'partnership_text' => donate_default('partnership_text'), 'partnership_types' => donate_default('partnership_types'), 'donate_button' => '1',
         'reg_prefix' => 'AFSS',
         'api_enabled' => '0', 'api_key_hash' => '', 'api_key_hint' => '', 'api_guardian' => '0',
         'whistle_intro' => whistle_default('whistle_intro'), 'whistle_categories' => whistle_default('whistle_categories'),
@@ -166,6 +178,7 @@ Campus Life",
     foreach (['scholarships_intro', 'scholarships_apply'] as $k) $set->execute([$k, scholarship_default($k)]);
     seed_scholarships($db);
     seed_alumni($db, true);
+    seed_giving($db);
 
     $slide = $db->prepare('INSERT INTO slides (title,subtitle,link_text,link_url,sort) VALUES (?,?,?,?,?)');
     $slide->execute(['Welcome to Archbishop Flynn Secondary School', 'Wisdom and Service — educating the head, heart and hands in Pader, Uganda.', 'Apply for Admission', 'apply.php', 1]);
@@ -302,6 +315,16 @@ function migrate(PDO $db): void
     if (!in_array('followups', $wbc, true)) $db->exec('ALTER TABLE whistle_reports ADD COLUMN followups TEXT');
     $ins2 = $db->prepare('INSERT OR IGNORE INTO settings (k,v) VALUES (?,?)');
     foreach (['reg_prefix' => 'AFSS', 'api_enabled' => '0', 'api_key_hash' => '', 'api_key_hint' => '', 'api_guardian' => '0', 'whistle_intro' => whistle_default('whistle_intro'), 'whistle_categories' => whistle_default('whistle_categories')] as $k2 => $v2) $ins2->execute([$k2, $v2]);
+    $db->exec("CREATE TABLE IF NOT EXISTS donation_methods ( id INTEGER PRIMARY KEY AUTOINCREMENT, type TEXT DEFAULT 'bank', title TEXT NOT NULL, bank_name TEXT, account_name TEXT, account_number TEXT, branch TEXT, swift TEXT, currency TEXT, merchant_code TEXT, link_url TEXT, instructions TEXT, sort INTEGER DEFAULT 0, active INTEGER DEFAULT 1 ); CREATE TABLE IF NOT EXISTS donation_causes ( id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL, summary TEXT, image TEXT, target TEXT, sort INTEGER DEFAULT 0, active INTEGER DEFAULT 1 ); CREATE TABLE IF NOT EXISTS donor_pledges ( id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, organisation TEXT, email TEXT, phone TEXT, kind TEXT, cause TEXT, amount_text TEXT, reference TEXT, message TEXT, status TEXT DEFAULT 'new', created_at TEXT DEFAULT CURRENT_TIMESTAMP );");
+    $tmc = array_column($db->query('PRAGMA table_info(team)')->fetchAll(PDO::FETCH_ASSOC), 'name');
+    if (!in_array('subjects', $tmc, true)) $db->exec('ALTER TABLE team ADD COLUMN subjects TEXT');
+    if (!$db->query("SELECT 1 FROM settings WHERE k = 'migr_giving'")->fetchColumn()) {
+        $gi = $db->prepare('INSERT OR IGNORE INTO settings (k,v) VALUES (?,?)');
+        foreach (['donate_intro', 'donate_thanks', 'partnership_text', 'partnership_types'] as $gk) $gi->execute([$gk, donate_default($gk)]);
+        $gi->execute(['donate_button', '1']);
+        seed_giving($db);
+        $db->exec("INSERT OR REPLACE INTO settings (k,v) VALUES ('migr_giving','1')");
+    }
     $ac = array_column($db->query('PRAGMA table_info(admissions_apps)')->fetchAll(PDO::FETCH_ASSOC), 'name');
     foreach (['admission_type', 'transfer_reason', 'results_file', 'recommendation_file'] as $c) if (!in_array($c, $ac, true)) $db->exec("ALTER TABLE admissions_apps ADD COLUMN $c TEXT");
     $done = $db->query("SELECT 1 FROM settings WHERE k = 'migr_pta'")->fetchColumn();
@@ -378,4 +401,32 @@ function whistle_default(string $key): string
         'whistle_intro' => 'Parents, students, staff, alumni and community members can report any concern about the safety, welfare or integrity of our school. You may give your name or stay completely anonymous. Every report is treated seriously and in confidence.',
         'whistle_categories' => "Corruption or misuse of school funds\nBribery for admissions, marks or bursaries\nFee or bursary irregularities\nBullying or harassment\nSexual abuse or exploitation\nChild protection concern\nCorporal punishment or physical abuse\nTeacher misconduct or absenteeism\nExamination malpractice\nDrug or substance abuse\nDiscrimination or exclusion\nUnsafe buildings or facilities\nPoor sanitation, health or feeding",
     ][$key] ?? '';
+}
+
+function donate_default(string $key): string
+{
+    return [
+        'donate_intro' => 'Your gift helps young people in Pader and beyond to learn, grow and serve. Every contribution, large or small, goes towards bursaries, learning resources and school development. Thank you for standing with Archbishop Flynn Secondary School.',
+        'donate_thanks' => 'Thank you! Your message has been received. A member of the school team will contact you shortly.',
+        'partnership_text' => '<p>We welcome partnerships with churches, companies, NGOs, government programmes, alumni groups and individuals who share our commitment to quality, values-based education. Partners can support bursaries, infrastructure, equipment, teacher training, mentorship and more.</p><p>Tell us how you would like to help and we will agree a plan that works for you.</p>',
+        'partnership_types' => "Make a donation\nSponsor a student (bursary)\nCorporate or institutional partnership\nDonate books, equipment or materials\nOffer skills, mentorship or training\nSupport a school project\nOther",
+    ][$key] ?? '';
+}
+
+/** Giving options start switched OFF with empty details, so nothing wrong is ever shown publicly until the school fills them in. */
+function seed_giving(PDO $db): void
+{
+    if (!$db->query('SELECT 1 FROM donation_methods LIMIT 1')->fetchColumn()) {
+        $m = $db->prepare("INSERT INTO donation_methods (type,title,currency,instructions,sort,active) VALUES (?,?,?,?,?,0)");
+        $m->execute(['bank', 'Bank transfer (UGX)', 'UGX', 'Please use your name and the purpose of your gift as the payment reference.', 1]);
+        $m->execute(['mtn', 'MTN Mobile Money', 'UGX', 'Pay the merchant code from your Mobile Money menu. Use your name as the reference.', 2]);
+        $m->execute(['airtel', 'Airtel Money', 'UGX', 'Pay the merchant code from your Airtel Money menu. Use your name as the reference.', 3]);
+        $m->execute(['link', 'Give online', '', 'Opens a secure payment page.', 4]);
+    }
+    if (!$db->query('SELECT 1 FROM donation_causes LIMIT 1')->fetchColumn()) {
+        $c = $db->prepare('INSERT INTO donation_causes (title,summary,sort) VALUES (?,?,?)');
+        $c->execute(['Bursary fund', 'Keep capable learners in school when families cannot afford fees, including orphans and learners with disabilities.', 1]);
+        $c->execute(['Library and learning resources', 'Textbooks, readers, science equipment and e-learning tools for every classroom.', 2]);
+        $c->execute(['School development', 'Classrooms, dormitories, sanitation and safe learning spaces.', 3]);
+    }
 }

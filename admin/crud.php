@@ -6,6 +6,12 @@ if (!isset($all[$key])) redirect('admin/index.php');
 $E = $all[$key];
 require_perm($key);
 $scope = scope_for($key);
+function crud_apply_filter(array $E, string $where, array $params): array
+{
+    $col = $E['filter'] ?? null;
+    if ($col && isset($E['fields'][$col]['options'][$_GET['f'] ?? ''])) { $where .= " AND $col = ?"; $params[] = $_GET['f']; }
+    return [$where, $params];
+}
 function scoped_options(array $opts, ?array $scope, string $field): array
 {
     return ($scope && $scope['col'] === $field) ? array_intersect_key($opts, array_flip($scope['values'])) : $opts;
@@ -87,7 +93,8 @@ if (!empty($_GET['export']) && $action === 'list') {
     $search = trim($_GET['q'] ?? '');
     $where = '1=1'; $params = [];
     if ($search !== '') { $where = '(' . implode(' OR ', array_map(fn($c) => "$c LIKE ?", $E['search'])) . ')'; $params = array_fill(0, count($E['search']), "%$search%"); }
-    [$scopeSql, $scopeParams] = scope_sql($scope);
+    [$where, $params] = crud_apply_filter($E, $where, $params);
+[$scopeSql, $scopeParams] = scope_sql($scope);
     $data = rows("SELECT * FROM $table WHERE $where$scopeSql ORDER BY {$E['order']}", array_merge($params, $scopeParams));
     $cols = array_filter($E['list'], fn($l, $c) => ($E['fields'][$c][1] ?? 'text') !== 'image', ARRAY_FILTER_USE_BOTH);
     $fmtv = function ($c, $v) use ($E) {
@@ -156,14 +163,17 @@ if ($search !== '') {
     $where = '(' . implode(' OR ', array_map(fn($c) => "$c LIKE ?", $E['search'])) . ')';
     $params = array_fill(0, count($E['search']), "%$search%");
 }
+[$where, $params] = crud_apply_filter($E, $where, $params);
 [$scopeSql, $scopeParams] = scope_sql($scope);
 $items = rows("SELECT * FROM $table WHERE $where$scopeSql ORDER BY {$E['order']} LIMIT 500", array_merge($params, $scopeParams));
 ?>
 <div class="bar">
   <a class="btn accent" href="<?= e($self) ?>&a=new">+ New <?= e($E['singular']) ?></a>
-  <form method="get" style="display:flex;gap:.4rem"><input type="hidden" name="e" value="<?= e($key) ?>"><input type="search" name="q" value="<?= e($search) ?>" placeholder="Search…"><button class="btn ghost">Search</button></form>
+  <form method="get" style="display:flex;gap:.4rem"><input type="hidden" name="e" value="<?= e($key) ?>"><input type="search" name="q" value="<?= e($search) ?>" placeholder="Search…">
+    <?php if (!empty($E['filter'])): ?><select name="f" onchange="this.form.submit()"><option value="">All groups</option><?php foreach (scoped_options($E['fields'][$E['filter']]['options'], $scope, $E['filter']) as $fv => $fl): ?><option value="<?= e($fv) ?>" <?= ($_GET['f'] ?? '') === (string) $fv ? 'selected' : '' ?>><?= e($fl) ?></option><?php endforeach; ?></select><?php endif; ?>
+    <button class="btn ghost">Search</button></form>
   <span class="muted"><?= count($items) ?> item(s)</span><span class="grow"></span>
-  <?= export_buttons($self . ($search !== '' ? '&q=' . urlencode($search) : '')) ?>
+  <?= export_buttons($self . ($search !== '' ? '&q=' . urlencode($search) : '') . (!empty($_GET['f']) ? '&f=' . urlencode($_GET['f']) : '')) ?>
 </div>
 <div class="tablewrap"><table>
   <thead><tr><?php foreach ($E['list'] as $c => $l) echo '<th>' . e($l) . '</th>'; ?><th></th></tr></thead>

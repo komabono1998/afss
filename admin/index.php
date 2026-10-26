@@ -46,6 +46,7 @@ $attn = [
     ['🏅', 'Scholarship applications', 'scholarship_apps', 'inbox.php?t=scholarship_apps', 'scholarship_apps'],
     ['🎓', 'Alumni sign-ups', 'alumni_members', 'inbox.php?t=alumni_members', 'alumni_members'],
     ['🕊', 'Whistle-blower reports', 'whistle_reports', 'whistle.php', 'whistleblower'],
+    ['🤝', 'Donor & partner enquiries', 'donor_pledges', 'inbox.php?t=donor_pledges', 'donor_pledges'],
     ['✉', 'Messages', 'messages', 'inbox.php?t=messages', 'messages'],
 ];
 $attn = array_filter($attn, fn($a) => can($a[4]));
@@ -65,7 +66,7 @@ $tiles = [
     ['💼', 'Post vacancy', 'crud.php?e=jobs&a=new', 'jobs'], ['🏅', 'Add scholarship', 'crud.php?e=scholarships&a=new', 'scholarships'],
     ['🎓', 'Review admissions', 'inbox.php?t=admissions', 'admissions'], ['📄', 'Edit pages', 'crud.php?e=pages', 'pages'],
     ['🖼', 'Hero slides', 'crud.php?e=slides', 'slides'], ['🏛', 'Management profiles', 'crud.php?e=team', 'team'],
-    ['🎓', 'Student database', 'students.php', 'students'], ['⬆', 'Upload class list', 'students.php?a=upload', 'students_manage'], ['🏫', 'Classes & streams', 'classes.php', 'classes'], ['🕊', 'Whistle-blower reports', 'whistle.php', 'whistleblower'], ['🔌', 'Student data API', 'student_api.php', 'students_api'], ['👥', 'School population', 'population.php', 'population'], ['📝', 'Alumni page text', 'alumni_page.php', 'alumni_page'], ['📬', 'Subscribers & email', 'newsletter.php', 'newsletter'],
+    ['🎓', 'Student database', 'students.php', 'students'], ['👩‍🏫', 'Staff profiles', 'crud.php?e=team&a=new', 'team'], ['💳', 'Donation methods', 'crud.php?e=donation_methods', 'donation_methods'], ['⬆', 'Upload class list', 'students.php?a=upload', 'students_manage'], ['🏫', 'Classes & streams', 'classes.php', 'classes'], ['🕊', 'Whistle-blower reports', 'whistle.php', 'whistleblower'], ['🔌', 'Student data API', 'student_api.php', 'students_api'], ['👥', 'School population', 'population.php', 'population'], ['📝', 'Alumni page text', 'alumni_page.php', 'alumni_page'], ['📬', 'Subscribers & email', 'newsletter.php', 'newsletter'],
     ['⚙', 'Site settings', 'settings.php', 'settings'], ['👤', 'Admin users', 'users.php', 'users'],
 ];
 $tiles = array_filter($tiles, fn($t) => $t[3] === 'team_alumni' ? ($ME['role'] === 'alumni_coordinator') : can($t[3]));

@@ -67,16 +67,16 @@ $logo = setting('logo') ?: 'assets/img/logo.webp';
     <nav class="main-nav" aria-label="Main">
       <ul>
         <?= nav_item('Home', url()) ?>
-        <?= nav_item('About', url('page.php?slug=about-us'), group_children('about')) ?>
+        <?= nav_item('About', url('page.php?slug=about-us'), group_children('about', [['Our Staff', url('staff.php')], ['Careers — Work with Us', url('careers.php')]])) ?>
         <?= nav_item('Management', url('governance.php'), [['Governance Structure', url('governance.php')], ['Board of Governors', url('management.php?g=board')], ['School Management Team', url('management.php?g=team')], ['PTA Committee', url('management.php?g=pta')]]) ?>
         <?= nav_item('Academics', url('page.php?slug=academics'), group_children('academics')) ?>
         <?= nav_item('Admissions', url('admissions.php'), group_children('admissions', [['Apply Online', url('apply.php')], ['Scholarships & Bursaries', url('scholarships.php')]], true)) ?>
         <?= nav_item('Student Life', url('gallery.php'), group_children('students', [['Alumni (AFSSOSA)', url('alumni.php')], ['Photo Gallery', url('gallery.php')]])) ?>
         <?= nav_item('News', url('news.php'), [['News & Stories', url('news.php')], ['Monthly Newsletter', url('newsletters.php')]]) ?>
         <?= nav_item('Events', url('events.php')) ?>
-        <?= nav_item('Careers', url('careers.php')) ?>
         <?= nav_item('Contact', url('contact.php'), [['Contact Us', url('contact.php')], ['Report a Concern (confidential)', url('whistleblower.php')]]) ?>
       </ul>
+      <?php if (setting('donate_button') !== '0'): ?><a class="btn btn-gold nav-donate" href="<?= url('donate.php') ?>">♥ Donate</a><?php endif; ?>
       <a class="btn btn-accent nav-cta" href="<?= url('apply.php') ?>">Apply Now</a>
     </nav>
   </div>

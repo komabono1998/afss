@@ -8,8 +8,9 @@ function admin_nav(): array
         'Overview' => [['index.php', '📊 Dashboard'], ['population.php', '👥 School Population']],
         'Content' => [
             ['crud.php?e=slides', '🖼 Hero Slides'], ['crud.php?e=pages', '📄 Pages'], ['crud.php?e=news', '📰 News & Stories'], ['issues.php', '🗞 Monthly Newsletter'],
-            ['crud.php?e=events', '📅 Events'], ['albums.php', '📷 Photo Albums'], ['crud.php?e=team', '🏛 Management Profiles'],
+            ['crud.php?e=events', '📅 Events'], ['albums.php', '📷 Photo Albums'], ['crud.php?e=team', '🏛 Staff & Management'],
         ],
+        'Giving' => [['crud.php?e=donation_methods', '💳 Donation Methods'], ['crud.php?e=donation_causes', '💚 Giving Causes'], ['inbox.php?t=donor_pledges', '🤝 Donor Enquiries'], ['donate_page.php', '📝 Donate Page Text']],
         'Students' => [['students.php', '🎓 Student Database'], ['classes.php', '🏫 Classes & Streams'], ['student_api.php', '🔌 Student Data API']],
         'Recruitment' => [['crud.php?e=jobs', '💼 Job Vacancies'], ['inbox.php?t=job_apps', '📨 Job Applications']],
         'Admissions' => [['inbox.php?t=admissions', '🎓 Applications'], ['crud.php?e=scholarships', '🏅 Scholarships & Bursaries'], ['inbox.php?t=scholarship_apps', '📝 Scholarship Applications']],
@@ -23,7 +24,7 @@ function nav_module(string $href): ?string
 {
     if (preg_match('/^crud\.php\?e=(\w+)/', $href, $m)) return $m[1];
     if (preg_match('/^inbox\.php\?t=(\w+)/', $href, $m)) return $m[1];
-    return ['students.php' => 'students', 'classes.php' => 'classes', 'student_api.php' => 'students_api', 'whistle.php' => 'whistleblower', 'alumni_page.php' => 'alumni_page', 'population.php' => 'population', 'issues.php' => 'issues', 'albums.php' => 'albums', 'newsletter.php' => 'newsletter', 'settings.php' => 'settings', 'users.php' => 'users'][$href] ?? null;
+    return ['donate_page.php' => 'donate_page', 'students.php' => 'students', 'classes.php' => 'classes', 'student_api.php' => 'students_api', 'whistle.php' => 'whistleblower', 'alumni_page.php' => 'alumni_page', 'population.php' => 'population', 'issues.php' => 'issues', 'albums.php' => 'albums', 'newsletter.php' => 'newsletter', 'settings.php' => 'settings', 'users.php' => 'users'][$href] ?? null;
 }
 function badge_counts(): array
 {
@@ -31,6 +32,7 @@ function badge_counts(): array
         'inbox.php?t=admissions' => (int) val("SELECT COUNT(*) FROM admissions_apps WHERE status='new'"),
         'inbox.php?t=job_apps' => (int) val("SELECT COUNT(*) FROM job_apps WHERE status='new'"),
         'inbox.php?t=messages' => (int) val("SELECT COUNT(*) FROM messages WHERE status='new'"),
+        'inbox.php?t=donor_pledges' => (int) val("SELECT COUNT(*) FROM donor_pledges WHERE status='new'"),
         'whistle.php' => (int) val("SELECT COUNT(*) FROM whistle_reports WHERE status='new'"),
         'inbox.php?t=alumni_members' => (int) val("SELECT COUNT(*) FROM alumni_members WHERE status='new'"),
         'inbox.php?t=scholarship_apps' => (int) val("SELECT COUNT(*) FROM scholarship_apps WHERE status='new'"),
