@@ -81,7 +81,7 @@ $logo = setting('logo') ?: 'assets/img/logo.webp';
     <nav class="main-nav" aria-label="Main">
       <ul>
         <?= nav_item('Home', url()) ?>
-        <?= nav_item('About', url('page.php?slug=about-us'), group_children('about', [['Our Staff', url('staff.php')], ['Careers — Work with Us', url('careers.php')]])) ?>
+        <?= nav_item('About', url('page.php?slug=about-us'), group_children('about', [['School Anthem', url('anthem.php')], ['Our Staff', url('staff.php')], ['Careers — Work with Us', url('careers.php')]])) ?>
         <?= nav_item('Management', url('governance.php'), [['Governance Structure', url('governance.php')], ['Board of Governors', url('management.php?g=board')], ['School Management Team', url('management.php?g=team')], ['PTA Committee', url('management.php?g=pta')]]) ?>
         <?= nav_item('Academics', url('page.php?slug=academics'), group_children('academics', [['e-Library (free learning materials)', url('elibrary.php')], ['Live Online Lessons', url('live.php')]])) ?>
         <?= nav_item('Admissions', url('admissions.php'), group_children('admissions', [['Apply Online', url('apply.php')], ['Scholarships & Bursaries', url('scholarships.php')]], true)) ?>

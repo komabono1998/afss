@@ -8,7 +8,7 @@
 const ADMIN_MODULES = [
     'slides' => 'Hero slides', 'pages' => 'Pages', 'news' => 'News & stories', 'issues' => 'Monthly newsletter',
     'events' => 'Events', 'albums' => 'Photo albums', 'team' => 'Management profiles',
-    'jobs' => 'Job vacancies', 'job_apps' => 'Job applications', 'elib' => 'e-Library resources', 'live_sessions' => 'Live online lessons', 'live_all' => 'All teachers\' live lessons', 'achievers' => 'Achievers Corner', 'faqs' => 'FAQ & Help Centre', 'careers_page' => 'Careers page text',
+    'jobs' => 'Job vacancies', 'job_apps' => 'Job applications', 'anthem' => 'School anthem', 'elib' => 'e-Library resources', 'live_sessions' => 'Live online lessons', 'live_all' => 'All teachers\' live lessons', 'achievers' => 'Achievers Corner', 'faqs' => 'FAQ & Help Centre', 'careers_page' => 'Careers page text',
     'admissions' => 'Admission applications', 'scholarships' => 'Scholarships & bursaries', 'scholarship_apps' => 'Scholarship applications',
     'messages' => 'Contact messages', 'newsletter' => 'Subscribers & email',
     'population' => 'School population', 'alumni_events' => 'Alumni activities & events', 'alumni_members' => 'Alumni members', 'alumni_page' => 'Alumni page text', 'students' => 'Student database (view)', 'students_manage' => 'Student database (edit & upload)', 'classes' => 'Classes & streams', 'students_api' => 'Student data API', 'whistleblower' => 'Whistle-blower reports', 'donation_methods' => 'Donation methods', 'donation_causes' => 'Giving causes', 'donor_pledges' => 'Donor enquiries', 'donate_page' => 'Donate page text', 'clubs' => 'Clubs & societies', 'welfare_services' => 'Health & counselling services', 'help_requests' => 'Help & counselling requests', 'welfare_page' => 'Welfare page text', 'settings' => 'Site settings', 'users' => 'Admin users',
@@ -30,13 +30,13 @@ function roles(): array
         'deputy_academics' => [
             'label' => 'Deputy Headteacher (Academics)',
             'desc' => 'Academic and About pages, news, events, photo albums, admissions and scholarship applications.',
-            'modules' => ['pages', 'news', 'events', 'albums', 'achievers', 'faqs', 'elib', 'live_sessions', 'live_all', 'admissions', 'scholarships', 'scholarship_apps', 'population', 'students', 'students_manage', 'classes', 'clubs'],
+            'modules' => ['pages', 'news', 'events', 'albums', 'achievers', 'faqs', 'anthem', 'elib', 'live_sessions', 'live_all', 'admissions', 'scholarships', 'scholarship_apps', 'population', 'students', 'students_manage', 'classes', 'clubs'],
             'scope' => ['pages' => ['menu_group', ['academics', 'about']]],
         ],
         'deputy_admin' => [
             'label' => 'Deputy Headteacher (Administration)',
             'desc' => 'Management profiles, job vacancies and applications, contact messages, events, news and student-life pages.',
-            'modules' => ['pages', 'news', 'events', 'albums', 'achievers', 'faqs', 'team', 'jobs', 'job_apps', 'careers_page', 'messages', 'admissions', 'population', 'alumni_events', 'alumni_members', 'alumni_page', 'students', 'students_manage', 'classes', 'clubs'],
+            'modules' => ['pages', 'news', 'events', 'albums', 'achievers', 'faqs', 'anthem', 'team', 'jobs', 'job_apps', 'careers_page', 'messages', 'admissions', 'population', 'alumni_events', 'alumni_members', 'alumni_page', 'students', 'students_manage', 'classes', 'clubs'],
             'scope' => ['pages' => ['menu_group', ['about', 'students', 'none']]],
         ],
         'teacher' => [

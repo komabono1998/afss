@@ -68,6 +68,21 @@ include __DIR__ . '/includes/header.php';
   <?php endif; endforeach; ?>
 </div></div></section>
 
+<?php if (setting('anthem_show') !== '0'): $anAudio = setting('anthem_audio'); $anHas = $anAudio || trim((string) setting('anthem_lyrics')) !== ''; ?>
+<section class="an-home" aria-label="School anthem">
+  <div class="container an-home-in">
+    <div class="an-home-crest reveal"><img src="<?= e(media(setting('anthem_image') ?: (setting('logo') ?: 'assets/img/logo.webp'))) ?>" alt="" loading="lazy"><span class="an-eq" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span></div>
+    <div class="an-home-text reveal">
+      <span class="eyebrow">🎵 Sing with us</span>
+      <h2><?= e(setting('anthem_title') ?: 'Our School Anthem') ?></h2>
+      <p><?= e($anHas ? setting('anthem_intro') : 'Our school anthem will be published here soon, with the recording and the words for everyone to learn and sing.') ?></p>
+      <?php if ($anAudio): ?><audio controls preload="none" src="<?= e(media($anAudio)) ?>">Your browser cannot play this recording.</audio><?php endif; ?>
+      <p class="an-home-links"><a class="btn btn-accent" href="<?= url('anthem.php') ?>"><?= $anHas ? 'Read the words' : 'Visit the anthem page' ?></a><?php if ($anAudio): ?> <a class="btn btn-outline" href="<?= url('anthem.php') ?>#top">Open full player</a><?php endif; ?></p>
+    </div>
+  </div>
+</section>
+<?php endif; ?>
+
 <section class="section">
   <div class="container split">
     <div class="reveal">

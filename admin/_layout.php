@@ -8,7 +8,7 @@ function admin_nav(): array
         'Overview' => [['index.php', '📊 Dashboard'], ['population.php', '👥 School Population']],
         'Content' => [
             ['crud.php?e=slides', '🖼 Hero Slides'], ['crud.php?e=pages', '📄 Pages'], ['crud.php?e=news', '📰 News & Stories'], ['issues.php', '🗞 Monthly Newsletter'],
-            ['crud.php?e=events', '📅 Events'], ['albums.php', '📷 Photo Albums'], ['crud.php?e=achievers', '🏆 Achievers Corner'], ['crud.php?e=faqs', '❓ FAQ & Help Centre'], ['crud.php?e=elib', '📚 e-Library'], ['live_sessions.php', '🎥 Live Lessons'], ['crud.php?e=team', '🏛 Staff & Management'],
+            ['crud.php?e=events', '📅 Events'], ['albums.php', '📷 Photo Albums'], ['crud.php?e=achievers', '🏆 Achievers Corner'], ['crud.php?e=faqs', '❓ FAQ & Help Centre'], ['crud.php?e=elib', '📚 e-Library'], ['anthem_page.php', '🎵 School Anthem'], ['live_sessions.php', '🎥 Live Lessons'], ['crud.php?e=team', '🏛 Staff & Management'],
         ],
         'Giving' => [['crud.php?e=donation_methods', '💳 Donation Methods'], ['crud.php?e=donation_causes', '💚 Giving Causes'], ['inbox.php?t=donor_pledges', '🤝 Donor Enquiries'], ['donate_page.php', '📝 Donate Page Text']],
         'Student Welfare' => [['crud.php?e=clubs', '🎭 Clubs & Societies'], ['crud.php?e=welfare_services', '🩺 Health & Counselling Services'], ['help_requests.php', '💬 Help & Counselling Requests'], ['welfare_page.php', '📝 Welfare Page Text']],
@@ -25,7 +25,7 @@ function nav_module(string $href): ?string
 {
     if (preg_match('/^crud\.php\?e=(\w+)/', $href, $m)) return $m[1];
     if (preg_match('/^inbox\.php\?t=(\w+)/', $href, $m)) return $m[1];
-    return ['help_requests.php' => 'help_requests', 'careers_page.php' => 'careers_page', 'live_sessions.php' => 'live_sessions', 'staff_requests.php' => 'users', 'welfare_page.php' => 'welfare_page', 'donate_page.php' => 'donate_page', 'alumni_db.php' => 'alumni_members', 'students.php' => 'students', 'classes.php' => 'classes', 'student_api.php' => 'students_api', 'whistle.php' => 'whistleblower', 'alumni_page.php' => 'alumni_page', 'population.php' => 'population', 'issues.php' => 'issues', 'albums.php' => 'albums', 'newsletter.php' => 'newsletter', 'settings.php' => 'settings', 'users.php' => 'users'][$href] ?? null;
+    return ['help_requests.php' => 'help_requests', 'careers_page.php' => 'careers_page', 'live_sessions.php' => 'live_sessions', 'anthem_page.php' => 'anthem', 'staff_requests.php' => 'users', 'welfare_page.php' => 'welfare_page', 'donate_page.php' => 'donate_page', 'alumni_db.php' => 'alumni_members', 'students.php' => 'students', 'classes.php' => 'classes', 'student_api.php' => 'students_api', 'whistle.php' => 'whistleblower', 'alumni_page.php' => 'alumni_page', 'population.php' => 'population', 'issues.php' => 'issues', 'albums.php' => 'albums', 'newsletter.php' => 'newsletter', 'settings.php' => 'settings', 'users.php' => 'users'][$href] ?? null;
 }
 function badge_counts(): array
 {
