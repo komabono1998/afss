@@ -118,6 +118,32 @@ include __DIR__ . '/includes/header.php';
 </section>
 <?php endif; ?>
 
+<?php
+$achAll = rows("SELECT * FROM achievers WHERE active = 1 AND month <= date('now','start of month','+1 month','-1 day') ORDER BY month DESC, sort, id");
+$achMonth = $achAll ? substr($achAll[0]['month'], 0, 7) : '';
+$achPick = ['staff' => null, 'student' => null];
+foreach ($achAll as $a) if (substr($a['month'], 0, 7) === $achMonth && !$achPick[$a['kind']]) $achPick[$a['kind']] = $a;
+?>
+<section class="section ach-home">
+  <div class="container">
+    <div class="section-head"><span class="eyebrow">Recognition</span><h2>Achievers Corner</h2><p><?= $achMonth ? 'Our staff and student of the month for ' . e(date('F Y', strtotime($achMonth . '-01'))) . '.' : 'Celebrating the staff and students who make AFSS shine.' ?></p></div>
+    <div class="ach-feature">
+      <?php foreach (['staff' => 'Staff of the Month', 'student' => 'Student of the Month'] as $k => $lbl):
+          $a = $achPick[$k];
+          $ini = $a ? implode('', array_map(fn($w) => mb_substr($w, 0, 1), array_slice(preg_split('/\s+/', trim($a['name'])), 0, 2))) : '★'; ?>
+      <article class="ach-card ach-big ach-<?= $k ?><?= $a ? '' : ' ach-empty' ?> reveal">
+        <div class="ach-pic"><?php if ($a && $a['photo']): ?><img src="<?= e(media($a['photo'])) ?>" alt="<?= e($a['name']) ?>" loading="lazy"><?php else: ?><span class="ach-ini"><?= e($ini) ?></span><?php endif; ?><span class="ach-badge">★ <?= e($lbl) ?></span></div>
+        <div class="ach-body">
+          <?php if ($a): ?><span class="ach-month"><?= e(date('F Y', strtotime($a['month']))) ?></span><h3><?= e($a['name']) ?></h3><?php if ($a['role_class']): ?><div class="ach-role"><?= e($a['role_class']) ?></div><?php endif; ?><?php if ($a['achievement']): ?><p><?= e(excerpt($a['achievement'], 170)) ?></p><?php endif; ?>
+          <?php else: ?><h3><?= e($lbl) ?></h3><p>To be announced soon.</p><?php endif; ?>
+        </div>
+      </article>
+      <?php endforeach; ?>
+    </div>
+    <p style="text-align:center;margin-top:2rem"><a class="btn btn-ghost" href="<?= url('achievers.php') ?>">Visit the Achievers Corner</a></p>
+  </div>
+</section>
+
 <section class="section news-events">
   <div class="container ne-grid">
     <div class="reveal">
@@ -133,7 +159,7 @@ include __DIR__ . '/includes/header.php';
       <div class="ne-head"><h2>Upcoming Events</h2><a href="<?= url('events.php') ?>">Full calendar →</a></div>
       <?php foreach ($events as $ev): ?>
       <div class="ne-event"><div class="ne-date"><small><?= fmt_date($ev['start_date'], 'M') ?></small><b><?= fmt_date($ev['start_date'], 'j') ?></b></div>
-        <span><b><?= e($ev['title']) ?></b><small><?= e(trim(($ev['time_text'] ?: '') . ($ev['location'] ? ' · ' . $ev['location'] : ''), ' ·')) ?></small></span></div>
+        <span><b><?= e($ev['title']) ?></b><small><?= e(trim(($ev['time_text'] ?: '') . ($ev['location'] ? ' · ' . $ev['location'] : ''), ' ·')) ?></small><?= countdown_mini($ev) ?></span></div>
       <?php endforeach; if (!$events): ?><p>No upcoming events at the moment.</p><?php endif; ?>
     </div>
   </div>

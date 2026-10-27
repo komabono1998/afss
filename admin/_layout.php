@@ -8,7 +8,7 @@ function admin_nav(): array
         'Overview' => [['index.php', '📊 Dashboard'], ['population.php', '👥 School Population']],
         'Content' => [
             ['crud.php?e=slides', '🖼 Hero Slides'], ['crud.php?e=pages', '📄 Pages'], ['crud.php?e=news', '📰 News & Stories'], ['issues.php', '🗞 Monthly Newsletter'],
-            ['crud.php?e=events', '📅 Events'], ['albums.php', '📷 Photo Albums'], ['crud.php?e=team', '🏛 Staff & Management'],
+            ['crud.php?e=events', '📅 Events'], ['albums.php', '📷 Photo Albums'], ['crud.php?e=achievers', '🏆 Achievers Corner'], ['crud.php?e=team', '🏛 Staff & Management'],
         ],
         'Giving' => [['crud.php?e=donation_methods', '💳 Donation Methods'], ['crud.php?e=donation_causes', '💚 Giving Causes'], ['inbox.php?t=donor_pledges', '🤝 Donor Enquiries'], ['donate_page.php', '📝 Donate Page Text']],
         'Student Welfare' => [['crud.php?e=clubs', '🎭 Clubs & Societies'], ['crud.php?e=welfare_services', '🩺 Health & Counselling Services'], ['help_requests.php', '💬 Help & Counselling Requests'], ['welfare_page.php', '📝 Welfare Page Text']],

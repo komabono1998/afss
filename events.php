@@ -13,6 +13,7 @@ if (!empty($_GET['id'])) {
     <div class="container content-wrap"><article class="prose">
       <?php if ($ev['image']): ?><img src="<?= e(media($ev['image'])) ?>" alt=""><?php endif; ?>
       <p><span class="tag"><?= e($ev['category']) ?></span></p>
+      <?= countdown_block($ev) ?>
       <p><strong>When:</strong> <?= fmt_date($ev['start_date'], 'l, j F Y') ?><?= $ev['end_date'] && $ev['end_date'] !== $ev['start_date'] ? ' – ' . fmt_date($ev['end_date'], 'l, j F Y') : '' ?>
         <?= $ev['time_text'] ? ' · ' . e($ev['time_text']) : '' ?><br>
         <?php if ($ev['location']): ?><strong>Where:</strong> <?= e($ev['location']) ?><?php endif; ?></p>
@@ -48,6 +49,8 @@ $bannerSub = 'Key dates in the AFSS school year.';
 include __DIR__ . '/includes/header.php';
 include __DIR__ . '/includes/banner.php';
 ?>
+<?php $nextCd = null; foreach ($upcoming as $u) if (countdown_active($u)) { $nextCd = $u; break; } ?>
+<?php if ($nextCd): ?><section class="cd-hero"><div class="container"><div class="cd-hero-in"><div><span class="eyebrow">Next big event</span><h2><a href="<?= url('events.php?id=' . $nextCd['id']) ?>"><?= e($nextCd['title']) ?></a></h2><p><?= e(fmt_date($nextCd['start_date'], 'l, j F Y')) ?><?= $nextCd['time_text'] ? ' · ' . e($nextCd['time_text']) : '' ?><?= $nextCd['location'] ? ' · ' . e($nextCd['location']) : '' ?></p></div><?= countdown_block($nextCd) ?></div></div></section><?php endif; ?>
 <section class="section">
   <div class="container split split-cal">
     <div>
@@ -89,7 +92,7 @@ include __DIR__ . '/includes/banner.php';
       <div class="grid" style="gap:.8rem">
         <?php foreach ($upcoming as $ev): ?>
         <a class="event-row" href="<?= url('events.php?id=' . $ev['id']) ?>"><div class="date-box"><b><?= fmt_date($ev['start_date'], 'j') ?></b><small><?= fmt_date($ev['start_date'], 'M') ?></small></div>
-          <div><h3><?= e($ev['title']) ?></h3><span class="meta"><?= e($ev['category']) ?><?= $ev['time_text'] ? ' · ' . e($ev['time_text']) : '' ?></span></div></a>
+          <div><h3><?= e($ev['title']) ?></h3><span class="meta"><?= e($ev['category']) ?><?= $ev['time_text'] ? ' · ' . e($ev['time_text']) : '' ?></span><?= countdown_mini($ev) ?></div></a>
         <?php endforeach; if (!$upcoming): ?><p>No upcoming events.</p><?php endif; ?>
       </div>
     </aside>

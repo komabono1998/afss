@@ -93,3 +93,38 @@ document.addEventListener('click', function (e) {
   document.addEventListener('visibilitychange', function () { if (!document.hidden) tick(); });
   tick();
 })();
+
+/* ---- event countdowns (set up in the admin; target times are in school time, Africa/Kampala) ---- */
+(function () {
+  var big = document.querySelectorAll('.cd[data-to]'), mini = document.querySelectorAll('.cd-mini[data-to]');
+  if (!big.length && !mini.length) return;
+  function pad(n) { return (n < 10 ? '0' : '') + n; }
+  function parts(ms) {
+    var s = Math.floor(ms / 1000);
+    return { d: Math.floor(s / 86400), h: Math.floor(s % 86400 / 3600), m: Math.floor(s % 3600 / 60), s: s % 60 };
+  }
+  function tick() {
+    var now = Date.now();
+    big.forEach(function (el) {
+      var start = Date.parse(el.dataset.to), end = Date.parse(el.dataset.end || el.dataset.to), done = el.querySelector('.cd-done');
+      if (isNaN(start)) return;
+      if (now < start) {
+        var p = parts(start - now);
+        el.querySelector('[data-u=d]').textContent = p.d; el.querySelector('[data-u=h]').textContent = pad(p.h);
+        el.querySelector('[data-u=m]').textContent = pad(p.m); el.querySelector('[data-u=s]').textContent = pad(p.s);
+        el.classList.remove('is-live'); if (done) done.hidden = true;
+      } else {
+        el.classList.add('is-live');
+        if (done) { done.hidden = false; done.textContent = now <= end ? '🎉 The event is on today!' : 'This event has ended.'; }
+        var lbl = el.querySelector('.cd-label'); if (lbl) lbl.hidden = true;
+      }
+    });
+    mini.forEach(function (el) {
+      var start = Date.parse(el.dataset.to), end = Date.parse(el.dataset.end || el.dataset.to), t = el.querySelector('i');
+      if (isNaN(start)) return;
+      if (now < start) { var p = parts(start - now); t.textContent = (p.d ? p.d + 'd ' : '') + pad(p.h) + 'h ' + pad(p.m) + 'm ' + pad(p.s) + 's left'; }
+      else t.textContent = now <= end ? 'On now' : 'Ended';
+    });
+  }
+  tick(); setInterval(tick, 1000);
+})();

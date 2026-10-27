@@ -25,6 +25,7 @@
         <li><a href="<?= url('news.php') ?>">News &amp; Stories</a></li>
         <li><a href="<?= url('newsletters.php') ?>">Monthly Newsletter</a></li>
         <li><a href="<?= url('events.php') ?>">Events &amp; Calendar</a></li>
+        <li><a href="<?= url('achievers.php') ?>">Achievers Corner</a></li>
         <li><a href="<?= url('staff.php') ?>">Our Staff</a></li>
         <li><a href="<?= url('careers.php') ?>">Careers</a></li>
         <li><a href="<?= url('donate.php') ?>">Donate &amp; Partner</a></li>

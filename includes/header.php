@@ -85,7 +85,7 @@ $logo = setting('logo') ?: 'assets/img/logo.webp';
         <?= nav_item('Management', url('governance.php'), [['Governance Structure', url('governance.php')], ['Board of Governors', url('management.php?g=board')], ['School Management Team', url('management.php?g=team')], ['PTA Committee', url('management.php?g=pta')]]) ?>
         <?= nav_item('Academics', url('page.php?slug=academics'), group_children('academics')) ?>
         <?= nav_item('Admissions', url('admissions.php'), group_children('admissions', [['Apply Online', url('apply.php')], ['Scholarships & Bursaries', url('scholarships.php')]], true)) ?>
-        <?= nav_item('Student Life', url('clubs.php'), group_children('students', [['Alumni (AFSSOSA)', url('alumni.php')], ['Get my alumni card', url('alumni.php#card')], ['Photo Gallery', url('gallery.php')]])) ?>
+        <?= nav_item('Student Life', url('clubs.php'), group_children('students', [['Alumni (AFSSOSA)', url('alumni.php')], ['Achievers Corner', url('achievers.php')], ['Get my alumni card', url('alumni.php#card')], ['Photo Gallery', url('gallery.php')]])) ?>
         <?= nav_item('News', url('news.php'), [['News & Stories', url('news.php')], ['Monthly Newsletter', url('newsletters.php')]]) ?>
         <?= nav_item('Events', url('events.php')) ?>
         <?= nav_item('Contact', url('contact.php'), [['Contact Us', url('contact.php')], ['Report a Concern (confidential)', url('whistleblower.php')]]) ?>

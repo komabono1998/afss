@@ -23,6 +23,7 @@ if (!empty($_GET['e'])) {
       <article class="prose">
         <?php if ($ev['image']): ?><img src="<?= e(media($ev['image'])) ?>" alt="<?= e($ev['title']) ?>"><?php endif; ?>
         <p><span class="tag"><?= e($ev['category']) ?></span></p>
+        <?= countdown_block($ev, 'event_date') ?>
         <?php if ($ev['event_date'] || $ev['venue'] || $ev['time_text']): ?><p class="notice">
           <?php if ($ev['event_date']): ?><strong>When:</strong> <?= e(fmt_date($ev['event_date'], 'l, j F Y')) ?><?= $ev['end_date'] && $ev['end_date'] !== $ev['event_date'] ? ' – ' . e(fmt_date($ev['end_date'], 'l, j F Y')) : '' ?><?= $ev['time_text'] ? ' · ' . e($ev['time_text']) : '' ?><br><?php endif; ?>
           <?php if ($ev['venue']): ?><strong>Where:</strong> <?= e($ev['venue']) ?><?php endif; ?></p><?php endif; ?>
@@ -100,7 +101,7 @@ function activity_card(array $a, array $icons): string
     $when = $a['event_date'] ? e(fmt_date($a['event_date'], 'j M Y')) . ($a['time_text'] ? ' · ' . e($a['time_text']) : '') : 'Annual activity';
     $img = $a['image'] ? '<img src="' . e(media($a['image'])) . '" alt="" loading="lazy">' : '<span style="font-size:3rem">' . ($icons[$a['category']] ?? '🎉') . '</span>';
     return '<a class="card reveal" href="' . e(url('alumni.php?e=' . $a['slug'])) . '"><div class="thumb">' . $img . '</div><div class="card-body"><span class="tag">' . e($a['category']) . '</span>'
-        . '<h3>' . e($a['title']) . '</h3><p>' . e($a['summary'] ?: excerpt((string) $a['description'], 120)) . '</p><span class="meta">' . $when . ($a['venue'] ? ' · ' . e($a['venue']) : '') . '</span></div></a>';
+        . '<h3>' . e($a['title']) . '</h3><p>' . e($a['summary'] ?: excerpt((string) $a['description'], 120)) . '</p><span class="meta">' . $when . ($a['venue'] ? ' · ' . e($a['venue']) : '') . '</span>' . countdown_mini($a, 'event_date') . '</div></a>';
 }
 
 $pageTitle = 'Alumni — ' . setting('short_name');
