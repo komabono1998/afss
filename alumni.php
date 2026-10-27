@@ -67,8 +67,8 @@ if (is_post() && ($_POST['do'] ?? '') === 'getcard') {
         if ($errors) foreach ([$photo, $proof] as $fn) if ($fn) @unlink(PRIVATE_DIR . '/' . $fn);
     }
     if (!$errors) {
-        q('INSERT INTO alumni_members (name,email,phone,year_left,last_class,profession,workplace,location,message,newsletter,token,photo,proof_file,consent,consent_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
-            [post('name'), strtolower(post('email')), post('phone'), post('year_left'), post('last_class'), post('profession'), post('workplace'), post('location'), post('message'), post('newsletter') !== '' ? 1 : 0, bin2hex(random_bytes(12)), $photo, $proof, 1, date('Y-m-d H:i:s')]);
+        q('INSERT INTO alumni_members (name,email,phone,year_left,last_class,profession,workplace,location,message,newsletter,token,photo,proof_file,consent,consent_at,year_joined,dob,district) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
+            [post('name'), strtolower(post('email')), post('phone'), post('year_left'), post('last_class'), post('profession'), post('workplace'), post('location'), post('message'), post('newsletter') !== '' ? 1 : 0, bin2hex(random_bytes(12)), $photo, $proof, 1, date('Y-m-d H:i:s'), preg_replace('/\D/', '', post('year_joined')), preg_match('/^\d{4}-\d{2}-\d{2}$/', post('dob')) ? post('dob') : '', post('district')]);
         alumni_log((int) db()->lastInsertId(), 'registered', 'Submitted the online registration form');
         notify('New alumni sign-up: ' . post('name'), post('name') . ' (left ' . post('year_left') . ') joined the alumni network.\nView it in the admin panel.', post('email'));
         flash('Thank you, ' . post('name') . '. Your registration has been received and is awaiting approval. Once it is approved you will receive your membership number and card' . (post('email') !== '' ? ' by email.' : '.'));
@@ -163,7 +163,10 @@ $tools = array_filter([
     <?= csrf_field() ?><input type="text" name="website" class="hp" tabindex="-1" autocomplete="off">
     <div class="row">
       <div class="field"><label class="req">Full name</label><input name="name" value="<?= old('name') ?>" required></div>
-      <div class="field"><label>Year you left AFSS</label><input name="year_left" value="<?= old('year_left') ?>" placeholder="e.g. 2015"></div>
+      <div class="field"><label>Year you joined AFSS</label><input name="year_joined" value="<?= old('year_joined') ?>" placeholder="e.g. 2012" inputmode="numeric" maxlength="4"></div>
+      <div class="field"><label>Year you left AFSS</label><input name="year_left" value="<?= old('year_left') ?>" placeholder="e.g. 2015" inputmode="numeric" maxlength="4"></div>
+      <div class="field"><label>Date of birth</label><input type="date" name="dob" value="<?= old('dob') ?>" max="<?= date('Y-m-d') ?>"><small>Used to show your age on the membership card.</small></div>
+      <div class="field"><label>District of origin</label><select name="district"><option value="">Select district</option><?= district_options(post('district')) ?></select></div>
       <div class="field"><label>Email</label><input type="email" name="email" value="<?= old('email') ?>"></div>
       <div class="field"><label>Phone / WhatsApp</label><input name="phone" value="<?= old('phone') ?>"></div>
       <div class="field"><label>Last class attended</label><input name="last_class" value="<?= old('last_class') ?>" placeholder="e.g. Senior 6"></div>

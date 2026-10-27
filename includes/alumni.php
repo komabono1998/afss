@@ -8,6 +8,20 @@ function alumni_log(int $id, string $action, string $detail = ''): void
     q('INSERT INTO alumni_log (member_id,user_name,action,detail) VALUES (?,?,?,?)', [$id, admin_user()['name'] ?? 'member', $action, $detail]);
 }
 
+/** Age in whole years from a date of birth (null when unknown or invalid). */
+function alumni_age(?string $dob): ?int
+{
+    if (!$dob || !preg_match('/^\d{4}-\d{2}-\d{2}$/', $dob)) return null;
+    $a = (int) (new DateTimeImmutable($dob))->diff(new DateTimeImmutable('today'))->y;
+    return ($a >= 5 && $a <= 110) ? $a : null;
+}
+/** "2013 – 2016" style cohort (years at AFSS), falling back to the class year. */
+function alumni_cohort(array $m): string
+{
+    $j = trim((string) ($m['year_joined'] ?? '')); $l = trim((string) ($m['year_left'] ?? ''));
+    if ($j !== '' && $l !== '') return $j . ' – ' . $l;
+    return $l !== '' ? 'Class of ' . $l : ($j !== '' ? 'Joined ' . $j : '');
+}
 function alumni_validity_months(): int { return max(1, min(120, (int) (setting('alumni_validity_months') ?: 12))); }
 
 /** Next membership number, e.g. AFSSOSA/2026/0001 (prefix / year of approval / running number). */

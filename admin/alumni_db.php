@@ -11,6 +11,7 @@ function rm_private(?string $f): void { if ($f) @unlink(PRIVATE_DIR . '/' . base
 function member_form_data(): array
 {
     return ['name' => post('name'), 'email' => strtolower(post('email')), 'phone' => post('phone'), 'year_left' => post('year_left'), 'last_class' => post('last_class'),
+        'year_joined' => preg_replace('/\D/', '', post('year_joined')), 'dob' => preg_match('/^\d{4}-\d{2}-\d{2}$/', post('dob')) ? post('dob') : '', 'district' => post('district'),
         'profession' => post('profession'), 'workplace' => post('workplace'), 'location' => post('location'), 'newsletter' => isset($_POST['newsletter']) ? 1 : 0, 'notes' => trim((string) ($_POST['notes'] ?? ''))];
 }
 
@@ -41,15 +42,15 @@ if (is_post()) {
         if ($m) {
             if ($photo) rm_private($m['photo']); if ($proof) rm_private($m['proof_file']);
             if (!empty($_POST['photo_remove']) && !$photo) { rm_private($m['photo']); $photo = ''; }
-            q('UPDATE alumni_members SET name=?,email=?,phone=?,year_left=?,last_class=?,profession=?,workplace=?,location=?,newsletter=?,notes=?,photo=?,proof_file=? WHERE id=?',
+            q('UPDATE alumni_members SET name=?,email=?,phone=?,year_left=?,last_class=?,profession=?,workplace=?,location=?,newsletter=?,notes=?,photo=?,proof_file=?,year_joined=?,dob=?,district=? WHERE id=?',
                 [$d['name'], $d['email'], $d['phone'], $d['year_left'], $d['last_class'], $d['profession'], $d['workplace'], $d['location'], $d['newsletter'], $d['notes'],
-                    $photo !== null ? $photo : $m['photo'], $proof ?: $m['proof_file'], $mid]);
+                    $photo !== null ? $photo : $m['photo'], $proof ?: $m['proof_file'], $d['year_joined'], $d['dob'], $d['district'], $mid]);
             alumni_log($mid, 'edited', 'Details updated');
             flash('Alumni record saved.');
             redirect("admin/$self?a=view&id=$mid");
         }
-        q('INSERT INTO alumni_members (name,email,phone,year_left,last_class,profession,workplace,location,newsletter,notes,photo,proof_file,token,consent,consent_at,status) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,1,?,?)',
-            [$d['name'], $d['email'], $d['phone'], $d['year_left'], $d['last_class'], $d['profession'], $d['workplace'], $d['location'], $d['newsletter'], $d['notes'], $photo, $proof, bin2hex(random_bytes(12)), date('Y-m-d H:i:s'), 'new']);
+        q('INSERT INTO alumni_members (name,email,phone,year_left,last_class,profession,workplace,location,newsletter,notes,photo,proof_file,token,consent,consent_at,status,year_joined,dob,district) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,1,?,?,?,?,?)',
+            [$d['name'], $d['email'], $d['phone'], $d['year_left'], $d['last_class'], $d['profession'], $d['workplace'], $d['location'], $d['newsletter'], $d['notes'], $photo, $proof, bin2hex(random_bytes(12)), date('Y-m-d H:i:s'), 'new', $d['year_joined'], $d['dob'], $d['district']]);
         $nid = (int) db()->lastInsertId();
         alumni_log($nid, 'created', 'Added by staff');
         if (!empty($_POST['approve_now'])) { $no = alumni_approve($nid); flash("Added and approved — membership number $no."); }
@@ -124,6 +125,9 @@ if ($a === 'new' || $a === 'edit') {
       <?= csrf_field() ?><input type="hidden" name="do" value="save"><input type="hidden" name="id" value="<?= (int) ($m['id'] ?? 0) ?>">
       <div class="cols">
         <div class="f"><label>Full name *</label><input type="text" name="name" value="<?= $v('name') ?>" required></div>
+        <div class="f"><label>Year joined AFSS</label><input type="text" name="year_joined" value="<?= $v('year_joined') ?>" placeholder="e.g. 2012"></div>
+        <div class="f"><label>Date of birth</label><input type="date" name="dob" value="<?= $v('dob') ?>"><small>Shown as age on the card.</small></div>
+        <div class="f"><label>District of origin</label><select name="district"><option value="">Select district</option><?= district_options((string) ($m['district'] ?? '')) ?></select></div>
         <div class="f"><label>Year left AFSS</label><input type="text" name="year_left" value="<?= $v('year_left') ?>" placeholder="e.g. 2015"></div>
         <div class="f"><label>Email</label><input type="email" name="email" value="<?= $v('email') ?>"></div>
         <div class="f"><label>Phone / WhatsApp</label><input type="text" name="phone" value="<?= $v('phone') ?>"></div>
@@ -158,6 +162,8 @@ if ($a === 'view') {
           <?php if ($m['photo']): ?><img src="download.php?f=<?= urlencode($m['photo']) ?>&inline=1" alt="" style="width:130px;height:160px;object-fit:cover;border-radius:10px"><?php endif; ?>
           <dl class="kv" style="flex:1;min-width:240px">
             <dt>Membership no.</dt><dd><strong><?= e($m['member_no'] ?: '— not yet approved —') ?></strong></dd>
+            <dt>Cohort</dt><dd><?= e(alumni_cohort($m)) ?></dd>
+            <dt>Age</dt><dd><?= alumni_age($m['dob']) !== null ? alumni_age($m['dob']) . ' years' : '—' ?></dd><dt>District of origin</dt><dd><?= e($m['district'] ?: '—') ?></dd>
             <dt>Class of</dt><dd><?= e($m['year_left']) ?><?= $m['last_class'] ? ' (' . e($m['last_class']) . ')' : '' ?></dd>
             <dt>Profession</dt><dd><?= e($m['profession']) ?></dd><dt>Place of work</dt><dd><?= e($m['workplace']) ?></dd><dt>Lives in</dt><dd><?= e($m['location']) ?></dd>
             <dt>Email</dt><dd><?= $m['email'] ? '<a href="mailto:' . e($m['email']) . '">' . e($m['email']) . '</a>' : '' ?></dd><dt>Phone</dt><dd><?= e($m['phone']) ?></dd>

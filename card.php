@@ -77,6 +77,8 @@ body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;back
 .info .row{display:flex;gap:calc(var(--u)*1.2);margin-top:calc(var(--u)*.7)}
 .info .row span{color:var(--accent);min-width:calc(var(--u)*13);font-size:calc(var(--u)*2.1);text-transform:uppercase;letter-spacing:.05em;padding-top:.15em}
 .info .row b{font-weight:700}
+.info .row.duo{gap:calc(var(--u)*1.2)}.info .row.duo span{min-width:0}.info .row.duo span:nth-of-type(2){margin-left:calc(var(--u)*2)}.info .row.duo b{margin-right:calc(var(--u)*.4)}
+.info .row{margin-top:calc(var(--u)*.5)}
 .no{position:absolute;left:calc(var(--u)*4);bottom:calc(var(--u)*5.2);font-size:calc(var(--u)*2.4);color:#e8f3ec}
 .no b{font-size:calc(var(--u)*3.3);letter-spacing:.07em;color:#fff}
 .valid{position:absolute;right:calc(var(--u)*4);bottom:calc(var(--u)*5.2);text-align:right;font-size:calc(var(--u)*2.1);color:#e8f3ec}
@@ -114,7 +116,8 @@ body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;back
       <div class="photo" <?= $photoUrl ? 'style="background-image:url(\'' . e($photoUrl) . '\')"' : '' ?>><?= $photoUrl ? '' : e($ini) ?></div>
       <div class="info">
         <div class="nm"><?= e($m['name']) ?></div>
-        <div class="row"><span>Class of</span><b><?= e($m['year_left'] ?: '—') ?></b></div>
+        <div class="row"><span>Cohort</span><b><?= e(alumni_cohort($m) ?: '—') ?></b></div>
+        <?php $age = alumni_age($m['dob'] ?? null); if ($age !== null || !empty($m['district'])): ?><div class="row duo"><?php if ($age !== null): ?><span>Age</span><b><?= $age ?></b><?php endif; ?><?php if (!empty($m['district'])): ?><span>District</span><b><?= e($m['district']) ?></b><?php endif; ?></div><?php endif; ?>
         <?php if ($m['profession']): ?><div class="row"><span>Profession</span><b><?= e($m['profession']) ?></b></div><?php endif; ?>
         <?php if ($m['workplace']): ?><div class="row"><span>Works at</span><b><?= e($m['workplace']) ?></b></div><?php endif; ?>
         <?php if ($m['phone']): ?><div class="row"><span>Phone</span><b><?= e($m['phone']) ?></b></div><?php endif; ?>
