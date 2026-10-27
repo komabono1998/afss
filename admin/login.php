@@ -48,5 +48,5 @@ if ($err): ?><div class="lg-alert lg-err" role="alert"><?= e($err) ?></div><?php
       <?php if (!$hasUsers): auth_password_field('lg-pw2', 'password2', 'Confirm password', 'new-password'); endif; ?>
       <button class="lg-btn" type="submit"><?= $hasUsers ? 'Sign in to Admin' : 'Create administrator' ?></button>
     </form>
-    <?php if ($hasUsers): ?><div class="lg-links"><a href="forgot.php">Forgot your password?</a><a href="<?= e(url('alumni.php#card')) ?>">Alumni member card</a></div><?php endif; ?>
+    <?php if ($hasUsers): ?><div class="lg-links"><a href="forgot.php">Forgot your password?</a><a href="request.php">Staff? Request an account</a><a href="<?= e(url('alumni.php#card')) ?>">Alumni member card</a></div><?php endif; ?>
 <?php auth_end(); ?>

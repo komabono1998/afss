@@ -8,7 +8,7 @@ function admin_nav(): array
         'Overview' => [['index.php', '📊 Dashboard'], ['population.php', '👥 School Population']],
         'Content' => [
             ['crud.php?e=slides', '🖼 Hero Slides'], ['crud.php?e=pages', '📄 Pages'], ['crud.php?e=news', '📰 News & Stories'], ['issues.php', '🗞 Monthly Newsletter'],
-            ['crud.php?e=events', '📅 Events'], ['albums.php', '📷 Photo Albums'], ['crud.php?e=achievers', '🏆 Achievers Corner'], ['crud.php?e=faqs', '❓ FAQ & Help Centre'], ['crud.php?e=team', '🏛 Staff & Management'],
+            ['crud.php?e=events', '📅 Events'], ['albums.php', '📷 Photo Albums'], ['crud.php?e=achievers', '🏆 Achievers Corner'], ['crud.php?e=faqs', '❓ FAQ & Help Centre'], ['crud.php?e=elib', '📚 e-Library'], ['live_sessions.php', '🎥 Live Lessons'], ['crud.php?e=team', '🏛 Staff & Management'],
         ],
         'Giving' => [['crud.php?e=donation_methods', '💳 Donation Methods'], ['crud.php?e=donation_causes', '💚 Giving Causes'], ['inbox.php?t=donor_pledges', '🤝 Donor Enquiries'], ['donate_page.php', '📝 Donate Page Text']],
         'Student Welfare' => [['crud.php?e=clubs', '🎭 Clubs & Societies'], ['crud.php?e=welfare_services', '🩺 Health & Counselling Services'], ['help_requests.php', '💬 Help & Counselling Requests'], ['welfare_page.php', '📝 Welfare Page Text']],
@@ -17,7 +17,7 @@ function admin_nav(): array
         'Admissions' => [['inbox.php?t=admissions', '🎓 Applications'], ['crud.php?e=scholarships', '🏅 Scholarships & Bursaries'], ['inbox.php?t=scholarship_apps', '📝 Scholarship Applications']],
         'Alumni' => [['crud.php?e=alumni_events', '🎉 Alumni Events'], ['alumni_db.php', '🎓 Alumni Database'], ['alumni_page.php', '📝 Alumni Page Text']],
         'Communication' => [['inbox.php?t=messages', '✉ Messages'], ['whistle.php', '🕊 Whistle-blower Reports'], ['newsletter.php', '📬 Subscribers & Email']],
-        'System' => [['settings.php', '⚙ Site Settings'], ['users.php', '👤 Admin Users'], ['account.php', '🔑 My Account']],
+        'System' => [['settings.php', '⚙ Site Settings'], ['users.php', '👤 Admin Users'], ['staff_requests.php', '🙋 Staff Requests'], ['account.php', '🔑 My Account']],
     ];
 }
 /** Which permission module a sidebar/dashboard link belongs to (null = open to every signed-in user). */
@@ -25,7 +25,7 @@ function nav_module(string $href): ?string
 {
     if (preg_match('/^crud\.php\?e=(\w+)/', $href, $m)) return $m[1];
     if (preg_match('/^inbox\.php\?t=(\w+)/', $href, $m)) return $m[1];
-    return ['help_requests.php' => 'help_requests', 'careers_page.php' => 'careers_page', 'welfare_page.php' => 'welfare_page', 'donate_page.php' => 'donate_page', 'alumni_db.php' => 'alumni_members', 'students.php' => 'students', 'classes.php' => 'classes', 'student_api.php' => 'students_api', 'whistle.php' => 'whistleblower', 'alumni_page.php' => 'alumni_page', 'population.php' => 'population', 'issues.php' => 'issues', 'albums.php' => 'albums', 'newsletter.php' => 'newsletter', 'settings.php' => 'settings', 'users.php' => 'users'][$href] ?? null;
+    return ['help_requests.php' => 'help_requests', 'careers_page.php' => 'careers_page', 'live_sessions.php' => 'live_sessions', 'staff_requests.php' => 'users', 'welfare_page.php' => 'welfare_page', 'donate_page.php' => 'donate_page', 'alumni_db.php' => 'alumni_members', 'students.php' => 'students', 'classes.php' => 'classes', 'student_api.php' => 'students_api', 'whistle.php' => 'whistleblower', 'alumni_page.php' => 'alumni_page', 'population.php' => 'population', 'issues.php' => 'issues', 'albums.php' => 'albums', 'newsletter.php' => 'newsletter', 'settings.php' => 'settings', 'users.php' => 'users'][$href] ?? null;
 }
 function badge_counts(): array
 {
@@ -35,6 +35,7 @@ function badge_counts(): array
         'inbox.php?t=messages' => (int) val("SELECT COUNT(*) FROM messages WHERE status='new'"),
         'inbox.php?t=donor_pledges' => (int) val("SELECT COUNT(*) FROM donor_pledges WHERE status='new'"),
         'help_requests.php' => (function () { $sc = scope_for('help_requests'); [$sql, $p] = scope_sql($sc); return (int) val("SELECT COUNT(*) FROM help_requests WHERE status='new'" . $sql, $p); })(),
+        'staff_requests.php' => (int) val("SELECT COUNT(*) FROM staff_requests WHERE status='new'"),
         'whistle.php' => (int) val("SELECT COUNT(*) FROM whistle_reports WHERE status='new'"),
         'alumni_db.php' => (int) val("SELECT COUNT(*) FROM alumni_members WHERE status='new'"),
         'inbox.php?t=scholarship_apps' => (int) val("SELECT COUNT(*) FROM scholarship_apps WHERE status='new'"),

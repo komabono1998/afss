@@ -24,6 +24,8 @@
         <li><a href="<?= url('scholarships.php') ?>">Scholarships &amp; Bursaries</a></li>
         <li><a href="<?= url('news.php') ?>">News &amp; Stories</a></li>
         <li><a href="<?= url('newsletters.php') ?>">Monthly Newsletter</a></li>
+        <li><a href="<?= url('elibrary.php') ?>">e-Library</a></li>
+        <li><a href="<?= url('live.php') ?>">Live Online Lessons</a></li>
         <li><a href="<?= url('events.php') ?>">Events &amp; Calendar</a></li>
         <li><a href="<?= url('achievers.php') ?>">Achievers Corner</a></li>
         <li><a href="<?= url('staff.php') ?>">Our Staff</a></li>

@@ -93,6 +93,23 @@ return [
             'active' => ['Visible on website', 'check', 'default' => 1],
         ],
     ],
+    'elib' => [
+        'label' => 'e-Library Resources', 'singular' => 'resource', 'table' => 'elib_resources', 'order' => 'featured DESC, sort, title', 'filter' => 'kind',
+        'list' => ['title' => 'Resource', 'level' => 'Level', 'subject' => 'Subject', 'kind' => 'Type', 'featured' => 'Featured', 'active' => 'Visible'],
+        'search' => ['title', 'description', 'source'],
+        'fields' => [
+            'title' => ['Title', 'text', 'required' => true],
+            'url' => ['Web address', 'text', 'required' => true, 'help' => 'The full address of the free resource, starting with https://'],
+            'description' => ['Short description', 'textarea', 'help' => 'One or two sentences on what learners will find there.'],
+            'source' => ['Published by', 'text', 'help' => 'e.g. Khan Academy, UNEB, BBC'],
+            'level' => ['Level', 'select', 'options' => array_combine(ELIB_LEVELS, ELIB_LEVELS)],
+            'subject' => ['Subject', 'select', 'options' => array_combine(ELIB_SUBJECTS, ELIB_SUBJECTS)],
+            'kind' => ['Type of material', 'select', 'options' => array_combine(ELIB_KINDS, ELIB_KINDS)],
+            'featured' => ['Feature at the top', 'check', 'default' => 0],
+            'sort' => ['Display order', 'number', 'default' => 0],
+            'active' => ['Visible on website', 'check', 'default' => 1],
+        ],
+    ],
     'scholarships' => [
         'label' => 'Scholarships & Bursaries', 'singular' => 'award', 'table' => 'scholarships', 'order' => 'sort, title', 'slug' => 'title',
         'list' => ['title' => 'Name', 'type' => 'Type', 'deadline' => 'Deadline', 'accepting' => 'Taking applications', 'active' => 'Visible'],
