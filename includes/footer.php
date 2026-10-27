@@ -29,6 +29,7 @@
         <li><a href="<?= url('staff.php') ?>">Our Staff</a></li>
         <li><a href="<?= url('careers.php') ?>">Careers</a></li>
         <li><a href="<?= url('donate.php') ?>">Donate &amp; Partner</a></li>
+        <li><a href="<?= url('help.php') ?>">FAQ &amp; Help Centre</a></li>
         <li><a href="<?= url('contact.php') ?>">Contact</a></li>
         <li><a href="<?= url('whistleblower.php') ?>">Report a Concern</a></li>
       </ul>

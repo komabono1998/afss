@@ -78,6 +78,21 @@ return [
             'active' => ['Visible on website', 'check', 'default' => 1],
         ],
     ],
+    'faqs' => [
+        'label' => 'FAQ & Help Centre', 'singular' => 'question', 'table' => 'faqs', 'order' => 'category_sort, sort, id',
+        'list' => ['question' => 'Question', 'category' => 'Topic', 'sort' => 'Order', 'active' => 'Visible'],
+        'search' => ['question', 'answer', 'category'],
+        'filter' => 'category',
+        'fields' => [
+            'category' => ['Topic', 'select', 'options' => array_combine(faq_categories(), faq_categories()), 'required' => true, 'help' => 'Questions are grouped by topic on the Help Centre page.'],
+            'question' => ['Question', 'text', 'required' => true],
+            'answer' => ['Answer', 'html', 'help' => 'You can use {{phone}}, {{email}}, {{address}}, {{uneb}} and {{intake}}; they fill in automatically from Site Settings.'],
+            'link_text' => ['Button text (optional)', 'text', 'help' => 'e.g. Apply online'],
+            'link_url' => ['Button link (optional)', 'text', 'help' => 'A page on this site such as apply.php, or a full web address.'],
+            'sort' => ['Order within the topic', 'number', 'default' => 0],
+            'active' => ['Visible on website', 'check', 'default' => 1],
+        ],
+    ],
     'scholarships' => [
         'label' => 'Scholarships & Bursaries', 'singular' => 'award', 'table' => 'scholarships', 'order' => 'sort, title', 'slug' => 'title',
         'list' => ['title' => 'Name', 'type' => 'Type', 'deadline' => 'Deadline', 'accepting' => 'Taking applications', 'active' => 'Visible'],

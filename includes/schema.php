@@ -345,6 +345,13 @@ function migrate(PDO $db): void
         foreach (['countdown' => 'INTEGER DEFAULT 0', 'start_time' => 'TEXT'] as $c => $def) if (!in_array($c, $cc, true)) $db->exec("ALTER TABLE $ct ADD COLUMN $c $def");
     }
     $db->exec("CREATE TABLE IF NOT EXISTS achievers (id INTEGER PRIMARY KEY AUTOINCREMENT, kind TEXT NOT NULL DEFAULT 'student', month TEXT NOT NULL, name TEXT NOT NULL, role_class TEXT, photo TEXT, achievement TEXT, sort INTEGER DEFAULT 0, active INTEGER DEFAULT 1, created_at TEXT DEFAULT CURRENT_TIMESTAMP)");
+    $db->exec("CREATE TABLE IF NOT EXISTS faqs (id INTEGER PRIMARY KEY AUTOINCREMENT, category TEXT NOT NULL DEFAULT 'Website & Contact', question TEXT NOT NULL, answer TEXT, link_text TEXT, link_url TEXT, sort INTEGER DEFAULT 0, active INTEGER DEFAULT 1, category_sort INTEGER DEFAULT 0)");
+    if (!$db->query("SELECT 1 FROM settings WHERE k = 'migr_faqs'")->fetchColumn()) {
+        $fi = $db->prepare('INSERT INTO faqs (category, question, answer, link_text, link_url, sort, category_sort) VALUES (?,?,?,?,?,?,?)');
+        $fcat = array_flip(faq_categories());
+        foreach (faq_seed() as $n => [$cat, $qq, $aa, $lt, $lu]) $fi->execute([$cat, $qq, $aa, $lt, $lu, $n, $fcat[$cat] ?? 99]);
+        $db->exec("INSERT OR REPLACE INTO settings (k,v) VALUES ('migr_faqs','1')");
+    }
     foreach (['founders_show' => '1', 'founders_title' => 'Our Founders\' Story', 'founders_story' => "Archbishop Flynn Secondary School began with a simple conviction: that the young people of Pader and the wider northern Uganda deserve a school where academic excellence and strong moral formation go hand in hand.\n\nOur founders gave their time, resources and faith to open a school that welcomes boys and girls on equal terms and prepares them to serve their communities. Their vision lives on in our motto, Sapientia et Servitium: wisdom and service.\n\nToday, teachers, parents, alumni and well-wishers carry that vision forward, one learner at a time.", 'founders_image' => '', 'founders_caption' => 'The founders of Archbishop Flynn Secondary School'] as $fk => $fv)
         $db->prepare('INSERT OR IGNORE INTO settings (k,v) VALUES (?,?)')->execute([$fk, $fv]);
     foreach (['careers_heading' => 'Build a career that shapes young lives', 'careers_intro' => 'At AFSS you will join qualified, mentoring colleagues serving a diverse boarding community. We value integrity, professionalism and a passion for learners\' growth.', 'careers_benefits' => "Supportive mentoring culture\nProfessional development\nA purposeful, values-driven community", 'careers_how' => 'Choose a vacancy below, complete the short form and attach your CV. Shortlisted candidates will be contacted.'] as $ck => $cv)

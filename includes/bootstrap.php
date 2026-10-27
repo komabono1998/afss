@@ -30,6 +30,7 @@ require_once __DIR__ . '/drafts.php';
 require_once __DIR__ . '/content_paper.php';
 require_once __DIR__ . '/holidays.php';
 require_once __DIR__ . '/countdown.php';
+require_once __DIR__ . '/faq_seed.php';
 
 function db(): PDO
 {

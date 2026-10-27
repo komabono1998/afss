@@ -88,7 +88,7 @@ $logo = setting('logo') ?: 'assets/img/logo.webp';
         <?= nav_item('Student Life', url('clubs.php'), group_children('students', [['Alumni (AFSSOSA)', url('alumni.php')], ['Achievers Corner', url('achievers.php')], ['Get my alumni card', url('alumni.php#card')], ['Photo Gallery', url('gallery.php')]])) ?>
         <?= nav_item('News', url('news.php'), [['News & Stories', url('news.php')], ['Monthly Newsletter', url('newsletters.php')]]) ?>
         <?= nav_item('Events', url('events.php')) ?>
-        <?= nav_item('Contact', url('contact.php'), [['Contact Us', url('contact.php')], ['Report a Concern (confidential)', url('whistleblower.php')]]) ?>
+        <?= nav_item('Contact', url('contact.php'), [['Contact Us', url('contact.php')], ['FAQ & Help Centre', url('help.php')], ['Report a Concern (confidential)', url('whistleblower.php')]]) ?>
       </ul>
       <?php if (setting('donate_button') !== '0'): ?><a class="btn btn-gold nav-donate" href="<?= url('donate.php') ?>">♥ Donate</a><?php endif; ?>
       <a class="btn btn-accent nav-cta" href="<?= url('apply.php') ?>">Apply Now</a>
