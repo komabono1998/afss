@@ -64,25 +64,26 @@ body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;back
 .side-label{text-align:center;font-size:.8rem;color:#6b7785;margin:.5rem 0 0}
 /* card: everything is sized in --u (1 unit = 1mm when printing) */
 .idc{position:relative;width:calc(var(--u)*85.6);height:calc(var(--u)*54);border-radius:calc(var(--u)*3.2);overflow:hidden;background:#fff;box-shadow:0 10px 30px rgba(0,0,0,.18);font-size:calc(var(--u)*2.6);line-height:1.25;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-.front{background:linear-gradient(135deg,var(--primary) 0%,color-mix(in srgb,var(--primary) 70%,#000) 100%);color:#fff}
-.front::before{content:"";position:absolute;right:calc(var(--u)*-18);top:calc(var(--u)*-18);width:calc(var(--u)*55);height:calc(var(--u)*55);border-radius:50%;background:rgba(242,183,5,.16)}
+.front{background:#fff;color:#1c2733}
+.front::before{content:"";position:absolute;left:0;right:0;top:0;height:calc(var(--u)*1.8);background:var(--primary)}
+.front::after{content:"";position:absolute;right:calc(var(--u)*-14);top:calc(var(--u)*-14);width:calc(var(--u)*42);height:calc(var(--u)*42);border-radius:50%;background:rgba(242,183,5,.13)}
 .front .stripe{position:absolute;left:0;right:0;bottom:0;height:calc(var(--u)*2.2);background:linear-gradient(90deg,var(--secondary) 0 55%,var(--accent) 55% 100%)}
-.hdr{position:absolute;left:calc(var(--u)*4);top:calc(var(--u)*3.2);right:calc(var(--u)*4);display:flex;align-items:center;gap:calc(var(--u)*2.4)}
-.hdr img{height:calc(var(--u)*9.5);width:auto;background:#fff;border-radius:calc(var(--u)*1.4);padding:calc(var(--u)*.5)}
-.hdr b{display:block;font-size:calc(var(--u)*2.9);letter-spacing:.02em;line-height:1.1}
-.hdr small{display:block;font-size:calc(var(--u)*2);color:var(--accent);font-weight:600;letter-spacing:.14em;text-transform:uppercase}
-.photo{position:absolute;left:calc(var(--u)*4);top:calc(var(--u)*16.5);width:calc(var(--u)*21);height:calc(var(--u)*26);border-radius:calc(var(--u)*2);background:#e8efe9 center/cover no-repeat;border:calc(var(--u)*.6) solid #fff;display:flex;align-items:center;justify-content:center;color:var(--primary);font-weight:800;font-size:calc(var(--u)*8)}
-.info{position:absolute;left:calc(var(--u)*28);top:calc(var(--u)*16.5);right:calc(var(--u)*4)}
-.info .nm{font-size:calc(var(--u)*4);font-weight:800;line-height:1.1;text-transform:uppercase;margin-bottom:calc(var(--u)*1.4);word-break:break-word}
-.info .row{display:flex;gap:calc(var(--u)*1.2);margin-top:calc(var(--u)*.7)}
-.info .row span{color:var(--accent);min-width:calc(var(--u)*13);font-size:calc(var(--u)*2.1);text-transform:uppercase;letter-spacing:.05em;padding-top:.15em}
-.info .row b{font-weight:700}
+.hdr{position:absolute;left:calc(var(--u)*4);top:calc(var(--u)*4);right:calc(var(--u)*4);display:flex;align-items:center;gap:calc(var(--u)*2.4);z-index:1}
+.hdr img{height:calc(var(--u)*9.5);width:auto}
+.hdr b{display:block;font-size:calc(var(--u)*2.9);letter-spacing:.02em;line-height:1.1;color:var(--primary)}
+.hdr small{display:block;font-size:calc(var(--u)*2);color:var(--secondary);font-weight:700;letter-spacing:.14em;text-transform:uppercase}
+.photo{position:absolute;left:calc(var(--u)*4);top:calc(var(--u)*16.5);width:calc(var(--u)*17.5);height:calc(var(--u)*22);border-radius:calc(var(--u)*1.6);background:#eef2ef center/cover no-repeat;border:calc(var(--u)*.5) solid var(--primary);display:flex;align-items:center;justify-content:center;color:var(--primary);font-weight:800;font-size:calc(var(--u)*7);z-index:1}
+.info{position:absolute;left:calc(var(--u)*24.5);top:calc(var(--u)*16);right:calc(var(--u)*4);z-index:1}
+.info .nm{font-size:calc(var(--u)*3.9);font-weight:800;line-height:1.1;text-transform:uppercase;margin-bottom:calc(var(--u)*1.1);word-break:break-word;color:var(--primary)}
+.info .row{display:flex;gap:calc(var(--u)*1.2);margin-top:calc(var(--u)*.45)}
+.info .row span{color:var(--secondary);min-width:calc(var(--u)*13);font-size:calc(var(--u)*1.95);text-transform:uppercase;letter-spacing:.05em;padding-top:.15em;font-weight:600}
+.info .row b{font-weight:700;color:#1c2733}
 .info .row.duo{gap:calc(var(--u)*1.2)}.info .row.duo span{min-width:0}.info .row.duo span:nth-of-type(2){margin-left:calc(var(--u)*2)}.info .row.duo b{margin-right:calc(var(--u)*.4)}
-.info .row{margin-top:calc(var(--u)*.5)}
-.no{position:absolute;left:calc(var(--u)*4);bottom:calc(var(--u)*5.2);font-size:calc(var(--u)*2.4);color:#e8f3ec}
-.no b{font-size:calc(var(--u)*3.3);letter-spacing:.07em;color:#fff}
-.valid{position:absolute;right:calc(var(--u)*4);bottom:calc(var(--u)*5.2);text-align:right;font-size:calc(var(--u)*2.1);color:#e8f3ec}
-.valid b{display:block;font-size:calc(var(--u)*2.8);color:var(--accent)}
+.mstrip{position:absolute;left:calc(var(--u)*4);right:calc(var(--u)*4);bottom:calc(var(--u)*4.6);height:calc(var(--u)*7.6);border-radius:calc(var(--u)*1.4);background:#f2f5f3;border:calc(var(--u)*.3) solid #dde5df;display:flex;align-items:center;justify-content:space-between;padding:0 calc(var(--u)*2.4);z-index:1}
+.mstrip .no{font-size:calc(var(--u)*1.9);color:#5b6877;text-transform:uppercase;letter-spacing:.08em;line-height:1.2}
+.mstrip .no b{display:block;font-size:calc(var(--u)*3.6);letter-spacing:.06em;color:var(--primary);text-transform:none;font-weight:800}
+.mstrip .valid{text-align:right;font-size:calc(var(--u)*1.9);color:#5b6877;text-transform:uppercase;letter-spacing:.06em;line-height:1.2}
+.mstrip .valid b{display:block;font-size:calc(var(--u)*2.9);color:var(--secondary);text-transform:none;letter-spacing:.02em}
 .back{background:#fff;color:#1c2733}
 .back .band{height:calc(var(--u)*8);background:var(--primary);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;letter-spacing:.14em;font-size:calc(var(--u)*2.4)}
 .back .terms{position:absolute;left:calc(var(--u)*4);right:calc(var(--u)*30);top:calc(var(--u)*11);font-size:calc(var(--u)*2.2);color:#3a4654}
@@ -117,13 +118,15 @@ body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;back
       <div class="info">
         <div class="nm"><?= e($m['name']) ?></div>
         <div class="row"><span>Cohort</span><b><?= e(alumni_cohort($m) ?: '—') ?></b></div>
-        <?php $age = alumni_age($m['dob'] ?? null); if ($age !== null || !empty($m['district'])): ?><div class="row duo"><?php if ($age !== null): ?><span>Age</span><b><?= $age ?></b><?php endif; ?><?php if (!empty($m['district'])): ?><span>District</span><b><?= e($m['district']) ?></b><?php endif; ?></div><?php endif; ?>
+        <?php $age = alumni_age($m['dob'] ?? null); if ($age !== null): ?><div class="row"><span>Born</span><b><?= e(date('j M Y', strtotime((string) $m['dob']))) ?> · Age <?= $age ?></b></div><?php endif; ?>
+        <?php if (!empty($m['district'])): ?><div class="row"><span>District</span><b><?= e($m['district']) ?></b></div><?php endif; ?>
         <?php if ($m['profession']): ?><div class="row"><span>Profession</span><b><?= e($m['profession']) ?></b></div><?php endif; ?>
         <?php if ($m['workplace']): ?><div class="row"><span>Works at</span><b><?= e($m['workplace']) ?></b></div><?php endif; ?>
-        <?php if ($m['phone']): ?><div class="row"><span>Phone</span><b><?= e($m['phone']) ?></b></div><?php endif; ?>
       </div>
-      <div class="no">Member no.<br><b><?= e($m['member_no']) ?></b></div>
-      <div class="valid">Valid <?= e(date('M Y', strtotime((string) $m['valid_from']))) ?> – <b><?= e(date('d M Y', strtotime((string) $m['valid_to']))) ?></b></div>
+      <div class="mstrip">
+        <div class="no">Member no.<b><?= e($m['member_no']) ?></b></div>
+        <div class="valid">Valid until<b><?= e(date('d M Y', strtotime((string) $m['valid_to']))) ?></b></div>
+      </div>
       <div class="stripe"></div>
       <?php if ($ribbon): ?><div class="ribbon"><span><?= e($ribbon) ?></span></div><?php endif; ?>
     </div>
