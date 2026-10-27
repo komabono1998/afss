@@ -36,6 +36,8 @@ foreach ($monthEvents as $ev) {
     $en = min(strtotime($ev['end_date'] ?: $ev['start_date']), strtotime($monthEnd));
     for ($t = $s; $t <= $en; $t += 86400) $byDay[(int) date('j', $t)][] = $ev;
 }
+$showHol = setting('show_holidays') !== '0';
+$holidays = $showHol ? array_filter(uganda_holidays((int) date('Y', $first)), fn($d) => str_starts_with($d, $m), ARRAY_FILTER_USE_KEY) : [];
 $upcoming = rows("SELECT * FROM events WHERE date(COALESCE(end_date,start_date)) >= date('now') ORDER BY start_date LIMIT 12");
 $prev = date('Y-m', strtotime('-1 month', $first));
 $next = date('Y-m', strtotime('+1 month', $first));
@@ -64,7 +66,9 @@ include __DIR__ . '/includes/banner.php';
             for ($c = 0; $c < 7; $c++, $cell++):
                 if ($cell < 1 || $cell > $days) { echo '<td class="out"></td>'; continue; }
                 $isToday = date('Y-m-d') === date('Y-m-d', strtotime("$m-$cell"));
-                echo '<td class="' . ($isToday ? 'today' : '') . '"><span class="d">' . $cell . '</span>';
+                $hol = $holidays[sprintf('%s-%02d', $m, $cell)] ?? null;
+                echo '<td class="' . trim(($isToday ? 'today ' : '') . ($hol ? 'holiday' : '')) . '"><span class="d">' . $cell . '</span>';
+                if ($hol) echo '<span class="hol" title="' . e($hol['name'] . ($hol['note'] ? ' (' . $hol['note'] . ')' : '')) . '">' . e($hol['name']) . '</span>';
                 foreach (array_slice($byDay[$cell] ?? [], 0, 3) as $ev) echo '<a class="ev" href="' . url('events.php?id=' . $ev['id']) . '" title="' . e($ev['title']) . '">' . e($ev['title']) . '</a>';
                 echo '</td>';
             endfor;
@@ -72,8 +76,15 @@ include __DIR__ . '/includes/banner.php';
         endwhile; ?>
         </tbody>
       </table>
+      <?php if ($showHol): ?><p class="cal-legend"><span class="hol-key"></span> Public holiday in Uganda<?= array_filter($holidays, fn($x) => $x['note']) ? ' (Eid dates depend on the moon sighting and may shift by a day)' : '' ?></p><?php endif; ?>
     </div>
     <aside>
+      <?php if ($holidays): ?>
+      <h3>Public holidays in <?= e(date('F', $first)) ?></h3>
+      <ul class="hol-list">
+        <?php foreach ($holidays as $d => $hh): ?><li><b><?= e(date('j M', strtotime($d))) ?></b> <?= e($hh['name']) ?><small><?= e(date('l', strtotime($d))) ?></small></li><?php endforeach; ?>
+      </ul>
+      <?php endif; ?>
       <h3>Upcoming</h3>
       <div class="grid" style="gap:.8rem">
         <?php foreach ($upcoming as $ev): ?>

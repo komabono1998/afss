@@ -63,6 +63,7 @@ $logo = setting('logo') ?: 'assets/img/logo.webp';
       <small class="clock-tz">EAT</small>
     </span>
     <?php endif; ?>
+    <?php if (whatsapp_link()): ?><a class="topbar-wa" href="<?= e(whatsapp_link('Hello, I need some help.')) ?>" target="_blank" rel="noopener" aria-label="Chat with online support on WhatsApp"><i></i><span class="wa-lbl">WhatsApp support</span><b>Online</b></a><?php endif; ?>
     <span class="topbar-contact">
       <?php if (setting('phone')): ?><a href="tel:<?= e(preg_replace('/\s+/', '', setting('phone'))) ?>">☎ <?= e(setting('phone')) ?></a><?php endif; ?>
       <?php if (setting('email')): ?><a href="mailto:<?= e(setting('email')) ?>">✉ <?= e(setting('email')) ?></a><?php endif; ?>

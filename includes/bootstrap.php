@@ -28,6 +28,7 @@ require_once __DIR__ . '/students.php';
 require_once __DIR__ . '/alumni.php';
 require_once __DIR__ . '/drafts.php';
 require_once __DIR__ . '/content_paper.php';
+require_once __DIR__ . '/holidays.php';
 
 function db(): PDO
 {
